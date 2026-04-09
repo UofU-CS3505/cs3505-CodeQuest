@@ -1,11 +1,18 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Code Quest");
+
+    // Show the welcome/start page on launch
+    ui->stackedWidget->setCurrentIndex(START_PAGE);
+
+    // Apply gold border style only to the level number buttons
     setLevelButtonStyles();
 }
 
@@ -13,6 +20,36 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+// -------------------- Start Page Slots --------------------
+void MainWindow::on_startButton_clicked()
+{
+    on_levelOneButton_clicked();
+}
+
+void MainWindow::on_levelsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
+}
+
+void MainWindow::on_aboutButton_clicked()
+{
+    QMessageBox::about(
+        this,
+        "About Code Quest",
+        "Code Quest\n\n"
+        "A block-based coding education game.\n"
+        "Drag and drop code blocks to solve each challenge.\n\n"
+        "Use the level buttons to pick where you want to start!"
+        "-----Developed by bitcat.-----"
+        );
+}
+
+void MainWindow::on_backToStartButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(START_PAGE);
+}
+
 //----------------Level Button Slots-------------------
 void MainWindow::setLevelButtonStyles()
 {

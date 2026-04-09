@@ -21,9 +21,37 @@ private:
     Ui::MainWindow *ui;
     void setLevelButtonStyles();
 
-protected:
+    // Page indices in the QStackedWidget
+    static constexpr int START_PAGE  = 0;
+    static constexpr int LEVEL_PAGE  = 1;
 
 private slots:
+    // --- Start Page ---
+    /**
+     * Navigates to level 1 directly (quick-start from the welcome page).
+     * @brief on_startButton_clicked
+     */
+    void on_startButton_clicked();
+
+    /**
+     * Navigates to the level selection page.
+     * @brief on_levelsButton_clicked
+     */
+    void on_levelsButton_clicked();
+
+    /**
+     * Shows an About dialog with game info.
+     * @brief on_aboutButton_clicked
+     */
+    void on_aboutButton_clicked();
+
+    /**
+     * Returns to the start/welcome page from the level selection page.
+     * @brief on_backToStartButton_clicked
+     */
+    void on_backToStartButton_clicked();
+
+    // --- Level Selection Page ---
     /**
      * A button that directs users to the tutorial and challenge for Level 1.
      * @brief on_levelOneButton_clicked handles level 1 button
