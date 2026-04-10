@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include "codeBlock.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,10 +11,22 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Code Quest");
 
     // Show the welcome/start page on launch
-    ui->stackedWidget->setCurrentIndex(START_PAGE);
+    //ui->stackedWidget->setCurrentIndex(START_PAGE);
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 
     // Apply gold border style only to the level number buttons
     setLevelButtonStyles();
+
+    CodeBlock *moveBlock = new CodeBlock("move();", "move");
+    moveBlock->setStyleSheet("background-color: lightgreen; padding: 8px;");
+    ui->blockLayout->addWidget(moveBlock);
+
+    CodeBlock *ifBlock = new CodeBlock("if {", "ifStatement");
+    ifBlock->setStyleSheet("background-color: purple; padding: 8px;");
+    ui->blockLayout->addWidget(ifBlock);
+
+    ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
+
 }
 
 MainWindow::~MainWindow()

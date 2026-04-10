@@ -24,6 +24,7 @@ private:
     // Page indices in the QStackedWidget
     static constexpr int START_PAGE  = 0;
     static constexpr int LEVEL_PAGE  = 1;
+    static constexpr int CODE_PAGE   = 2;
 
 private slots:
     // --- Start Page ---

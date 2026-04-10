@@ -24,9 +24,8 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
-
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
       <property name="spacing">
@@ -44,40 +43,37 @@
       <property name="bottomMargin">
        <number>80</number>
       </property>
-
       <item>
        <widget class="QLabel" name="titleLabel">
-        <property name="text">
-         <string>Code Quest</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
         <property name="font">
          <font>
           <pointsize>36</pointsize>
           <bold>true</bold>
          </font>
         </property>
+        <property name="text">
+         <string>Code Quest</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
+        </property>
        </widget>
       </item>
-
       <item>
        <widget class="QLabel" name="subtitleLabel">
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Learn to code by dragging and dropping blocks!</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
        </widget>
       </item>
-
       <item>
        <spacer name="topSpacer">
         <property name="orientation">
@@ -91,12 +87,26 @@
         </property>
        </spacer>
       </item>
-
       <item>
        <widget class="QPushButton" name="startButton">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Start Game</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="levelsButton">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -108,14 +118,13 @@
           <pointsize>14</pointsize>
          </font>
         </property>
-       </widget>
-      </item>
-
-      <item>
-       <widget class="QPushButton" name="levelsButton">
         <property name="text">
          <string>Select Level</string>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="aboutButton">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -127,28 +136,11 @@
           <pointsize>14</pointsize>
          </font>
         </property>
-       </widget>
-      </item>
-
-      <item>
-       <widget class="QPushButton" name="aboutButton">
         <property name="text">
          <string>About</string>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>14</pointsize>
-         </font>
-        </property>
        </widget>
       </item>
-
       <item>
        <spacer name="bottomSpacer">
         <property name="orientation">
@@ -162,11 +154,9 @@
         </property>
        </spacer>
       </item>
-
      </layout>
     </widget>
-
-    <widget class="QWidget" name="page_4">
+    <widget class="QWidget" name="levelSelectionPage">
      <widget class="QLabel" name="levelSelectionLabel">
       <property name="geometry">
        <rect>
@@ -194,7 +184,6 @@
        <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
-
      <widget class="QPushButton" name="backToStartButton">
       <property name="geometry">
        <rect>
@@ -208,7 +197,6 @@
        <string>&lt; Back</string>
       </property>
      </widget>
-
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
@@ -557,6 +545,53 @@
       </layout>
      </widget>
     </widget>
+    <widget class="QWidget" name="codePage">
+     <widget class="Workspace" name="workspaceWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>389</x>
+        <y>180</y>
+        <width>271</width>
+        <height>261</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>271</width>
+         <height>261</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout"/>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="blockStorageWidget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>219</x>
+        <y>180</y>
+        <width>141</width>
+        <height>261</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="verticalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>141</width>
+         <height>261</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="blockLayout"/>
+      </widget>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -565,12 +600,20 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Workspace</class>
+   <extends>QWidget</extends>
+   <header>workspace.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

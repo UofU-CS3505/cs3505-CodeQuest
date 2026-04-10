@@ -1,32 +1,35 @@
-#include "Workspace.h"
-#include <QVBoxLayout>
-#include <QDragEnterEvent>
+#include "workspace.h"
+#include "codeBlock.h"
 #include <QMimeData>
-#include <QLabel>
 
 Workspace::Workspace(QWidget *parent)
     : QWidget(parent)
 {
     setAcceptDrops(true);
     setStyleSheet("background-color: lightgray;");
+
     layout = new QVBoxLayout(this);
+    layout->setAlignment(Qt::AlignTop);
+    setLayout(layout);
 }
 
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (event->mimeData()->hasText())
+    if (event->mimeData()->hasFormat("application/x-codeblock")) {
         event->acceptProposedAction();
+    }
 }
 
 void Workspace::dropEvent(QDropEvent *event)
 {
-    QString text = event->mimeData()->text();
+    if (event->mimeData()->hasFormat("application/x-codeblock")) {
 
-    QLabel *block = new QLabel(text);
-    block->setStyleSheet("background-color: lightgreen; padding: 6px;");
-    block->setAlignment(Qt::AlignCenter);
+        QString text = event->mimeData()->text();
+        QString type = event->mimeData()->data("application/x-codeblock");
 
-    layout->addWidget(block);
+        CodeBlock *block = new CodeBlock(text, type);
+        layout->addWidget(block);
 
-    event->acceptProposedAction();
+        event->acceptProposedAction();
+    }
 }

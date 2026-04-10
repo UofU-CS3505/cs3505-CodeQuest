@@ -1,16 +1,19 @@
-#ifndef CODEBLOCK_H
-#define CODEBLOCK_H
+#pragma once
 
 #include <QLabel>
+#include <QMouseEvent>
 
 class CodeBlock : public QLabel {
     Q_OBJECT
 
 public:
-    explicit CodeBlock(QString text, QWidget *parent = nullptr);
+    explicit CodeBlock(QString text, QString type, QWidget *parent = nullptr);
+
+    QString getType() const;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
-};
 
-#endif
+private:
+    QString blockType;
+};
