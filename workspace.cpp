@@ -27,8 +27,15 @@ void Workspace::dropEvent(QDropEvent *event)
         QString text = event->mimeData()->text();
         QString type = event->mimeData()->data("application/x-codeblock");
 
-        CodeBlock *block = new CodeBlock(text, type);
-        layout->addWidget(block);
+        if (event->dropAction() == Qt::MoveAction) {
+            CodeBlock *block = qobject_cast<CodeBlock*>(event->source());
+            if (block) {
+                layout->addWidget(block);
+            }
+        } else {
+            CodeBlock *block = new CodeBlock(text, type);
+            layout->addWidget(block);
+        }
 
         event->acceptProposedAction();
     }
