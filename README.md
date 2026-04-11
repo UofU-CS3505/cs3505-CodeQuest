@@ -1,5 +1,3 @@
-# See Project Board in "Issues"
-
 # Code Quest
 
 A block-based coding education game built with Qt/C++.
