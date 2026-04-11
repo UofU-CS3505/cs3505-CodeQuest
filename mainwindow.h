@@ -25,6 +25,17 @@ private:
     static constexpr int START_PAGE  = 0;
     static constexpr int LEVEL_PAGE  = 1;
     static constexpr int CODE_PAGE   = 2;
+protected:
+    // --------Mouse events, Qt calls these when user interacts with the window----------
+    /**
+     * When the mouse hovers over the corresponding level button,
+     * the corresponding level description text should appear.
+     * @brief eventFilter handles Qt mouse hover.
+     * @param levelButton Buttons related to hover operations.
+     * @param hoverEvent Content triggered when hovering over the correct position.
+     * @return true if the event is handled, false to continue normal processing.
+     */
+    bool eventFilter(QObject *levelButton, QEvent *hoverEvent) override;
 
 private slots:
     // --- Start Page ---

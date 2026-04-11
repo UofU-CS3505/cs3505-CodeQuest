@@ -7,6 +7,9 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     : QLabel(text, parent), blockType(type)
 {
     setAlignment(Qt::AlignCenter);
+    //setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    setMinimumHeight(40);
+    setMaximumHeight(50);
 
     if (type == "move") {
         setStyleSheet("background-color: lightgreen; padding: 6px; border: 1px solid black;");
@@ -51,7 +54,11 @@ void CodeBlock::mousePressEvent(QMouseEvent *event)
 
         drag->setPixmap(pixmap);
         drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+        Qt::DropAction action = Qt::CopyAction;
+        if (parentWidget() && parentWidget()->inherits("Workspace")) {
+            action = Qt::MoveAction;
+        }
 
-        drag->exec(Qt::CopyAction);
+        drag->exec(action);
     }
 }

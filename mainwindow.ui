@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
@@ -544,6 +544,44 @@
        </item>
       </layout>
      </widget>
+     <widget class="QFrame" name="levelDescriptionFrame">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>319</y>
+        <width>701</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <widget class="QLabel" name="levelDescriptionLabel">
+       <property name="geometry">
+        <rect>
+         <x>8</x>
+         <y>8</y>
+         <width>681</width>
+         <height>181</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>MV Boli</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Hover your mouse over the level button to display the level description.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+       </property>
+      </widget>
+     </widget>
     </widget>
     <widget class="QWidget" name="codePage">
      <widget class="Workspace" name="workspaceWidget" native="true">
@@ -600,7 +638,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>
