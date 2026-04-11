@@ -93,5 +93,34 @@ private slots:
      * @brief on_levelFiveButton_clicked handles level 5 button.
      */
     void on_levelFiveButton_clicked();
+
+    // --- Game / Code Page ---
+    /**
+     * Returns to the level selection page from the game screen.
+     * @brief on_backToLevelsButton_clicked
+     */
+    void on_backToLevelsButton_clicked();
+
+    /**
+     * Executes the player's block sequence against the current level.
+     * @brief on_runButton_clicked
+     */
+    void on_runButton_clicked();
+
+    /**
+     * Clears the workspace and resets the game state.
+     * @brief on_resetButton_clicked
+     */
+    void on_resetButton_clicked();
+
+    /**
+     * @brief on_hintButton_clicked
+     */
+    void on_hintButton_clicked();
+
+    /**
+     * @brief on_saveButton_clicked
+     */
+    void on_saveButton_clicked();
 };
 #endif // MAINWINDOW_H

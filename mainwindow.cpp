@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Show the welcome/start page on launch
     ui->stackedWidget->setCurrentIndex(START_PAGE);
-    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 
     // Apply gold border style only to the level number buttons
     setLevelButtonStyles();
@@ -41,6 +40,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
 
+    // Wire the new game-page navigation buttons
+    connect(ui->backToLevelsButton, &QPushButton::clicked,
+            this, &MainWindow::on_backToLevelsButton_clicked);
+    connect(ui->hintButton,   &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
+    connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
+    connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
+    connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -100,7 +106,8 @@ void MainWindow::setLevelButtonStyles()
 
 void MainWindow::on_levelOneButton_clicked()
 {
-
+    ui->levelTitleLabel->setText("Level 1");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 void MainWindow::on_levelTwoButton_clicked()
@@ -142,4 +149,26 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
         }
     }
     return QMainWindow::eventFilter(levelButton, hoverEvent);
+}
+
+// -------------------- Game Page Slots --------------------
+void MainWindow::on_backToLevelsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
+}
+
+void MainWindow::on_runButton_clicked()
+{
+}
+
+void MainWindow::on_resetButton_clicked()
+{
+}
+
+void MainWindow::on_hintButton_clicked()
+{
+}
+
+void MainWindow::on_saveButton_clicked()
+{
 }
