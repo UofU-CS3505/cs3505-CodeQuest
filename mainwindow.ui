@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
@@ -178,8 +178,8 @@
      <widget class="QLabel" name="levelSelectionLabel">
       <property name="geometry">
        <rect>
-        <x>260</x>
-        <y>50</y>
+        <x>420</x>
+        <y>40</y>
         <width>271</width>
         <height>71</height>
        </rect>
@@ -218,8 +218,8 @@
      <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>140</y>
+        <x>160</x>
+        <y>130</y>
         <width>781</width>
         <height>131</height>
        </rect>
@@ -578,8 +578,8 @@
      <widget class="QFrame" name="levelDescriptionFrame">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>319</y>
+        <x>200</x>
+        <y>290</y>
         <width>701</width>
         <height>201</height>
        </rect>
@@ -593,8 +593,8 @@
       <widget class="QLabel" name="levelDescriptionLabel">
        <property name="geometry">
         <rect>
-         <x>8</x>
-         <y>8</y>
+         <x>10</x>
+         <y>10</y>
          <width>681</width>
          <height>181</height>
         </rect>
