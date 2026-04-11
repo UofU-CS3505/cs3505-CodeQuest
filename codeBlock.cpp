@@ -14,6 +14,12 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     else if (type == "ifStatement") {
         setStyleSheet("background-color: purple; color: white; padding: 6px; border: 1px solid black;");
     }
+    else if (type == "turnLeft") {
+        setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
+    }
+    else if (type == "turnRight") {
+        setStyleSheet("background-color: khaki; padding: 6px; border: 1px solid black;");
+    }
     else {
         setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
     }

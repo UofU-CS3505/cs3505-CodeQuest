@@ -25,6 +25,12 @@ MainWindow::MainWindow(QWidget *parent)
     ifBlock->setStyleSheet("background-color: purple; padding: 8px;");
     ui->blockLayout->addWidget(ifBlock);
 
+    CodeBlock *turnLeftBlock = new CodeBlock("turnLeft();", "turnLeft");
+    ui->blockLayout->addWidget(turnLeftBlock);
+
+    CodeBlock *turnRightBlock = new CodeBlock("turnRight();", "turnRight");
+    ui->blockLayout->addWidget(turnRightBlock);
+
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
 
 }
