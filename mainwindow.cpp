@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include "codeBlock.h"
+#include <QEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -11,11 +12,18 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Code Quest");
 
     // Show the welcome/start page on launch
-    //ui->stackedWidget->setCurrentIndex(START_PAGE);
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    ui->stackedWidget->setCurrentIndex(START_PAGE);
+    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 
     // Apply gold border style only to the level number buttons
     setLevelButtonStyles();
+
+    // Enables the specified filter object to receive the target object within the eventFilter() function.
+    ui->level_1_Button->installEventFilter(this);
+    ui->level_2_Button->installEventFilter(this);
+    ui->level_3_Button->installEventFilter(this);
+    ui->level_4_Button->installEventFilter(this);
+    ui->level_5_Button->installEventFilter(this);
 
     CodeBlock *moveBlock = new CodeBlock("move();", "move");
     moveBlock->setStyleSheet("background-color: lightgreen; padding: 8px;");
@@ -107,4 +115,25 @@ void MainWindow::on_levelFourButton_clicked()
 void MainWindow::on_levelFiveButton_clicked()
 {
 
+}
+
+bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
+{
+    // Check if the event corresponds to a mouse hover state.
+    if (hoverEvent->type() == QEvent::Enter){
+
+        // Generate corresponding descriptive text for each distinct level.
+        if (levelButton == ui->level_1_Button){
+            ui->levelDescriptionLabel->setText("Level One:");
+        } else if (levelButton == ui->level_2_Button){
+            ui->levelDescriptionLabel->setText("Level Two:");
+        } else if (levelButton == ui->level_3_Button){
+            ui->levelDescriptionLabel->setText("Level Three:");
+        } else if (levelButton == ui->level_4_Button){
+            ui->levelDescriptionLabel->setText("Level Four:");
+        } else {
+            ui->levelDescriptionLabel->setText("Level Five:");
+        }
+    }
+    return QMainWindow::eventFilter(levelButton, hoverEvent);
 }
