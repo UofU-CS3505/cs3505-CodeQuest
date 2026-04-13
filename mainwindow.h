@@ -20,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     void setLevelButtonStyles();
+    void setLevelDescriptionStyles();
 
     // Page indices in the QStackedWidget
     static constexpr int START_PAGE  = 0;

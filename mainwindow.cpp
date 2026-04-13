@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Apply gold border style only to the level number buttons
     setLevelButtonStyles();
+    setLevelDescriptionStyles();
 
     // Enables the specified filter object to receive the target object within the eventFilter() function.
     ui->level_1_Button->installEventFilter(this);
@@ -47,6 +48,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
     connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
     connect(ui->saveButton, &QPushButton::clicked, this, &MainWindow::on_saveButton_clicked);
+
+    // select level buttons
+    connect(ui->level_1_Button, &QPushButton::clicked, this, &MainWindow::on_levelOneButton_clicked);
+    connect(ui->level_2_Button, &QPushButton::clicked, this, &MainWindow::on_levelTwoButton_clicked);
+    connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
+    connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
+    connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
 }
 
 MainWindow::~MainWindow()
@@ -104,6 +112,14 @@ void MainWindow::setLevelButtonStyles()
     ui->level_5_Button->setStyleSheet(levelStyle);
 }
 
+void MainWindow::setLevelDescriptionStyles()
+{
+    ui->levelDescriptionLabel->setStyleSheet(
+        "border: 3px solid rgb(255, 215, 0);"
+        "border-radius: 12px;"
+        );
+}
+
 void MainWindow::on_levelOneButton_clicked()
 {
     ui->levelTitleLabel->setText("Level 1");
@@ -112,22 +128,26 @@ void MainWindow::on_levelOneButton_clicked()
 
 void MainWindow::on_levelTwoButton_clicked()
 {
-
+    ui->levelTitleLabel->setText("Level 2");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 void MainWindow::on_levelThreeButton_clicked()
 {
-
+    ui->levelTitleLabel->setText("Level 3");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 void MainWindow::on_levelFourButton_clicked()
 {
-
+    ui->levelTitleLabel->setText("Level 4");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 void MainWindow::on_levelFiveButton_clicked()
 {
-
+    ui->levelTitleLabel->setText("Level 5");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
