@@ -39,6 +39,15 @@ MainWindow::MainWindow(QWidget *parent)
     CodeBlock *turnRightBlock = new CodeBlock("turnRight();", "turnRight");
     ui->blockLayout->addWidget(turnRightBlock);
 
+    currentLevelRoutePoints = {"A", "B", "C", "D", "E", "F", "G"};
+
+    for (const QString &pointName : currentLevelRoutePoints) {
+        CodeBlock *pointBlock = new CodeBlock(pointName, "routePoint");
+        pointBlock->hide();
+        ui->blockLayout->addWidget(pointBlock);
+        routePointBlocks.append(pointBlock);
+    }
+
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
 
     // Wire the new game-page navigation buttons
@@ -157,7 +166,10 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
 
         // Generate corresponding descriptive text for each distinct level.
         if (levelButton == ui->level_1_Button){
-            ui->levelDescriptionLabel->setText("Level One:");
+            ui->levelDescriptionLabel->setText("Level One:\n"
+                                               "Run first and observe the enemy patrols.\n"
+                                               "Use move(point) to send the robot to route points.\n"
+                                               "Avoid the two enemies and reach the target.");
         } else if (levelButton == ui->level_2_Button){
             ui->levelDescriptionLabel->setText("Level Two:");
         } else if (levelButton == ui->level_3_Button){

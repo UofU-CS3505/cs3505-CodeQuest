@@ -2,12 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVector>
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+class CodeBlock;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +25,8 @@ private:
     Ui::MainWindow *ui;
     void setLevelButtonStyles();
     void setLevelDescriptionStyles();
+    QVector<CodeBlock*> routePointBlocks;
+    QStringList currentLevelRoutePoints;
 
     // Page indices in the QStackedWidget
     static constexpr int START_PAGE  = 0;
