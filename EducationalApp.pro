@@ -58,6 +58,7 @@ SOURCES += \
     codeBlock.cpp \
     main.cpp \
     mainwindow.cpp \
+    savefile.cpp \
     workspace.cpp
 
 HEADERS += \
@@ -110,6 +111,7 @@ HEADERS += \
     Box2D/Rope/b2Rope.h \
     codeBlock.h \
     mainwindow.h \
+    savefile.h \
     workspace.h
 
 FORMS += \
