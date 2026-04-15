@@ -1,5 +1,4 @@
 #include "workspace.h"
-#include "codeBlock.h"
 #include <QMimeData>
 
 Workspace::Workspace(QWidget *parent)
@@ -27,6 +26,13 @@ void Workspace::clearBlocks()
 
         delete item;
     }
+
+    blocks.clear();
+}
+
+QList<CodeBlock*> getBlocks()
+{
+    return blocks;
 }
 
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
@@ -58,6 +64,7 @@ void Workspace::dropEvent(QDropEvent *event)
         block = new CodeBlock(text, type);
     }
 
+    blocks.append(block);
     int insertIndex = layout->count();
 
     QPoint dropPosition = event->position().toPoint();
