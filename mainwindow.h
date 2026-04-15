@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QStringList>
+#include "savefile.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,6 +33,14 @@ private:
     static constexpr int START_PAGE  = 0;
     static constexpr int LEVEL_PAGE  = 1;
     static constexpr int CODE_PAGE   = 2;
+
+    SaveFile saveFile;
+    int currentLevel = 1;
+
+    // Lock and Unlock Levels
+    void unlockLevelButtons();
+    void openSpecificLevel(int levelNumber);
+    void completeCurrentLevel();
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
     /**

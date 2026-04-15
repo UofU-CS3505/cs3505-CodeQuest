@@ -68,4 +68,8 @@ QJsonObject SaveFile::toJSON() const {
     return obj;
 }
 
+int SaveFile::getLatestUnlocked(){
+    return latestUnlockedIndex;
+}
+
 
