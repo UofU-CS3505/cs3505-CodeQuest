@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include "codeBlock.h"
 
 class BlockSpace : public QWidget
 {
@@ -11,7 +12,7 @@ class BlockSpace : public QWidget
 public:
     BlockSpace(QWidget *parent = nullptr);
 
-    void addBlock(const QString &text, const QString &type);
+    void addBlock(CodeBlock *block);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;

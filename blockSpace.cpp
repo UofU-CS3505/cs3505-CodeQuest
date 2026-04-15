@@ -1,6 +1,4 @@
 #include "blockSpace.h"
-#include "codeBlock.h"
-
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
@@ -16,10 +14,11 @@ BlockSpace::BlockSpace(QWidget *parent)
     setLayout(layout);
 }
 
-void BlockSpace::addBlock(const QString &text, const QString &type)
+void BlockSpace::addBlock(CodeBlock *block)
 {
-    CodeBlock *block = new CodeBlock(text, type);
+    block->setParent(this);
     layout->addWidget(block);
+    block->show();
 }
 
 void BlockSpace::dragEnterEvent(QDragEnterEvent *event)

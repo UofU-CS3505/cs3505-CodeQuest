@@ -27,17 +27,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->level_5_Button->installEventFilter(this);
 
     // Add code blocks to blockSpace
-    ui->blockSpaceWidget->addBlock("move();", "move");
-    ui->blockSpaceWidget->addBlock("if {", "ifStatement");
-    ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
-    ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
+    //ui->blockSpaceWidget->addBlock("move();", "move");
+    // ui->blockSpaceWidget->addBlock("if {", "ifStatement");
+    // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
+    // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
-    currentLevelRoutePoints = {"A", "B", "C", "D", "E", "F", "G"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
 
     for (const QString &pointName : currentLevelRoutePoints) {
-        CodeBlock *pointBlock = new CodeBlock(pointName, "routePoint");
-        pointBlock->hide();
-        ui->blockSpaceWidget->addBlock(pointName, "routePoint");
+        CodeBlock *pointBlock = new CodeBlock(pointName, "method");
+        ui->blockSpaceWidget->addBlock(pointBlock);
         routePointBlocks.append(pointBlock);
     }
 

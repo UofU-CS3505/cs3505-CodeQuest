@@ -10,6 +10,7 @@ Workspace::Workspace(QWidget *parent)
 
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
+    layout->setSpacing(6);
     setLayout(layout);
 }
 
@@ -74,6 +75,6 @@ void Workspace::dropEvent(QDropEvent *event)
     }
 
     layout->insertWidget(insertIndex, block);
-
+    block->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     event->acceptProposedAction();
 }
