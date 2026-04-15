@@ -1,3 +1,24 @@
+/* IDEA FOR LEVELS
+
+level one: teach user what a method is
+- has to use basic move methods to move princess to castle through a maze
+
+level two: teach user what a for-loop is
+- same thing as level one, move princess to castle through a maze, but use a for-loop this time
+
+level three: teach user what an if-statement is
+- have a dragon be moving across the screen side to side and have the user move the princess to the castle,
+but if a dragon is in the way, use wait method (or something like that?)
+- move princess to castle while avoiding the dragon
+
+level four: teach user what a function is
+- have the user use a function called something like "moveToCastle" or "avoidDragon" and then they can add
+the code in for that function and then use that function name in the "main method" to get the princess to the castle.
+
+level five: ? I was thinking maybe we could do like a free for all and the user can try and get the princess to the
+castle using the skills they learned and try to use the least amount of code blocks while accomplishing this task?
+*/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
