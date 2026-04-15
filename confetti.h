@@ -32,7 +32,7 @@ private:
     QTimer spawnTimer;
 
     int spawnCount = 0;
-    const int maxSpawns = 4;
+    const int maxSpawns = 3;
 };
 
 #endif
