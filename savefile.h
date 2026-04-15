@@ -26,7 +26,6 @@ public:
     void updateUnlockedLevels(int levelIndex);
     void updateScore(int levelIndex, int score);
     int getScore(int levelIndex);
-
 };
 
 #endif // SAVEFILE_H

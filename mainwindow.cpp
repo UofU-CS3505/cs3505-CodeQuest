@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
+    saveFile = SaveFile();
     ui->setupUi(this);
     setWindowTitle("Code Quest");
 

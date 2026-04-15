@@ -4,16 +4,13 @@
 #include "QFile"
 #include "QDebug"
 #include "QJsonArray"
+#include "vector"
 
-QString filename = "";
+QString filename = "save.txt";
 
 SaveFile::SaveFile() {
-    latestUnlockedIndex = 1; // level 1 is always unlocked
+    load();
 }
-
-
-
-
 
 void SaveFile::save(){
 
@@ -31,8 +28,12 @@ void SaveFile::save(){
 
 void SaveFile::load() {
     QFile file(filename);
+    // no save
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "No save detected!";
+        latestUnlockedIndex = 1;
+        scores = vector<int>(5);
+        save();
         return;
     }
 
@@ -80,9 +81,11 @@ void SaveFile::updateUnlockedLevels(int levelIndex){
 }
 
 void SaveFile::updateScore(int levelIndex, int score){
-    scores[levelIndex] = score;
+    if(score != 0 && score < scores[levelIndex - 1]){
+        scores[levelIndex - 1] = score;
+    }
 }
 
 int SaveFile::getScore(int levelIndex){
-    return scores[levelIndex];
+    return scores[levelIndex - 1];
 }
