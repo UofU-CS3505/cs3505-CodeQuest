@@ -120,34 +120,38 @@ void MainWindow::setUpLevel1()
     princess->setPixmap(QPixmap(":/images/princess.png"));
     princess->setScaledContents(true);
     princess->setFixedSize(TILE, TILE);
-    princess->move(1 * TILE, 10 * TILE);
+    princess->move(0 * TILE, 10 * TILE);
 
     // ---- CASTLE ----
     castle = new QLabel(canvas);
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
-    castle->setFixedSize(TILE, TILE);
-    castle->move(10 * TILE, 1 * TILE);
+    castle->setFixedSize(2 * TILE, 2 * TILE);
+    castle->move(10 * TILE, 0 * TILE);
 
-    // ---- OUTER BORDER WALLS ----
-    for (int c = 0; c < COLS; c++) {
-        addWall(0, c);
-        addWall(ROWS - 1, c);
-    }
+    // ---- MAZE LAYOUT ----
+    int maze[ROWS][COLS] = {
+        {1,1,1,1,1,1,1,1,1,1,0,0},
+        {1,0,0,0,0,1,0,0,0,0,0,0},
+        {1,0,1,1,0,1,0,1,1,1,0,1},
+        {1,0,1,0,0,0,0,1,0,0,0,1},
+        {1,0,1,0,1,1,1,1,0,1,0,1},
+        {1,0,0,0,1,0,0,0,0,1,0,1},
+        {1,1,1,0,1,0,1,1,1,1,0,1},
+        {1,0,0,0,1,0,0,0,0,0,0,1},
+        {1,0,1,1,1,1,1,1,1,1,0,1},
+        {1,0,0,0,0,0,0,0,0,1,0,1},
+        {0,0,0,0,0,0,0,0,0,1,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1}
+    };
 
     for (int r = 0; r < ROWS; r++) {
-        addWall(r, 0);
-        addWall(r, COLS - 1);
+        for (int c = 0; c < COLS; c++) {
+            if (maze[r][c] == 1) {
+                addWall(r, c);
+            }
+        }
     }
-
-    addWall(8, 2);
-    addWall(7, 2);
-    addWall(6, 2);
-
-    addWall(6, 3);
-    addWall(6, 4);
-
-
     princess->raise();
     castle->raise();
 }
