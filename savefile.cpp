@@ -9,7 +9,6 @@ QString filename = "";
 
 SaveFile::SaveFile() {
     latestUnlockedIndex = 1; // level 1 is always unlocked
-
 }
 
 
@@ -72,4 +71,18 @@ int SaveFile::getLatestUnlocked(){
     return latestUnlockedIndex;
 }
 
+bool SaveFile::isLevelUnlocked(int levelIndex){
+    return (levelIndex <= latestUnlockedIndex);
+}
 
+void SaveFile::updateUnlockedLevels(int levelIndex){
+    latestUnlockedIndex = levelIndex;
+}
+
+void SaveFile::updateScore(int levelIndex, int score){
+    scores[levelIndex] = score;
+}
+
+int SaveFile::getScore(int levelIndex){
+    return scores[levelIndex];
+}

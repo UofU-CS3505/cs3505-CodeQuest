@@ -22,7 +22,10 @@ public:
     QJsonObject toJSON() const;
 
     int getLatestUnlocked();
-    int getResults(int levelIndex);
+    bool isLevelUnlocked(int levelIndex);
+    void updateUnlockedLevels(int levelIndex);
+    void updateScore(int levelIndex, int score);
+    int getScore(int levelIndex);
 
 };
 
