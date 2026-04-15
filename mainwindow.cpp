@@ -25,26 +25,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->level_4_Button->installEventFilter(this);
     ui->level_5_Button->installEventFilter(this);
 
-    CodeBlock *moveBlock = new CodeBlock("move();", "move");
-    moveBlock->setStyleSheet("background-color: lightgreen; padding: 8px;");
-    ui->blockLayout->addWidget(moveBlock);
-
-    CodeBlock *ifBlock = new CodeBlock("if {", "ifStatement");
-    ifBlock->setStyleSheet("background-color: purple; padding: 8px;");
-    ui->blockLayout->addWidget(ifBlock);
-
-    CodeBlock *turnLeftBlock = new CodeBlock("turnLeft();", "turnLeft");
-    ui->blockLayout->addWidget(turnLeftBlock);
-
-    CodeBlock *turnRightBlock = new CodeBlock("turnRight();", "turnRight");
-    ui->blockLayout->addWidget(turnRightBlock);
+    // Add code blocks to blockSpace
+    ui->blockSpaceWidget->addBlock("move();", "move");
+    ui->blockSpaceWidget->addBlock("if {", "ifStatement");
+    ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
+    ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
     currentLevelRoutePoints = {"A", "B", "C", "D", "E", "F", "G"};
 
     for (const QString &pointName : currentLevelRoutePoints) {
         CodeBlock *pointBlock = new CodeBlock(pointName, "routePoint");
         pointBlock->hide();
-        ui->blockLayout->addWidget(pointBlock);
+        ui->blockSpaceWidget->addBlock(pointName, "routePoint");
         routePointBlocks.append(pointBlock);
     }
 

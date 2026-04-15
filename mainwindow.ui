@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
@@ -870,24 +870,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="blockLayout">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Orientation::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          <widget class="BlockSpace" name="blockSpaceWidget"/>
          </item>
         </layout>
        </item>
@@ -943,6 +926,11 @@
    <extends>QWidget</extends>
    <header>workspace.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BlockSpace</class>
+   <extends>QListWidget</extends>
+   <header>blockSpace.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
