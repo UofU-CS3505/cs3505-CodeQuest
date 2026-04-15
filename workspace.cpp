@@ -13,6 +13,21 @@ Workspace::Workspace(QWidget *parent)
     setLayout(layout);
 }
 
+void Workspace::clearBlocks()
+{
+    QLayoutItem *item;
+
+    while ((item = layout->takeAt(0)) != nullptr) {
+        QWidget *widget = item->widget();
+
+        if (widget) {
+            delete widget;
+        }
+
+        delete item;
+    }
+}
+
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-codeblock")) {
