@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include "codeBlock.h"
 
 #pragma once
 
@@ -13,6 +14,7 @@ class Workspace : public QWidget {
 public:
     Workspace(QWidget *parent = nullptr);
     void clearBlocks();
+    QList<CodeBlock*> getBlocks();
 
 signals:
     void moveBlockClicked(CodeBlock *block);
@@ -20,8 +22,8 @@ signals:
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-
 private:
     QVBoxLayout *layout;
     void registerBlock(CodeBlock *block);
+    QList<CodeBlock*> blocks;
 };
