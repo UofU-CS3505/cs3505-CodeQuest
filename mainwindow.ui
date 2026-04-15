@@ -819,7 +819,7 @@
             <item>
              <widget class="QLabel" name="gameCanvasPlaceholder">
               <property name="text">
-               <string>(game canvas)</string>
+               <string/>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>

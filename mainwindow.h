@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QStringList>
+#include <QLabel>
 #include "savefile.h"
 
 QT_BEGIN_NAMESPACE
@@ -41,6 +42,21 @@ private:
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);
     void completeCurrentLevel();
+
+    // Canvas setup
+    QLabel *princess;
+    QLabel *castle;
+    QVector<QLabel*> walls;
+    static const int TILE = 40;
+    static const int COLS = 12;
+    static const int ROWS = 12;
+
+    void setUpLevels();
+    void setUpLevel1();
+    void addWall(int x, int y);
+    void movePrincess(int dx, int dy);
+    bool won();
+
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
     /**

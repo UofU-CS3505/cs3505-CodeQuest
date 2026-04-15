@@ -32,13 +32,14 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
     // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
+    // currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
 
-    for (const QString &pointName : currentLevelRoutePoints) {
-        CodeBlock *pointBlock = new CodeBlock(pointName, "method");
-        ui->blockSpaceWidget->addBlock(pointBlock);
-        routePointBlocks.append(pointBlock);
-    }
+    // for (const QString &pointName : currentLevelRoutePoints) {
+    //     CodeBlock *pointBlock = new CodeBlock(pointName, "method");
+    //     ui->blockSpaceWidget->addBlock(pointBlock);
+    //     routePointBlocks.append(pointBlock);
+    // }
+    setUpLevels();
 
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
 
@@ -60,13 +61,108 @@ MainWindow::MainWindow(QWidget *parent)
     // add confetti
     Confetti *confetti = new Confetti(this);
     confetti->setGeometry(this->rect());
-    confetti->raise(); // draw on top
+    confetti->raise();
     connect(this, &MainWindow::levelCompleted, confetti, &Confetti::startConfetti);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+// -------------------- Helper methods --------------------
+void MainWindow::setUpLevels()
+{
+    setUpLevel1();
+    ui->blockSpaceWidget->addBlock(new CodeBlock("moveUp();", "method"));
+    ui->blockSpaceWidget->addBlock(new CodeBlock("moveDown();", "method"));
+    ui->blockSpaceWidget->addBlock(new CodeBlock("moveRight();", "method"));
+    ui->blockSpaceWidget->addBlock(new CodeBlock("moveLeft();", "method"));
+}
+
+void MainWindow::setUpLevel1()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+    canvas->setFixedSize(COLS * TILE, ROWS * TILE);
+
+    QLabel *bg = new QLabel(canvas);
+    bg->setPixmap(QPixmap(":/images/grass.png").scaled(
+        canvas->size(),
+        Qt::IgnoreAspectRatio,
+        Qt::SmoothTransformation
+        ));
+    bg->setGeometry(0, 0, canvas->width(), canvas->height());
+    bg->lower();
+
+    // ---- PRINCESS ----
+    princess = new QLabel(canvas);
+    princess->setPixmap(QPixmap(":/images/princess.png"));
+    princess->setScaledContents(true);
+    princess->setFixedSize(TILE, TILE);
+    princess->move(1 * TILE, 10 * TILE);
+
+    // ---- CASTLE ----
+    castle = new QLabel(canvas);
+    castle->setPixmap(QPixmap(":/images/castle.png"));
+    castle->setScaledContents(true);
+    castle->setFixedSize(TILE, TILE);
+    castle->move(10 * TILE, 1 * TILE);
+
+    // ---- OUTER BORDER WALLS ----
+    for (int c = 0; c < COLS; c++) {
+        addWall(0, c);
+        addWall(ROWS - 1, c);
+    }
+
+    for (int r = 0; r < ROWS; r++) {
+        addWall(r, 0);
+        addWall(r, COLS - 1);
+    }
+
+    addWall(8, 2);
+    addWall(7, 2);
+    addWall(6, 2);
+
+    addWall(6, 3);
+    addWall(6, 4);
+
+
+    princess->raise();
+    castle->raise();
+}
+
+void MainWindow::addWall(int row, int col)
+{
+    QLabel *wall = new QLabel(ui->gameCanvasFrame);
+    wall->setStyleSheet(
+        "background-color: rgba(0,0,0,200);"
+        "border-radius: 4px;"
+        );
+
+    wall->setFixedSize(TILE, TILE);
+    wall->move(col * TILE, row * TILE);
+    wall->show();
+
+    walls.append(wall);
+}
+
+void MainWindow::movePrincess(int dx, int dy)
+{
+    QPoint pos = princess->pos();
+
+    int newX = pos.x() + dx * TILE;
+    int newY = pos.y() + dy * TILE;
+
+    if (newX < 0 || newY < 0 ||
+        newX >= COLS * TILE || newY >= ROWS * TILE)
+        return;
+
+    princess->move(newX, newY);
+}
+
+bool MainWindow::won()
+{
+    return princess->pos() == castle->pos();
 }
 
 // -------------------- Start Page Slots --------------------
@@ -168,18 +264,30 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
 
         // Generate corresponding descriptive text for each distinct level.
         if (levelButton == ui->level_1_Button){
+            // ui->levelDescriptionLabel->setText("Level One:\n"
+            //                                    "Run first and observe the enemy patrols.\n"
+            //                                    "Use move(point) to send the robot to route points.\n"
+            //                                    "Avoid the two enemies and reach the target.");
             ui->levelDescriptionLabel->setText("Level One:\n"
-                                               "Run first and observe the enemy patrols.\n"
-                                               "Use move(point) to send the robot to route points.\n"
-                                               "Avoid the two enemies and reach the target.");
+                                               "Basic method\n"
+                                               "Learn how to use the move(); method");
         } else if (levelButton == ui->level_2_Button){
-            ui->levelDescriptionLabel->setText("Level Two:");
+            ui->levelDescriptionLabel->setText("Level Two:\n"
+                                               "for loop\n"
+                                               "Learn how to simplify code by using a loop\n"
+                                               "simplify the code you made last round by using loops");
         } else if (levelButton == ui->level_3_Button){
-            ui->levelDescriptionLabel->setText("Level Three:");
+            ui->levelDescriptionLabel->setText("Level Three:\n"
+                                               "if statement\n"
+                                               "learn that if you see the enemy, wait");
         } else if (levelButton == ui->level_4_Button){
-            ui->levelDescriptionLabel->setText("Level Four:");
+            ui->levelDescriptionLabel->setText("Level Four\n"
+                                               "function\n"
+                                               "learn that you can put multiple methods in a function and call it later");
         } else {
-            ui->levelDescriptionLabel->setText("Level Five:");
+            ui->levelDescriptionLabel->setText("Level Five:\n"
+                                               "free for all: solve the level however you want using the skills that you learned\n"
+                                               "try and get the simplest code that completes the same task");
         }
     }
     return QMainWindow::eventFilter(levelButton, hoverEvent);
@@ -235,9 +343,9 @@ void MainWindow::on_backToLevelsButton_clicked()
 void MainWindow::on_runButton_clicked()
 {
     // TODO add the rest of this functionality
-
-    // if they completed the level,
-    emit levelCompleted();
+    if (won()) {
+        emit levelCompleted();
+    }
 
 }
 
