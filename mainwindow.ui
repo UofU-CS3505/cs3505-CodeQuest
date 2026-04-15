@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
@@ -819,7 +819,7 @@
             <item>
              <widget class="QLabel" name="gameCanvasPlaceholder">
               <property name="text">
-               <string>(game canvas)</string>
+               <string/>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -852,7 +852,7 @@
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="paletteColumnLayout">
+        <layout class="QVBoxLayout" name="blockSaceColumnLayout">
          <property name="spacing">
           <number>6</number>
          </property>
@@ -870,14 +870,23 @@
           </widget>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="blockLayout">
-           <property name="spacing">
-            <number>6</number>
+          <widget class="BlockSpace" name="blockSpaceWidget">
+           <property name="minimumSize">
+            <size>
+             <width>180</width>
+             <height>0</height>
+            </size>
            </property>
-          </layout>
+           <property name="maximumSize">
+            <size>
+             <width>220</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="verticalSpacer_11">
            <property name="orientation">
             <enum>Qt::Orientation::Vertical</enum>
            </property>
@@ -943,6 +952,11 @@
    <extends>QWidget</extends>
    <header>workspace.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BlockSpace</class>
+   <extends>QListWidget</extends>
+   <header>blockSpace.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

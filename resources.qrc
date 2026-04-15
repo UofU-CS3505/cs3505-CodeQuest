@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images/princess.png"/>
+    <qresource prefix="/images/castle.png"/>
+    <qresource prefix="/images/dragon.png"/>
+</RCC>

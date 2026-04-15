@@ -7,7 +7,7 @@ class CodeBlock : public QLabel {
     Q_OBJECT
 
 public:
-    explicit CodeBlock(QString text, QString type, QWidget *parent = nullptr);
+    CodeBlock(QString text, QString type, QWidget *parent = nullptr);
 
     QString getType() const;
 

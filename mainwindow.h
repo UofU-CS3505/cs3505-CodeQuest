@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QVector>
 #include <QStringList>
+#include <QLabel>
+#include "savefile.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,6 +38,28 @@ private:
 
     bool routePointsVisible = false;
     CodeBlock *selectedMoveBlock = nullptr;
+
+    SaveFile saveFile;
+    int currentLevel = 1;
+
+    // Lock and Unlock Levels
+    void unlockLevelButtons();
+    void openSpecificLevel(int levelNumber);
+    void completeCurrentLevel();
+
+    // Canvas setup
+    QLabel *princess;
+    QLabel *castle;
+    QVector<QLabel*> walls;
+    static const int TILE = 40;
+    static const int COLS = 12;
+    static const int ROWS = 12;
+
+    void setUpLevels();
+    void setUpLevel1();
+    void addWall(int x, int y);
+    void movePrincess(int dx, int dy);
+    bool won();
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
@@ -136,5 +160,8 @@ private slots:
     void on_saveButton_clicked();
 
     void onWorkspaceMoveBlockClicked(CodeBlock *block);
+
+signals:
+    void levelCompleted();
 };
 #endif // MAINWINDOW_H

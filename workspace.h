@@ -11,7 +11,8 @@ class Workspace : public QWidget {
     Q_OBJECT
 
 public:
-    explicit Workspace(QWidget *parent = nullptr);
+    Workspace(QWidget *parent = nullptr);
+    void clearBlocks();
 
 signals:
     void moveBlockClicked(CodeBlock *block);
