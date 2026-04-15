@@ -129,26 +129,30 @@ void MainWindow::on_levelOneButton_clicked()
 
 void MainWindow::on_levelTwoButton_clicked()
 {
-    ui->levelTitleLabel->setText("Level 2");
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // ui->levelTitleLabel->setText("Level 2");
+    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    openSpecificLevel(2);
 }
 
 void MainWindow::on_levelThreeButton_clicked()
 {
-    ui->levelTitleLabel->setText("Level 3");
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // ui->levelTitleLabel->setText("Level 3");
+    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    openSpecificLevel(3);
 }
 
 void MainWindow::on_levelFourButton_clicked()
 {
-    ui->levelTitleLabel->setText("Level 4");
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // ui->levelTitleLabel->setText("Level 4");
+    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    openSpecificLevel(4);
 }
 
 void MainWindow::on_levelFiveButton_clicked()
 {
-    ui->levelTitleLabel->setText("Level 5");
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // ui->levelTitleLabel->setText("Level 5");
+    // ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    openSpecificLevel(5);
 }
 
 bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
@@ -173,6 +177,47 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
         }
     }
     return QMainWindow::eventFilter(levelButton, hoverEvent);
+}
+
+void MainWindow::unlockLevelButtons()
+{
+    int unlocked = saveFile.getLatestUnlocked();
+
+    // Lock and unlock levels based on different conditions.
+    ui->level_2_Button->setEnabled(unlocked >= 2);
+    ui->level_3_Button->setEnabled(unlocked >= 3);
+    ui->level_4_Button->setEnabled(unlocked >= 4);
+    ui->level_5_Button->setEnabled(unlocked >= 5);
+}
+
+void MainWindow::openSpecificLevel(int levelNumber)
+{
+    int unlockedLevel = saveFile.getLatestUnlocked();
+
+    // If you attempt to enter a level that has not yet been unlocked, a notification message will appear.
+    if (levelNumber > unlockedLevel) {
+        ui->levelDescriptionLabel->setText("This level is locked. You need to complete the previous level.");
+    }
+    return;
+
+    // If the level is already unlocked, enter the current level.
+    currentLevel = levelNumber;
+    ui->levelTitleLabel->setText("Level " + QString::number(levelNumber));
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+}
+
+void MainWindow::completeCurrentLevel()
+{
+    int unlockedLevel = saveFile.getLatestUnlocked();
+
+    // If the currently completed level is one prior to Level 5, unlock the next level.
+    if (unlockedLevel < 5) {
+        if (currentLevel == unlockedLevel) {
+            unlockedLevel++;
+        }
+    }
+
+    unlockLevelButtons();
 }
 
 // -------------------- Game Page Slots --------------------
