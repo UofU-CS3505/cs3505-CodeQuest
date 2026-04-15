@@ -30,11 +30,10 @@ void Workspace::clearBlocks()
     blocks.clear();
 }
 
-QList<CodeBlock*> getBlocks()
+QList<CodeBlock*> Workspace::getBlocks()
 {
     return blocks;
 }
-
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-codeblock")) {
