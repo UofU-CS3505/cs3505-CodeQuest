@@ -2,6 +2,7 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QPainter>
+#include <QApplication>
 
 CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     : QLabel(text, parent), blockType(type)
@@ -36,29 +37,55 @@ QString CodeBlock::getType() const
 void CodeBlock::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        QDrag *drag = new QDrag(this);
-        QMimeData *mimeData = new QMimeData;
-
-        mimeData->setText(this->text());
-        mimeData->setData("application/x-codeblock", blockType.toUtf8());
-
-        drag->setMimeData(mimeData);
-
-        QPixmap pixmap(this->size());
-        pixmap.fill(Qt::transparent);
-
-        QPainter painter(&pixmap);
-        painter.setOpacity(0.7);
-        this->render(&painter);
-
-
-        drag->setPixmap(pixmap);
-        drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
-        Qt::DropAction action = Qt::CopyAction;
-        if (parentWidget() && parentWidget()->inherits("Workspace")) {
-            action = Qt::MoveAction;
-        }
-
-        drag->exec(action);
+        dragStartPos = event->pos();
+        dragged = false;
     }
+
+    QLabel::mousePressEvent(event);
+}
+
+void CodeBlock::mouseMoveEvent(QMouseEvent *event)
+{
+    if (!(event->buttons() & Qt::LeftButton)) {
+        return;
+    }
+
+    if ((event->pos() - dragStartPos).manhattanLength() < QApplication::startDragDistance()) {
+        return;
+    }
+
+    dragged = true;
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    mimeData->setText(this->text());
+    mimeData->setData("application/x-codeblock", blockType.toUtf8());
+
+    drag->setMimeData(mimeData);
+
+    QPixmap pixmap(this->size());
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setOpacity(0.7);
+    this->render(&painter);
+
+
+    drag->setPixmap(pixmap);
+    drag->setHotSpot(QPoint(pixmap.width()/2, pixmap.height()/2));
+    Qt::DropAction action = Qt::CopyAction;
+    if (parentWidget() && parentWidget()->inherits("Workspace")) {
+    action = Qt::MoveAction;
+    }
+
+    drag->exec(action);
+}
+
+void CodeBlock::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton && !dragged) {
+        emit blockClicked(this);
+    }
+
+    QLabel::mouseReleaseEvent(event);
 }

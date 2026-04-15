@@ -3,11 +3,18 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 
+#pragma once
+
+class CodeBlock;
+
 class Workspace : public QWidget {
     Q_OBJECT
 
 public:
     explicit Workspace(QWidget *parent = nullptr);
+
+signals:
+    void moveBlockClicked(CodeBlock *block);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
@@ -15,4 +22,5 @@ protected:
 
 private:
     QVBoxLayout *layout;
+    void registerBlock(CodeBlock *block);
 };

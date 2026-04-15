@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "workspace.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include "codeBlock.h"
@@ -64,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
     connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
+    connect(ui->workspaceWidget, &Workspace::moveBlockClicked,
+            this, &MainWindow::onWorkspaceMoveBlockClicked);
 }
 
 MainWindow::~MainWindow()
@@ -203,4 +206,27 @@ void MainWindow::on_hintButton_clicked()
 
 void MainWindow::on_saveButton_clicked()
 {
+}
+
+void MainWindow::setRoutePointsVisible(bool visible)
+{
+    for (CodeBlock *pointBlock : routePointBlocks) {
+        if (pointBlock) {
+            pointBlock->setVisible(visible);
+        }
+    }
+
+    routePointsVisible = visible;
+}
+
+void MainWindow::onWorkspaceMoveBlockClicked(CodeBlock *block)
+{
+    if (selectedMoveBlock == block && routePointsVisible) {
+        selectedMoveBlock = nullptr;
+        setRoutePointsVisible(false);
+    }
+    else {
+        selectedMoveBlock = block;
+        setRoutePointsVisible(true);
+    }
 }

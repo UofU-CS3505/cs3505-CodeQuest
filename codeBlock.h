@@ -11,9 +11,16 @@ public:
 
     QString getType() const;
 
+signals:
+    void blockClicked(CodeBlock *block);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QString blockType;
+    QPoint dragStartPos;
+    bool dragged = false;
 };

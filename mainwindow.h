@@ -25,6 +25,7 @@ private:
     Ui::MainWindow *ui;
     void setLevelButtonStyles();
     void setLevelDescriptionStyles();
+    void setRoutePointsVisible(bool visible);
     QVector<CodeBlock*> routePointBlocks;
     QStringList currentLevelRoutePoints;
 
@@ -32,6 +33,10 @@ private:
     static constexpr int START_PAGE  = 0;
     static constexpr int LEVEL_PAGE  = 1;
     static constexpr int CODE_PAGE   = 2;
+
+    bool routePointsVisible = false;
+    CodeBlock *selectedMoveBlock = nullptr;
+
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
     /**
@@ -129,5 +134,7 @@ private slots:
      * @brief on_saveButton_clicked
      */
     void on_saveButton_clicked();
+
+    void onWorkspaceMoveBlockClicked(CodeBlock *block);
 };
 #endif // MAINWINDOW_H

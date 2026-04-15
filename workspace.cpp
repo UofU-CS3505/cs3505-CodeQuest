@@ -20,6 +20,17 @@ void Workspace::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
+void Workspace::registerBlock(CodeBlock *block)
+{
+    connect(block, &CodeBlock::blockClicked,
+            this,
+            [this](CodeBlock *clickedBlock) {
+                if (clickedBlock->getType() == "move") {
+                    emit moveBlockClicked(clickedBlock);
+                }
+            });
+}
+
 void Workspace::dropEvent(QDropEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-codeblock")) {
@@ -35,6 +46,7 @@ void Workspace::dropEvent(QDropEvent *event)
         } else {
             CodeBlock *block = new CodeBlock(text, type);
             layout->addWidget(block);
+            registerBlock(block);
         }
 
         event->acceptProposedAction();
