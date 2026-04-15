@@ -57,6 +57,7 @@ SOURCES += \
     Box2D/Rope/b2Rope.cpp \
     blockSpace.cpp \
     codeBlock.cpp \
+    confetti.cpp \
     main.cpp \
     mainwindow.cpp \
     savefile.cpp \
@@ -112,6 +113,7 @@ HEADERS += \
     Box2D/Rope/b2Rope.h \
     blockSpace.h \
     codeBlock.h \
+    confetti.h \
     mainwindow.h \
     savefile.h \
     workspace.h

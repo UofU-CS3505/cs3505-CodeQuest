@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include "codeBlock.h"
+#include "confetti.h"
 #include <QEvent>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -56,6 +57,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
     connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
+
+    // add confetti
+    Confetti *confetti = new Confetti(this);
+    confetti->setGeometry(this->rect());
+    confetti->raise(); // draw on top
+    connect(this, &MainWindow::levelCompleted, confetti, &Confetti::startConfetti);
 }
 
 MainWindow::~MainWindow()
@@ -228,6 +235,11 @@ void MainWindow::on_backToLevelsButton_clicked()
 
 void MainWindow::on_runButton_clicked()
 {
+    // TODO add the rest of this functionality
+
+    // if they completed the level,
+    emit levelCompleted();
+
 }
 
 void MainWindow::on_resetButton_clicked()

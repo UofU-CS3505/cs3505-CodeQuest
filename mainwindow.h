@@ -138,5 +138,8 @@ private slots:
      * @brief on_saveButton_clicked
      */
     void on_saveButton_clicked();
+
+signals:
+    void levelCompleted();
 };
 #endif // MAINWINDOW_H
