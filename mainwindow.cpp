@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
     connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
     connect(ui->workspaceWidget, &Workspace::moveBlockClicked,
-            this, &MainWindow::on_workspace_wove_block_clicked);
+            this, &MainWindow::on_workspace_move_block_clicked);
 
     // add confetti
     Confetti *confetti = new Confetti(this);
