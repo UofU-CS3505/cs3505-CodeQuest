@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     saveFile = SaveFile();
     ui->setupUi(this);
+    applyDarkTheme();
     setWindowTitle("Code Quest");
 
     // Show the welcome/start page on launch
@@ -70,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Wire the new game-page navigation buttons
     connect(ui->backToLevelsButton, &QPushButton::clicked,
             this, &MainWindow::on_backToLevelsButton_clicked);
-    connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
+    connect(ui->runButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
     connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
     connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
     connect(ui->restartButton, &QPushButton::clicked, this, &MainWindow::on_restartButton_clicked);
@@ -89,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     confetti->setGeometry(this->rect());
     confetti->raise();
     connect(this, &MainWindow::levelCompleted, confetti, &Confetti::startConfetti);
+
 }
 
 MainWindow::~MainWindow()
@@ -278,7 +280,7 @@ void MainWindow::setUpLevels()
     ui->blockSpaceWidget->addBlock(moveBlock);
     normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+    currentLevelRoutePoints = {"a", "b", "c", "d", "e", "f", "g"};
     createRoutePointBlocks();
     setRoutePointsVisible(false);
 }
@@ -287,6 +289,8 @@ void MainWindow::setUpLevel1()
 {
     QWidget *canvas = ui->gameCanvasFrame;
     canvas->setFixedSize(COLS * TILE, ROWS * TILE);
+
+    clearLevel1Visuals();
 
     QLabel *bg = new QLabel(canvas);
     bg->setPixmap(QPixmap(":/images/grass.png").scaled(
@@ -297,45 +301,76 @@ void MainWindow::setUpLevel1()
     bg->setGeometry(0, 0, canvas->width(), canvas->height());
     bg->lower();
 
-    // ---- PRINCESS ----
+    levelPointPositions.clear();
+    levelPointPositions["start"] = QPoint(20, 215);
+    levelPointPositions["a"] = QPoint(90, 80);
+    levelPointPositions["b"] = QPoint(220, 80);
+    levelPointPositions["c"] = QPoint(350, 80);
+    levelPointPositions["d"] = QPoint(90, 350);
+    levelPointPositions["e"] = QPoint(220, 350);
+    levelPointPositions["f"] = QPoint(350, 350);
+    levelPointPositions["g"] = QPoint(430, 215);
+
+    addPointVisual("a", levelPointPositions["a"] + QPoint(6, 6));
+    addPointVisual("b", levelPointPositions["b"] + QPoint(6, 6));
+    addPointVisual("c", levelPointPositions["c"] + QPoint(6, 6));
+    addPointVisual("d", levelPointPositions["d"] + QPoint(6, 6));
+    addPointVisual("e", levelPointPositions["e"] + QPoint(6, 6));
+    addPointVisual("f", levelPointPositions["f"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["g"] + QPoint(6, 6));
+
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
     princess->setScaledContents(true);
     princess->setFixedSize(TILE, TILE);
-    princess->move(0 * TILE, 10 * TILE);
+    princess->move(levelPointPositions[startPoint]);
 
-    // ---- CASTLE ----
     castle = new QLabel(canvas);
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
-    castle->setFixedSize(2 * TILE, 2 * TILE);
-    castle->move(10 * TILE, 0 * TILE);
+    castle->setFixedSize(TILE, TILE);
+    castle->move(levelPointPositions[goalPoint] + QPoint(25, -10));
 
-    // ---- MAZE LAYOUT ----
-    int maze[ROWS][COLS] = {
-        {1,1,1,1,1,1,1,1,1,1,0,0},
-        {1,0,0,0,0,1,0,0,0,0,0,0},
-        {1,0,1,1,0,1,0,1,1,1,0,1},
-        {1,0,1,0,0,0,0,1,0,0,0,1},
-        {1,0,1,0,1,1,1,1,0,1,0,1},
-        {1,0,0,0,1,0,0,0,0,1,0,1},
-        {1,1,1,0,1,0,1,1,1,1,0,1},
-        {1,0,0,0,1,0,0,0,0,0,0,1},
-        {1,0,1,1,1,1,1,1,1,1,0,1},
-        {1,0,0,0,0,0,0,0,0,1,0,1},
-        {0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,1,1,1,1,1,1,1,1,1,1,1}
-    };
-
-    for (int r = 0; r < ROWS; r++) {
-        for (int c = 0; c < COLS; c++) {
-            if (maze[r][c] == 1) {
-                addWall(r, c);
-            }
-        }
-    }
     princess->raise();
-    castle->raise();
+}
+
+void MainWindow::clearLevel1Visuals()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+
+    QList<QLabel*> labels = canvas->findChildren<QLabel*>(QString(), Qt::FindDirectChildrenOnly);
+    for (QLabel *label : labels) {
+        delete label;
+    }
+
+    walls.clear();
+    princess = nullptr;
+    castle = nullptr;
+}
+
+void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
+{
+    QLabel *point = new QLabel(name, ui->gameCanvasFrame);
+    point->setAlignment(Qt::AlignCenter);
+    point->setGeometry(pos.x(), pos.y(), 28, 28);
+
+    if (name == goalPoint) {
+        point->setStyleSheet(
+            "background-color: gold;"
+            "border: 2px solid black;"
+            "border-radius: 14px;"
+            "font-weight: bold;"
+            );
+    } else {
+        point->setStyleSheet(
+            "background-color: white;"
+            "border: 2px solid black;"
+            "border-radius: 14px;"
+            "font-weight: bold;"
+            );
+    }
+
+    point->show();
 }
 
 void MainWindow::addWall(int row, int col)

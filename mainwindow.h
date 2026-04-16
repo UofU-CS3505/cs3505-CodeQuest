@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QStringList>
 #include <QLabel>
+#include <QMap>
+#include <QTimer>
 #include "savefile.h"
 
 QT_BEGIN_NAMESPACE
@@ -49,6 +51,11 @@ private:
     SaveFile saveFile;
     int currentLevel = 1;
 
+    QMap<QString, QPoint> levelPointPositions;
+
+    QString startPoint = "start";
+    QString goalPoint = "g";
+
     // Lock and Unlock Levels
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);
@@ -69,6 +76,8 @@ private:
     bool won();
 
     void applyDarkTheme();
+    void clearLevel1Visuals();
+    void addPointVisual(const QString &name, const QPoint &pos);
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
