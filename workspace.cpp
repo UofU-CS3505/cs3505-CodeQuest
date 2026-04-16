@@ -21,6 +21,7 @@ void Workspace::clearBlocks()
         QWidget *widget = item->widget();
 
         if (widget) {
+            blocks.removeAll(static_cast<CodeBlock*>(widget));
             delete widget;
         }
 
@@ -34,6 +35,39 @@ QList<CodeBlock*> Workspace::getBlocks()
 {
     return blocks;
 }
+
+void Workspace::removeBlock(CodeBlock *block)
+{
+    if (!block) return;
+
+    layout->removeWidget(block);
+    blocks.removeAll(block);
+}
+
+void Workspace::insertRoutePointAfterMove(CodeBlock *moveBlock, CodeBlock *routePointBlock)
+{
+    if (!moveBlock || !routePointBlock) return;
+
+    int moveIndex = blocks.indexOf(moveBlock);
+    if (moveIndex == -1) return;
+
+    int insertIndex = moveIndex + 1;
+
+    while (insertIndex < blocks.size() &&
+           blocks[insertIndex] &&
+           blocks[insertIndex]->getType() == "routePoint") {
+        insertIndex++;
+    }
+
+    routePointBlock->setParent(this);
+    registerBlock(routePointBlock);
+
+    blocks.insert(insertIndex, routePointBlock);
+    layout->insertWidget(insertIndex, routePointBlock);
+    routePointBlock->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+    routePointBlock->show();
+}
+
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-codeblock")) {
@@ -68,6 +102,7 @@ void Workspace::dropEvent(QDropEvent *event)
         block = sourceBlock;
 
         layout->removeWidget(block);
+        blocks.removeAll(block);
     }
 
     else {
@@ -75,9 +110,7 @@ void Workspace::dropEvent(QDropEvent *event)
         registerBlock(block);
     }
 
-    blocks.append(block);
     int insertIndex = layout->count();
-
     QPoint dropPosition = event->position().toPoint();
 
     for (int i = 0; i < layout->count(); i++) {
@@ -92,6 +125,7 @@ void Workspace::dropEvent(QDropEvent *event)
         }
     }
 
+    blocks.insert(insertIndex, block);
     layout->insertWidget(insertIndex, block);
     block->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     event->acceptProposedAction();

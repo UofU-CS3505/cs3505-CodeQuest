@@ -1,4 +1,5 @@
 #include "blockSpace.h"
+#include "workspace.h"
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
@@ -35,9 +36,10 @@ void BlockSpace::dropEvent(QDropEvent *event)
     CodeBlock *block = qobject_cast<CodeBlock*>(event->source());
 
     if (block && block->parentWidget()) {
+        Workspace *workspace = qobject_cast<Workspace*>(block->parentWidget());
 
-        // only delete blocks that came from workspace
-        if (block->parentWidget()->inherits("Workspace")) {
+        if (workspace) {
+            workspace->removeBlock(block);
             delete block;
         }
     }

@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QList>
 #include "codeBlock.h"
 
 #pragma once
@@ -15,6 +16,9 @@ public:
     Workspace(QWidget *parent = nullptr);
     void clearBlocks();
     QList<CodeBlock*> getBlocks();
+
+    void removeBlock(CodeBlock *block);
+    void insertRoutePointAfterMove(CodeBlock *moveBlock, CodeBlock *routePointBlock);
 
 signals:
     void moveBlockClicked(CodeBlock *block);

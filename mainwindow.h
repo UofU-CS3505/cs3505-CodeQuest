@@ -28,7 +28,13 @@ private:
     void setLevelButtonStyles();
     void setLevelDescriptionStyles();
     void setRoutePointsVisible(bool visible);
+    void setNormalPaletteBlocksVisible(bool visible);
+    void enterRoutePointSelectionMode(CodeBlock *moveBlock);
+    void exitRoutePointSelectionMode();
+    void createRoutePointBlocks();
+
     QVector<CodeBlock*> routePointBlocks;
+    QVector<CodeBlock*> normalPaletteBlocks;
     QStringList currentLevelRoutePoints;
 
     // Page indices in the QStackedWidget
@@ -37,6 +43,7 @@ private:
     static constexpr int CODE_PAGE   = 2;
 
     bool routePointsVisible = false;
+    bool routePointSelectionMode = false;
     CodeBlock *selectedMoveBlock = nullptr;
 
     SaveFile saveFile;
@@ -60,8 +67,6 @@ private:
     void addWall(int x, int y);
     void movePrincess(int dx, int dy);
     bool won();
-
-    void applyDarkTheme();
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
@@ -157,11 +162,19 @@ private slots:
     void on_hintButton_clicked();
 
     /**
-     * @brief on_restartButton_clicked
+     * @brief on_saveButton_clicked
      */
-    void on_restartButton_clicked();
+    void on_saveButton_clicked();
 
-    void onWorkspaceMoveBlockClicked(CodeBlock *block);
+    /**
+     * @brief on_workspace_wove_block_clicked
+     */
+    void on_workspace_wove_block_clicked(CodeBlock *block);
+
+    /**
+     * @brief on_route_point_block_clicked
+     */
+    void on_route_point_block_clicked(CodeBlock *block);
 
 signals:
     void levelCompleted();

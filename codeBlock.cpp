@@ -14,9 +14,18 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     setMinimumWidth(120);
     setMaximumWidth(220);
 
-    if (type == "method") {
+    if (type == "move" || type == "method") {
         setStyleSheet(
             "background-color: lightgreen;"
+            "border: 2px solid rgba(0,0,0,0.6);"
+            "border-bottom: 4px solid rgba(0,0,0,0.25);"
+            "border-radius: 12px;"
+            "padding: 6px;"
+            );
+    }
+    else if (type == "routePoint") {
+        setStyleSheet(
+            "background-color: lightblue;"
             "border: 2px solid rgba(0,0,0,0.6);"
             "border-bottom: 4px solid rgba(0,0,0,0.25);"
             "border-radius: 12px;"
