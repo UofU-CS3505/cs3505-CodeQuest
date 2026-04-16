@@ -34,6 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     saveFile = SaveFile();
     ui->setupUi(this);
+
+    ui->workspaceWidget->setAttribute(Qt::WA_StyledBackground, true);
+    ui->blockSpaceWidget->setAttribute(Qt::WA_StyledBackground, true);
+
     applyDarkTheme();
     setWindowTitle("Code Quest");
 
@@ -57,13 +61,13 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
     // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
-    // currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
 
-    // for (const QString &pointName : currentLevelRoutePoints) {
-    //     CodeBlock *pointBlock = new CodeBlock(pointName, "method");
-    //     ui->blockSpaceWidget->addBlock(pointBlock);
-    //     routePointBlocks.append(pointBlock);
-    // }
+    for (const QString &pointName : currentLevelRoutePoints) {
+        CodeBlock *pointBlock = new CodeBlock(pointName, "method");
+        ui->blockSpaceWidget->addBlock(pointBlock);
+        routePointBlocks.append(pointBlock);
+    }
     setUpLevels();
 
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
@@ -264,12 +268,18 @@ void MainWindow::applyDarkTheme()
     // Block space and workspace panels
     ui->blockSpaceWidget->setStyleSheet(
         "QListWidget {"
-        "  background-color: #161628;"
-        "  border: 1px solid #3a3a6e;"
-        "  border-radius: 4px;"
+        "background-color: #2a2a40;"
+        "border: 1px solid #444466;"
+        "border-radius: 6px;"
         "}"
         );
-    ui->workspaceWidget->setStyleSheet("background-color: #1a1a30; border: 1px solid #3a3a6e; border-radius: 4px;");
+    ui->workspaceWidget->setStyleSheet(
+        "background-color: #202040;"
+        "border: 1px solid #3a3a6e;"
+        "border-radius: 6px;"
+        "background-image: radial-gradient(#2a2a50 1px, transparent 1px);"
+        "background-size: 10px 10px;"
+        );
 }
 
 // -------------------- Helper methods --------------------
@@ -704,7 +714,7 @@ void MainWindow::exitRoutePointSelectionMode()
     selectedMoveBlock = nullptr;
     routePointSelectionMode = false;
 }
-void MainWindow::on_workspace_wove_block_clicked(CodeBlock *block)
+void MainWindow::on_workspace_move_block_clicked(CodeBlock *block)
 {
     if (!block) return;
     if (!routePointSelectionMode) {
