@@ -180,7 +180,7 @@ private slots:
     /**
      * @brief on_workspace_move_block_clicked
      */
-    void on_workspace_wove_block_clicked(CodeBlock *block);
+    void on_workspace_move_block_clicked(CodeBlock *block);
 
     /**
      * @brief on_route_point_block_clicked
