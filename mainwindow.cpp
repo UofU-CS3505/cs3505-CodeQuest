@@ -458,6 +458,17 @@ void MainWindow::setLevelButtonStyles()
         "QPushButton:hover {"
         "border: 4px solid rgb(255, 245, 160);"
         "color: rgb(255, 245, 160);"
+        "}"
+        "QPushButton {"
+        "  background-color: #1a1a2e;"
+        "  color: #e0e0ff;"
+        "  border: 2px solid #3a3a6e;"
+        "  border-radius: 8px;"
+        "  padding: 8px 20px;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #111130;"
+        "  border: 2px solid #cc9900;"
         "}";
 
     ui->level_1_Button->setStyleSheet(levelStyle);
@@ -479,6 +490,7 @@ void MainWindow::on_levelOneButton_clicked()
 {
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // completeCurrentLevel();
 }
 
 void MainWindow::on_levelTwoButton_clicked()
