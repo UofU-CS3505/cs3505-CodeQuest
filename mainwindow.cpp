@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Wire the new game-page navigation buttons
     connect(ui->backToLevelsButton, &QPushButton::clicked,
             this, &MainWindow::on_backToLevelsButton_clicked);
-    connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
+    connect(ui->runButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
     connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
     connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
     connect(ui->restartButton, &QPushButton::clicked, this, &MainWindow::on_restartButton_clicked);
