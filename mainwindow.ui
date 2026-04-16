@@ -648,9 +648,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="saveButton">
+        <widget class="QPushButton" name="restartButton">
          <property name="text">
-          <string>Save</string>
+          <string>Restart</string>
          </property>
         </widget>
        </item>

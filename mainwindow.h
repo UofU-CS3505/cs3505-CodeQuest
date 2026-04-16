@@ -61,6 +61,8 @@ private:
     void movePrincess(int dx, int dy);
     bool won();
 
+    void applyDarkTheme();
+
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
     /**
@@ -155,9 +157,9 @@ private slots:
     void on_hintButton_clicked();
 
     /**
-     * @brief on_saveButton_clicked
+     * @brief on_restartButton_clicked
      */
-    void on_saveButton_clicked();
+    void on_restartButton_clicked();
 
     void onWorkspaceMoveBlockClicked(CodeBlock *block);
 
