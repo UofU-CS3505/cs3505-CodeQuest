@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
     connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
     connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
+    connect(ui->restartButton, &QPushButton::clicked, this, &MainWindow::on_restartButton_clicked);
 
     // select level buttons
     connect(ui->level_1_Button, &QPushButton::clicked, this, &MainWindow::on_levelOneButton_clicked);
@@ -93,6 +94,180 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::applyDarkTheme()
+{
+    ui->startPage->setStyleSheet(
+        "QWidget#startPage {"
+        "  background-color: #0d0d1a;"
+        "}"
+        );
+
+    ui->titleLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #ffd700;"
+        "  background-color: transparent;"
+        "  letter-spacing: 4px;"
+        "}"
+        );
+
+    ui->subtitleLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #8899aa;"
+        "  background-color: transparent;"
+        "}"
+        );
+
+    // Shared style for all start-page buttons
+    QString menuButtonStyle =
+        "QPushButton {"
+        "  background-color: #1a1a2e;"
+        "  color: #e0e0ff;"
+        "  border: 2px solid #3a3a6e;"
+        "  border-radius: 8px;"
+        "  padding: 8px 20px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #252550;"
+        "  border: 2px solid #ffd700;"
+        "  color: #ffd700;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #111130;"
+        "  border: 2px solid #cc9900;"
+        "}";
+
+    ui->startButton->setStyleSheet(menuButtonStyle);
+    ui->levelsButton->setStyleSheet(menuButtonStyle);
+    ui->aboutButton->setStyleSheet(menuButtonStyle);
+    ui->aboutButton_2->setStyleSheet(menuButtonStyle);
+
+    ui->codePage->setStyleSheet(
+        "QWidget#codePage {"
+        "  background-color: #111120;"
+        "}"
+        );
+
+    // Header bar on code page
+    ui->headerWidget->setStyleSheet(
+        "QWidget#headerWidget {"
+        "  background-color: #0d0d1a;"
+        "  border-bottom: 2px solid #ffd700;"
+        "}"
+        );
+
+    ui->levelTitleLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #ffd700;"
+        "  background-color: transparent;"
+        "}"
+        );
+
+    // Section labels: Game Board, Blocks, Your Code
+    QString sectionLabelStyle =
+        "QLabel {"
+        "  color: #aabbcc;"
+        "  background-color: transparent;"
+        "}";
+    ui->gameAreaLabel->setStyleSheet(sectionLabelStyle);
+    ui->blocksLabel->setStyleSheet(sectionLabelStyle);
+    ui->workspaceLabel->setStyleSheet(sectionLabelStyle);
+
+    // Game canvas frame
+    ui->gameCanvasFrame->setStyleSheet(
+        "QFrame#gameCanvasFrame {"
+        "  background-color: #1a1a2e;"
+        "  border: 2px solid #3a3a6e;"
+        "  border-radius: 4px;"
+        "}"
+        );
+
+    // Header buttons on code page (Back, Restart, Run, Reset, Hint)
+    QString codePageButtonStyle =
+        "QPushButton {"
+        "  background-color: #1a1a2e;"
+        "  color: #c8d0e0;"
+        "  border: 1px solid #3a3a6e;"
+        "  border-radius: 5px;"
+        "  padding: 4px 10px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #252550;"
+        "  border: 1px solid #ffd700;"
+        "  color: #ffd700;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #111130;"
+        "}";
+
+    ui->backToLevelsButton->setStyleSheet(codePageButtonStyle);
+    ui->restartButton->setStyleSheet(codePageButtonStyle);
+    ui->runButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #1a3a1a;"
+        "  color: #66ff88;"
+        "  border: 1px solid #33aa44;"
+        "  border-radius: 5px;"
+        "  padding: 4px 10px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #224422;"
+        "  border: 1px solid #88ffaa;"
+        "  color: #88ffaa;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #112211;"
+        "}"
+        );
+    ui->resetButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #3a1a1a;"
+        "  color: #ff8866;"
+        "  border: 1px solid #aa4433;"
+        "  border-radius: 5px;"
+        "  padding: 4px 10px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #442222;"
+        "  border: 1px solid #ffaa88;"
+        "  color: #ffaa88;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #221111;"
+        "}"
+        );
+    ui->hintButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #1a2a3a;"
+        "  color: #88bbff;"
+        "  border: 1px solid #3355aa;"
+        "  border-radius: 5px;"
+        "  padding: 4px 10px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #223344;"
+        "  border: 1px solid #88bbff;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #111a22;"
+        "}"
+        );
+
+    // Divider lines on code page
+    ui->headerDivider->setStyleSheet("background-color: #ffd700;");
+    ui->divider1->setStyleSheet("color: #3a3a6e;");
+    ui->divider2->setStyleSheet("color: #3a3a6e;");
+
+    // Block space and workspace panels
+    ui->blockSpaceWidget->setStyleSheet(
+        "QListWidget {"
+        "  background-color: #161628;"
+        "  border: 1px solid #3a3a6e;"
+        "  border-radius: 4px;"
+        "}"
+        );
+    ui->workspaceWidget->setStyleSheet("background-color: #1a1a30; border: 1px solid #3a3a6e; border-radius: 4px;");
 }
 
 // -------------------- Helper methods --------------------
@@ -370,6 +545,29 @@ void MainWindow::completeCurrentLevel()
     }
 
     unlockLevelButtons();
+
+    // If the current level is cleared, a window pops up (containing text, the score, and options).
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Level Complete!");
+    msgBox.setText("Congratulations! You completed this level!\n"
+                   "Your total score is " + QString::number(saveFile.getScore(currentLevel)));
+
+    // Create three option buttons.
+    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
+    QPushButton *nextLevelButton = msgBox.addButton("Next Level", QMessageBox::ActionRole);
+    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+
+    msgBox.exec();
+
+    // Implement the functionality of each button.
+    if (msgBox.clickedButton() == restartButton) {
+        ui->workspaceWidget->clearBlocks();
+        openSpecificLevel(currentLevel);
+    } else if (msgBox.clickedButton() == nextLevelButton) {
+        openSpecificLevel(currentLevel + 1);
+    } else if (msgBox.clickedButton() == quitButton) {
+        ui->stackedWidget->setCurrentIndex(START_PAGE);
+    }
 }
 
 // -------------------- Game Page Slots --------------------
@@ -397,9 +595,7 @@ void MainWindow::on_hintButton_clicked()
 {
 }
 
-void MainWindow::on_saveButton_clicked()
 void MainWindow::on_restartButton_clicked()
-
 {
     //TODO:reset characters/npc/game's state
     ui->workspaceWidget->clearBlocks();
