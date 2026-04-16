@@ -86,6 +86,7 @@ void Workspace::registerBlock(CodeBlock *block)
             });
 }
 
+// This method was generated using AI
 void Workspace::dropEvent(QDropEvent *event)
 {
     if (!event->mimeData()->hasFormat("application/x-codeblock"))
@@ -117,9 +118,9 @@ void Workspace::dropEvent(QDropEvent *event)
         QWidget *w = layout->itemAt(i)->widget();
         if (!w) continue;
 
-        int middleY = w->y() + w->height() / 2;
+        int midY = w->y() + w->height() / 2;
 
-        if (dropPosition.y() < middleY) {
+        if (dropPosition.y() < midY) {
             insertIndex = i;
             break;
         }
