@@ -594,9 +594,30 @@ void MainWindow::on_resetButton_clicked()
 void MainWindow::on_hintButton_clicked()
 {
 }
-
 void MainWindow::on_restartButton_clicked()
 {
+    //TODO:reset characters/npc/game's state
+    ui->workspaceWidget->clearBlocks();
+
+    // show temporary message
+    QLabel *msg = new QLabel("Game Restarted!", ui->codePage);
+    msg->setAlignment(Qt::AlignCenter);
+    msg->setStyleSheet(
+        "background-color: #1a1a2e;"
+        "color: #ffd700;"
+        "border: 2px solid #ffd700;"
+        "border-radius: 8px;"
+        "padding: 10px;"
+        "font-size: 16px;"
+        "font-weight: bold;"
+        );
+    msg->adjustSize();
+    msg->move((ui->codePage->width() - msg->width()) / 2, 70);//center
+    msg->show();
+    msg->raise();
+
+    // disappear after 1.2 seconds
+    QTimer::singleShot(1200, msg, &QLabel::deleteLater);
 }
 
 void MainWindow::setRoutePointsVisible(bool visible)
