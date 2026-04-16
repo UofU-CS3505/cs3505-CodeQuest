@@ -64,15 +64,27 @@ private:
     // Canvas setup
     QLabel *princess;
     QLabel *castle;
+    QLabel *dragon1;
+    QLabel *dragon2;
+    QTimer *dragonTimer;
     QVector<QLabel*> walls;
     static const int TILE = 40;
     static const int COLS = 12;
     static const int ROWS = 12;
+    static const int DRAGON_MOVE_TOP_Y = 80;
+    static const int DRAGON_MOVE_BOTTOM_Y = 350;
+
+
+    // -1 is up, 1 is down.
+    int dragon1Direction = -1;
+    int dragon2Direction = -1;
 
     void setUpLevels();
     void setUpLevel1();
     void addWall(int x, int y);
     void movePrincess(int dx, int dy);
+    void setUpDragons();
+    void moveDragons(int dy);
     bool won();
 
     void applyDarkTheme();

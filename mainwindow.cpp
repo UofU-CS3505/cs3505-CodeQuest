@@ -26,6 +26,7 @@ castle using the skills they learned and try to use the least amount of code blo
 #include "codeBlock.h"
 #include "confetti.h"
 #include <QEvent>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -106,6 +107,12 @@ void MainWindow::applyDarkTheme()
 {
     ui->startPage->setStyleSheet(
         "QWidget#startPage {"
+        "  background-color: #0d0d1a;"
+        "}"
+        );
+
+    ui->levelSelectionPage->setStyleSheet(
+        "QWidget#levelSelectionPage {"
         "  background-color: #0d0d1a;"
         "}"
         );
@@ -341,6 +348,8 @@ void MainWindow::setUpLevel1()
     castle->setFixedSize(TILE, TILE);
     castle->move(levelPointPositions[goalPoint] + QPoint(25, -10));
 
+    setUpDragons();
+
     princess->raise();
 }
 
@@ -373,7 +382,7 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
             );
     } else {
         point->setStyleSheet(
-            "background-color: white;"
+            "background-color: blue;"
             "border: 2px solid black;"
             "border-radius: 14px;"
             "font-weight: bold;"
@@ -410,6 +419,58 @@ void MainWindow::movePrincess(int dx, int dy)
         return;
 
     princess->move(newX, newY);
+}
+
+void MainWindow::setUpDragons(){
+    QWidget *canvas = ui->gameCanvasFrame;
+
+    // add two dragons on map
+    dragon1 = new QLabel(canvas);
+    dragon1->setPixmap(QPixmap(":/images/dragon.png"));
+    dragon1->setScaledContents(true);
+    dragon1->setFixedSize(60, 60);
+    dragon1->move(155, 215);
+
+    dragon2 = new QLabel(canvas);
+    dragon2->setPixmap(QPixmap(":/images/dragon.png"));
+    dragon2->setScaledContents(true);
+    dragon2->setFixedSize(60, 60);
+    dragon2->move(285, 215);
+
+    // set up how far the dragon moves each time, and how often it triggers a movement.
+    dragonTimer = new QTimer(this);
+
+    connect(dragonTimer, &QTimer::timeout, this, [this]() {
+        moveDragons(6);
+    });
+
+    dragonTimer->start(60);
+}
+
+void MainWindow::moveDragons(int dy){
+    // update dragon position
+    int newY1 = dragon1->y() + dy * dragon1Direction;
+    int newY2 = dragon2->y() + dy * dragon2Direction;
+
+    // Change movement direction upon reaching the specified coordinates.
+    if (newY1 <= DRAGON_MOVE_TOP_Y) {
+        newY1 = DRAGON_MOVE_TOP_Y;
+        dragon1Direction = 1;
+    } else if (newY1 >= DRAGON_MOVE_BOTTOM_Y) {
+        newY1 = DRAGON_MOVE_BOTTOM_Y;
+        dragon1Direction = -1;
+    }
+
+    if (newY2 <= DRAGON_MOVE_TOP_Y) {
+        newY2 = DRAGON_MOVE_TOP_Y;
+        dragon2Direction = 1;
+    } else if (newY2 >= DRAGON_MOVE_BOTTOM_Y) {
+        newY2 = DRAGON_MOVE_BOTTOM_Y;
+        dragon2Direction = -1;
+    }
+
+    dragon1->move(dragon1->x(), newY1);
+    dragon2->move(dragon2->x(), newY2);
 }
 
 bool MainWindow::won()
