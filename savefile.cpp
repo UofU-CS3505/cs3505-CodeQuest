@@ -52,6 +52,8 @@ void SaveFile::load() {
     QJsonObject obj = doc.object();
 
     latestUnlockedIndex = obj["unlockedLevels"].toInt();
+
+    scores = vector<int>(5);
 }
 
 QJsonObject SaveFile::toJSON() const {

@@ -300,24 +300,31 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
             //                                    "Avoid the two enemies and reach the target.");
             ui->levelDescriptionLabel->setText("Level One:\n"
                                                "Basic method\n"
-                                               "Learn how to use the move(); method");
+                                               "Learn how to use the move(); method\n"
+                                               "Score: " + QString::number(saveFile.getScore(1)));
         } else if (levelButton == ui->level_2_Button){
             ui->levelDescriptionLabel->setText("Level Two:\n"
                                                "for loop\n"
                                                "Learn how to simplify code by using a loop\n"
-                                               "simplify the code you made last round by using loops");
+                                               "simplify the code you made last round by using loops\n"
+                                               "Score: " + QString::number(saveFile.getScore(2)));
         } else if (levelButton == ui->level_3_Button){
             ui->levelDescriptionLabel->setText("Level Three:\n"
                                                "if statement\n"
-                                               "learn that if you see the enemy, wait");
+                                               "learn that if you see the enemy, wait\n"
+                                               "Score: " + QString::number(saveFile.getScore(3)));
         } else if (levelButton == ui->level_4_Button){
             ui->levelDescriptionLabel->setText("Level Four\n"
                                                "function\n"
-                                               "learn that you can put multiple methods in a function and call it later");
+                                               "learn that you can put multiple methods\n"
+                                               "in a function and call it later\n"
+                                               "Score: " + QString::number(saveFile.getScore(4)));
         } else {
             ui->levelDescriptionLabel->setText("Level Five:\n"
-                                               "free for all: solve the level however you want using the skills that you learned\n"
-                                               "try and get the simplest code that completes the same task");
+                                               "free for all: solve the level however you want\n"
+                                               "using the skills that you learned\n"
+                                               "try and get the simplest code that completes the same task\n"
+                                               "Score: " + QString::number(saveFile.getScore(5)));
         }
     }
     return QMainWindow::eventFilter(levelButton, hoverEvent);
@@ -325,24 +332,22 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
 
 void MainWindow::unlockLevelButtons()
 {
-    int unlocked = saveFile.getLatestUnlocked();
-
     // Lock and unlock levels based on different conditions.
-    ui->level_2_Button->setEnabled(unlocked >= 2);
-    ui->level_3_Button->setEnabled(unlocked >= 3);
-    ui->level_4_Button->setEnabled(unlocked >= 4);
-    ui->level_5_Button->setEnabled(unlocked >= 5);
+    ui->level_2_Button->setEnabled(saveFile.isLevelUnlocked(2));
+    ui->level_3_Button->setEnabled(saveFile.isLevelUnlocked(3));
+    ui->level_4_Button->setEnabled(saveFile.isLevelUnlocked(4));
+    ui->level_5_Button->setEnabled(saveFile.isLevelUnlocked(5));
 }
 
 void MainWindow::openSpecificLevel(int levelNumber)
 {
-    int unlockedLevel = saveFile.getLatestUnlocked();
+    // int unlockedLevel = saveFile.getLatestUnlocked();
 
     // If you attempt to enter a level that has not yet been unlocked, a notification message will appear.
-    if (levelNumber > unlockedLevel) {
+    if (!saveFile.isLevelUnlocked(levelNumber)) {
         ui->levelDescriptionLabel->setText("This level is locked. You need to complete the previous level.");
+        return;
     }
-    return;
 
     // If the level is already unlocked, enter the current level.
     currentLevel = levelNumber;
@@ -357,7 +362,8 @@ void MainWindow::completeCurrentLevel()
     // If the currently completed level is one prior to Level 5, unlock the next level.
     if (unlockedLevel < 5) {
         if (currentLevel == unlockedLevel) {
-            unlockedLevel++;
+            saveFile.updateUnlockedLevels(unlockedLevel + 1);
+            saveFile.save();
         }
     }
 
