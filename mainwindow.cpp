@@ -257,6 +257,7 @@ void MainWindow::on_levelOneButton_clicked()
 {
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    // completeCurrentLevel();
 }
 
 void MainWindow::on_levelTwoButton_clicked()
@@ -357,17 +358,40 @@ void MainWindow::openSpecificLevel(int levelNumber)
 
 void MainWindow::completeCurrentLevel()
 {
-    int unlockedLevel = saveFile.getLatestUnlocked();
+    int latestUnlocked = saveFile.getLatestUnlocked();
 
     // If the currently completed level is one prior to Level 5, unlock the next level.
-    if (unlockedLevel < 5) {
-        if (currentLevel == unlockedLevel) {
-            saveFile.updateUnlockedLevels(unlockedLevel + 1);
+    if (latestUnlocked < 5) {
+        if (currentLevel == latestUnlocked) {
+            saveFile.updateUnlockedLevels(latestUnlocked + 1);
             saveFile.save();
         }
     }
 
     unlockLevelButtons();
+
+    // If the current level is cleared, a window pops up (containing text, the score, and options).
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Level Complete!");
+    msgBox.setText("Congratulations! You completed this level!\n"
+                   "Your total score is " + QString::number(saveFile.getScore(currentLevel)));
+
+    // Create three option buttons.
+    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
+    QPushButton *nextLevelButton = msgBox.addButton("Next Level", QMessageBox::ActionRole);
+    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+
+    msgBox.exec();
+
+    // Implement the functionality of each button.
+    if (msgBox.clickedButton() == restartButton) {
+        ui->workspaceWidget->clearBlocks();
+        openSpecificLevel(currentLevel);
+    } else if (msgBox.clickedButton() == nextLevelButton) {
+        openSpecificLevel(currentLevel + 1);
+    } else if (msgBox.clickedButton() == quitButton) {
+        ui->stackedWidget->setCurrentIndex(START_PAGE);
+    }
 }
 
 // -------------------- Game Page Slots --------------------
