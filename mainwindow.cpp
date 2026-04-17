@@ -73,14 +73,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
 
-    // Wire the new game-page navigation buttons
-    connect(ui->backToLevelsButton, &QPushButton::clicked,
-            this, &MainWindow::on_backToLevelsButton_clicked);
-    connect(ui->runButton, &QPushButton::clicked, this, &MainWindow::on_runButton_clicked);
-    connect(ui->resetButton, &QPushButton::clicked, this, &MainWindow::on_resetButton_clicked);
-    connect(ui->hintButton, &QPushButton::clicked, this, &MainWindow::on_hintButton_clicked);
-    connect(ui->restartButton, &QPushButton::clicked, this, &MainWindow::on_restartButton_clicked);
-
     // select level buttons
     connect(ui->level_1_Button, &QPushButton::clicked, this, &MainWindow::on_levelOneButton_clicked);
     connect(ui->level_2_Button, &QPushButton::clicked, this, &MainWindow::on_levelTwoButton_clicked);
@@ -710,6 +702,126 @@ void MainWindow::on_resetButton_clicked()
 
 void MainWindow::on_hintButton_clicked()
 {
+    // Hint content per level
+    struct HintContent {
+        QString title;
+        QString body;
+    };
+
+    static const HintContent hints[] = {
+        // Level 1
+        {
+            "Level 1 Hint — Methods",
+            "<b>What's a method?</b><br><br>"
+            "A method is a named action you can call to make something happen.<br><br>"
+            "<b>How to play:</b><br>"
+            "1. Drag a <span style='color:#90ee90;'>move</span> block into your workspace.<br>"
+            "2. Click the move block to pick a destination (A–G).<br>"
+            "3. Chain multiple move blocks to navigate around the dragons.<br><br>"
+            "<b>Tip:</b> The dragons patrol vertically in the middle. "
+            "Try going (some routes, need to be fill later)...."
+        },
+        // Level 2
+        {
+            "Level 2 Hint — For Loops",
+            "<b>Coming soon!</b><br><br>"
+            "This level will teach you how to use a <b>for loop</b> "
+            "to repeat actions without duplicating blocks.<br><br>"
+            "<i>()</i>"
+        },
+        // Level 3
+        {
+            "Level 3 Hint — If Statements",
+            "<b>Coming soon!</b><br><br>"
+            "This level will teach you how to use an <b>if statement</b> "
+            "to react to what's happening on screen.<br><br>"
+            "<i>()</i>"
+        },
+        // Level 4
+        {
+            "Level 4 Hint — Functions",
+            "<b>Coming soon!</b><br><br>"
+            "This level will teach you how to define a <b>function</b> "
+            "and call it by name.<br><br>"
+            "<i>()</i>"
+        },
+        // Level 5
+        {
+            "Level 5 Hint — Free For All",
+            "<b>Coming soon!</b><br><br>"
+            "Use everything you've learned to reach the castle "
+            "in as <b>few blocks as possible</b>.<br><br>"
+            "<i>()</i>"
+        },
+    };
+
+    int idx = qBound(1, currentLevel, 5) - 1;
+    const HintContent &hint = hints[idx];
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Hint");
+    dialog.setFixedSize(420, 300);
+    dialog.setStyleSheet(
+        "QDialog {"
+        "  background-color: #0d0d1a;"
+        "  border: 2px solid #ffd700;"
+        "  border-radius: 12px;"
+        "}"
+        );
+
+    QVBoxLayout *layout = new QVBoxLayout(&dialog);
+    layout->setContentsMargins(24, 20, 24, 20);
+    layout->setSpacing(14);
+
+    // Title
+    QLabel *titleLabel = new QLabel(hint.title, &dialog);
+    titleLabel->setStyleSheet(
+        "color: #ffd700;"
+        "font-size: 15px;"
+        "font-weight: bold;"
+        "background: transparent;"
+        );
+    titleLabel->setWordWrap(true);
+
+    // Body
+    QLabel *bodyLabel = new QLabel(&dialog);
+    bodyLabel->setText(hint.body);
+    bodyLabel->setTextFormat(Qt::RichText);
+    bodyLabel->setWordWrap(true);
+    bodyLabel->setStyleSheet(
+        "color: #c8d8e8;"
+        "font-size: 13px;"
+        "background: transparent;"
+        "line-height: 1.5;"
+        );
+
+    // Close button
+    QPushButton *closeBtn = new QPushButton("Got it!", &dialog);
+    closeBtn->setFixedHeight(36);
+    closeBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #1a3a1a;"
+        "  color: #66ff88;"
+        "  border: 1px solid #33aa44;"
+        "  border-radius: 6px;"
+        "  font-size: 13px;"
+        "  font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #224422;"
+        "  border: 1px solid #88ffaa;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #112211;"
+        "}"
+        );
+    connect(closeBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+    layout->addWidget(titleLabel);
+    layout->addWidget(bodyLabel, 1);
+    layout->addWidget(closeBtn);
+
+    dialog.exec();
 }
 
 void MainWindow::on_restartButton_clicked()
