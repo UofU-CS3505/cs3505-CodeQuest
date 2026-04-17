@@ -309,14 +309,14 @@ void MainWindow::setUpLevel1()
     bg->lower();
 
     levelPointPositions.clear();
-    levelPointPositions["start"] = QPoint(20, 215);
+    levelPointPositions["start"] = QPoint(20, 200);
     levelPointPositions["a"] = QPoint(90, 80);
     levelPointPositions["b"] = QPoint(220, 80);
     levelPointPositions["c"] = QPoint(350, 80);
-    levelPointPositions["d"] = QPoint(90, 350);
-    levelPointPositions["e"] = QPoint(220, 350);
-    levelPointPositions["f"] = QPoint(350, 350);
-    levelPointPositions["g"] = QPoint(430, 215);
+    levelPointPositions["d"] = QPoint(90, 320);
+    levelPointPositions["e"] = QPoint(220, 320);
+    levelPointPositions["f"] = QPoint(350, 320);
+    levelPointPositions["g"] = QPoint(430, 200);
 
     addPointVisual("a", levelPointPositions["a"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["b"] + QPoint(6, 6));
@@ -448,6 +448,12 @@ void MainWindow::stepPlayerMovement()
 
     if (distance <= playerSpeed) {
         princess->move(targetPos);
+
+        if (isTouchingDragon()) {
+            handlePlayerDeath();
+            return;
+        }
+
         activeRoute.removeFirst();
 
         if (activeRoute.isEmpty()) {
@@ -465,6 +471,29 @@ void MainWindow::stepPlayerMovement()
     int nextY = static_cast<int>(std::round(currentPos.y() + (dy / distance) * playerSpeed));
 
     princess->move(nextX, nextY);
+
+    if (isTouchingDragon()) {
+        handlePlayerDeath();
+        return;
+    }
+}
+
+bool MainWindow::isTouchingDragon() const
+{
+    if (!princess || !dragon1 || !dragon2) {
+        return false;
+    }
+
+    QRect playerRect = princess->geometry();
+    QRect dragon1Rect = dragon1->geometry();
+    QRect dragon2Rect = dragon2->geometry();
+
+    return playerRect.intersects(dragon1Rect) || playerRect.intersects(dragon2Rect);
+}
+
+void MainWindow::handlePlayerDeath()
+{
+    resetPrincessToStart();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -503,23 +532,23 @@ void MainWindow::setUpDragons(){
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
-    dragon1->setFixedSize(60, 60);
-    dragon1->move(155, 215);
+    dragon1->setFixedSize(90, 90);
+    dragon1->move(125, 180);
 
     dragon2 = new QLabel(canvas);
     dragon2->setPixmap(QPixmap(":/images/dragon.png"));
     dragon2->setScaledContents(true);
-    dragon2->setFixedSize(60, 60);
-    dragon2->move(285, 215);
+    dragon2->setFixedSize(90, 90);
+    dragon2->move(265, 180);
 
     // set up how far the dragon moves each time, and how often it triggers a movement.
     dragonTimer = new QTimer(this);
 
     connect(dragonTimer, &QTimer::timeout, this, [this]() {
-        moveDragons(6);
+        moveDragons(2);
     });
 
-    dragonTimer->start(60);
+    dragonTimer->start(20);
 }
 
 void MainWindow::moveDragons(int dy){
@@ -546,6 +575,10 @@ void MainWindow::moveDragons(int dy){
 
     dragon1->move(dragon1->x(), newY1);
     dragon2->move(dragon2->x(), newY2);
+
+    if (isTouchingDragon()) {
+        handlePlayerDeath();
+    }
 }
 
 bool MainWindow::won()

@@ -58,7 +58,7 @@ private:
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
-    double playerSpeed = 4.0;
+    double playerSpeed = 2.5;
 
     QStringList getProgramRoute() const;
     void resetPrincessToStart();
@@ -81,7 +81,7 @@ private:
     static const int COLS = 12;
     static const int ROWS = 12;
     static const int DRAGON_MOVE_TOP_Y = 80;
-    static const int DRAGON_MOVE_BOTTOM_Y = 350;
+    static const int DRAGON_MOVE_BOTTOM_Y = 280;
 
 
     // -1 is up, 1 is down.
@@ -99,6 +99,8 @@ private:
     void applyDarkTheme();
     void clearLevel1Visuals();
     void addPointVisual(const QString &name, const QPoint &pos);
+    bool isTouchingDragon() const;
+    void handlePlayerDeath();
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
