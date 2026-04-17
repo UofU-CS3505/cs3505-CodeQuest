@@ -88,6 +88,8 @@ private:
     int dragon1Direction = -1;
     int dragon2Direction = -1;
 
+    bool gameStarted = false;
+
     void setUpLevels();
     void setUpLevel1();
     void addWall(int x, int y);

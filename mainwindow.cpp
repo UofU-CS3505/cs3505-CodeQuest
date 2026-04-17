@@ -428,9 +428,11 @@ void MainWindow::resetDragonsToStart(){
     dragon2Direction = -1;
 
     // stop for 2s then continue moving.
-    QTimer::singleShot(2000, this, [this]() {
-        dragonTimer->start(20);
-    });
+    if (gameStarted) {
+        QTimer::singleShot(2000, this, [this]() {
+            dragonTimer->start(20);
+        });
+    }
 }
 
 void MainWindow::startPlayerMovement(const QStringList &route)
@@ -611,13 +613,6 @@ void MainWindow::moveDragons(int dy){
     }
 }
 
-// void MainWindow::dragonStartMove()
-// {
-//     if (dragonTimer) {
-//         dragonTimer->start(20);
-//     }
-// }
-
 bool MainWindow::won()
 {
     return princess &&
@@ -629,7 +624,7 @@ bool MainWindow::won()
 void MainWindow::on_startButton_clicked()
 {
     on_levelOneButton_clicked();
-    dragonStartMove();
+    // dragonStartMove();
 }
 
 void MainWindow::on_levelsButton_clicked()
@@ -700,6 +695,9 @@ void MainWindow::on_levelOneButton_clicked()
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
     // completeCurrentLevel();
+    gameStarted = false;
+    resetPrincessToStart();
+    resetDragonsToStart();
 }
 
 void MainWindow::on_levelTwoButton_clicked()
@@ -846,13 +844,16 @@ void MainWindow::on_runButton_clicked()
 {
     exitRoutePointSelectionMode();
 
+    gameStarted = true;
+    dragonStartMove();
+
     QStringList route = getProgramRoute();
     if (route.isEmpty()) {
         return;
     }
 
-    resetPrincessToStart();
     startPlayerMovement(route);
+    dragonStartMove();
 }
 
 void MainWindow::on_resetButton_clicked()
@@ -1023,7 +1024,10 @@ void MainWindow::on_restartButton_clicked()
     currentLevel = 1;
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
-    dragonStartMove();
+
+    gameStarted = false;
+    resetPrincessToStart();
+    resetDragonsToStart();
 }
 
 void MainWindow::createRoutePointBlocks()
