@@ -154,7 +154,7 @@ void MainWindow::applyDarkTheme()
     ui->startButton->setStyleSheet(menuButtonStyle);
     ui->levelsButton->setStyleSheet(menuButtonStyle);
     ui->aboutButton->setStyleSheet(menuButtonStyle);
-    ui->aboutButton_2->setStyleSheet(menuButtonStyle);
+    ui->restartButton->setStyleSheet(menuButtonStyle);
 
     ui->codePage->setStyleSheet(
         "QWidget#codePage {"
@@ -215,7 +215,6 @@ void MainWindow::applyDarkTheme()
         "}";
 
     ui->backToLevelsButton->setStyleSheet(codePageButtonStyle);
-    ui->restartButton->setStyleSheet(codePageButtonStyle);
     ui->runButton->setStyleSheet(
         "QPushButton {"
         "  background-color: #1a3a1a;"
@@ -715,28 +714,37 @@ void MainWindow::on_hintButton_clicked()
 
 void MainWindow::on_restartButton_clicked()
 {
-    //TODO:reset characters/npc/game's state
+    // Only warn if the user has actual progress beyond level 1
+    if (saveFile.getLatestUnlocked() > 1) {
+        QMessageBox confirmBox(this);
+        confirmBox.setWindowTitle("Start New Game?");
+        confirmBox.setText("You have existing progress. Starting a new game will erase all saved data and return to Level 1.");
+        confirmBox.setIcon(QMessageBox::Warning);
+
+        QPushButton *confirmBtn = confirmBox.addButton("Start New Game", QMessageBox::DestructiveRole);
+        QPushButton *cancelBtn  = confirmBox.addButton("Cancel",         QMessageBox::RejectRole);
+        confirmBox.setDefaultButton(cancelBtn);
+
+        confirmBox.exec();
+
+        if (confirmBox.clickedButton() != confirmBtn)
+            return;
+    }
+
+    // Wipe save data
+    saveFile.resetScores();
+    saveFile.updateUnlockedLevels(1);
+    saveFile.save();
+
+    // Reset UI state
     ui->workspaceWidget->clearBlocks();
+    exitRoutePointSelectionMode();
+    unlockLevelButtons();
 
-    // show temporary message
-    QLabel *msg = new QLabel("Game Restarted!", ui->codePage);
-    msg->setAlignment(Qt::AlignCenter);
-    msg->setStyleSheet(
-        "background-color: #1a1a2e;"
-        "color: #ffd700;"
-        "border: 2px solid #ffd700;"
-        "border-radius: 8px;"
-        "padding: 10px;"
-        "font-size: 16px;"
-        "font-weight: bold;"
-        );
-    msg->adjustSize();
-    msg->move((ui->codePage->width() - msg->width()) / 2, 70);//center
-    msg->show();
-    msg->raise();
-
-    // disappear after 1.2 seconds
-    QTimer::singleShot(1200, msg, &QLabel::deleteLater);
+    // Go to level 1
+    currentLevel = 1;
+    ui->levelTitleLabel->setText("Level 1");
+    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
 }
 
 void MainWindow::createRoutePointBlocks()
