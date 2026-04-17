@@ -409,6 +409,30 @@ void MainWindow::resetPrincessToStart()
     }
 }
 
+void MainWindow::resetDragonsToStart(){
+    if(dragonTimer){
+        dragonTimer->stop();
+    }
+
+    activeRoute.clear();
+
+    if(dragon1){
+        dragon1->move(125, 180);
+        dragon2->move(265, 180);
+    } else if (dragon2){
+        dragon1->move(125, 180);
+        dragon2->move(265, 180);
+    }
+
+    dragon1Direction = -1;
+    dragon2Direction = -1;
+
+    // stop for 2s then continue moving.
+    QTimer::singleShot(2000, this, [this]() {
+        dragonTimer->start(20);
+    });
+}
+
 void MainWindow::startPlayerMovement(const QStringList &route)
 {
     activeRoute = route;
@@ -494,6 +518,7 @@ bool MainWindow::isTouchingDragon() const
 void MainWindow::handlePlayerDeath()
 {
     resetPrincessToStart();
+    resetDragonsToStart();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -547,8 +572,13 @@ void MainWindow::setUpDragons(){
     connect(dragonTimer, &QTimer::timeout, this, [this]() {
         moveDragons(2);
     });
+}
 
-    dragonTimer->start(20);
+void MainWindow::dragonStartMove()
+{
+    if (dragonTimer) {
+        dragonTimer->start(20);
+    }
 }
 
 void MainWindow::moveDragons(int dy){
@@ -581,6 +611,13 @@ void MainWindow::moveDragons(int dy){
     }
 }
 
+// void MainWindow::dragonStartMove()
+// {
+//     if (dragonTimer) {
+//         dragonTimer->start(20);
+//     }
+// }
+
 bool MainWindow::won()
 {
     return princess &&
@@ -592,6 +629,7 @@ bool MainWindow::won()
 void MainWindow::on_startButton_clicked()
 {
     on_levelOneButton_clicked();
+    dragonStartMove();
 }
 
 void MainWindow::on_levelsButton_clicked()
@@ -822,6 +860,7 @@ void MainWindow::on_resetButton_clicked()
     exitRoutePointSelectionMode();
     ui->workspaceWidget->clearBlocks();
     resetPrincessToStart();
+    resetDragonsToStart();
 }
 
 void MainWindow::on_hintButton_clicked()
@@ -984,6 +1023,7 @@ void MainWindow::on_restartButton_clicked()
     currentLevel = 1;
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+    dragonStartMove();
 }
 
 void MainWindow::createRoutePointBlocks()

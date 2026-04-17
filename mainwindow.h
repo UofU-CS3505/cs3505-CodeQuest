@@ -94,6 +94,8 @@ private:
     void movePrincess(int dx, int dy);
     void setUpDragons();
     void moveDragons(int dy);
+    void dragonStartMove();
+    void resetDragonsToStart();
     bool won();
 
     void applyDarkTheme();
