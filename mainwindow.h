@@ -56,6 +56,15 @@ private:
     QString startPoint = "start";
     QString goalPoint = "g";
 
+    QTimer *moveTimer = nullptr;
+    QStringList activeRoute;
+    double playerSpeed = 4.0;
+
+    QStringList getProgramRoute() const;
+    void resetPrincessToStart();
+    void startPlayerMovement(const QStringList &route);
+    void stepPlayerMovement();
+
     // Lock and Unlock Levels
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);

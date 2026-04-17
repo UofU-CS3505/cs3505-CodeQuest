@@ -27,6 +27,7 @@ castle using the skills they learned and try to use the least amount of code blo
 #include "confetti.h"
 #include <QEvent>
 #include <QTimer>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -62,13 +63,6 @@ MainWindow::MainWindow(QWidget *parent)
     // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
     // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
-
-    for (const QString &pointName : currentLevelRoutePoints) {
-        CodeBlock *pointBlock = new CodeBlock(pointName, "method");
-        ui->blockSpaceWidget->addBlock(pointBlock);
-        routePointBlocks.append(pointBlock);
-    }
     setUpLevels();
 
     ui->workspaceWidget->setStyleSheet("background-color: lightgray;");
@@ -96,6 +90,11 @@ MainWindow::MainWindow(QWidget *parent)
     confetti->raise();
     connect(this, &MainWindow::levelCompleted, confetti, &Confetti::startConfetti);
 
+    moveTimer = new QTimer(this);
+    moveTimer->setInterval(16);
+
+    connect(moveTimer, &QTimer::timeout,
+            this, &MainWindow::stepPlayerMovement);
 }
 
 MainWindow::~MainWindow()
@@ -392,6 +391,91 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->show();
 }
 
+QStringList MainWindow::getProgramRoute() const
+{
+    QStringList route;
+    QList<CodeBlock*> blocks = ui->workspaceWidget->getBlocks();
+
+    for (CodeBlock *block : blocks) {
+        if (block && block->getType() == "routePoint") {
+            route << block->text();
+        }
+    }
+
+    return route;
+}
+
+void MainWindow::resetPrincessToStart()
+{
+    if (moveTimer) {
+        moveTimer->stop();
+    }
+
+    activeRoute.clear();
+
+    if (princess && levelPointPositions.contains(startPoint)) {
+        princess->move(levelPointPositions[startPoint]);
+    }
+}
+
+void MainWindow::startPlayerMovement(const QStringList &route)
+{
+    activeRoute = route;
+
+    if (!activeRoute.isEmpty() && moveTimer) {
+        moveTimer->start();
+    }
+}
+
+void MainWindow::stepPlayerMovement()
+{
+    if (!princess || activeRoute.isEmpty()) {
+        if (moveTimer) {
+            moveTimer->stop();
+        }
+
+        if (won()) {
+            completeCurrentLevel();
+            emit levelCompleted();
+        }
+        return;
+    }
+
+    QString targetName = activeRoute.first();
+
+    if (!levelPointPositions.contains(targetName)) {
+        activeRoute.removeFirst();
+        return;
+    }
+
+    QPoint currentPos = princess->pos();
+    QPoint targetPos = levelPointPositions[targetName];
+
+    double dx = targetPos.x() - currentPos.x();
+    double dy = targetPos.y() - currentPos.y();
+    double distance = std::sqrt(dx * dx + dy * dy);
+
+    if (distance <= playerSpeed) {
+        princess->move(targetPos);
+        activeRoute.removeFirst();
+
+        if (activeRoute.isEmpty()) {
+            moveTimer->stop();
+
+            if (won()) {
+                completeCurrentLevel();
+                emit levelCompleted();
+            }
+        }
+        return;
+    }
+
+    int nextX = static_cast<int>(std::round(currentPos.x() + (dx / distance) * playerSpeed));
+    int nextY = static_cast<int>(std::round(currentPos.y() + (dy / distance) * playerSpeed));
+
+    princess->move(nextX, nextY);
+}
+
 void MainWindow::addWall(int row, int col)
 {
     QLabel *wall = new QLabel(ui->gameCanvasFrame);
@@ -475,7 +559,9 @@ void MainWindow::moveDragons(int dy){
 
 bool MainWindow::won()
 {
-    return princess->pos() == castle->pos();
+    return princess &&
+           levelPointPositions.contains(goalPoint) &&
+           princess->pos() == levelPointPositions[goalPoint];
 }
 
 // -------------------- Start Page Slots --------------------
@@ -696,17 +782,22 @@ void MainWindow::on_backToLevelsButton_clicked()
 
 void MainWindow::on_runButton_clicked()
 {
-    // TODO add the rest of this functionality
-    if (won()) {
-        emit levelCompleted();
+    exitRoutePointSelectionMode();
+
+    QStringList route = getProgramRoute();
+    if (route.isEmpty()) {
+        return;
     }
 
+    resetPrincessToStart();
+    startPlayerMovement(route);
 }
 
 void MainWindow::on_resetButton_clicked()
 {
     exitRoutePointSelectionMode();
     ui->workspaceWidget->clearBlocks();
+    resetPrincessToStart();
 }
 
 void MainWindow::on_hintButton_clicked()
@@ -715,8 +806,9 @@ void MainWindow::on_hintButton_clicked()
 
 void MainWindow::on_restartButton_clicked()
 {
-    //TODO:reset characters/npc/game's state
+    exitRoutePointSelectionMode();
     ui->workspaceWidget->clearBlocks();
+    resetPrincessToStart();
 
     // show temporary message
     QLabel *msg = new QLabel("Game Restarted!", ui->codePage);
