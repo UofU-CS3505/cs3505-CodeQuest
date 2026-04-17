@@ -91,3 +91,7 @@ void SaveFile::updateScore(int levelIndex, int score){
 int SaveFile::getScore(int levelIndex){
     return scores[levelIndex - 1];
 }
+
+void SaveFile::resetScores() {
+    scores = vector<int>(5);
+}
