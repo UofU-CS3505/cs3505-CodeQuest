@@ -78,6 +78,7 @@ private:
     QLabel *castle;
     QLabel *dragon1;
     QLabel *dragon2;
+    QLabel *dragonAlertZone;
     QTimer *dragonTimer;
     QVector<QLabel*> walls;
     static const int TILE = 40;
@@ -96,11 +97,15 @@ private:
 
     void setUpLevels();
     void setUpLevel1();
+    void setUpLevel2();
+    void setUpLevel3();
+    void setUpLevel4();
     void addWall(int x, int y);
     void movePrincess(int dx, int dy);
     void setUpDragons();
     void moveDragons(int dy);
     void dragonStartMove();
+    void showDragonAlertZone();
     void resetDragonsToStart();
     bool won();
 

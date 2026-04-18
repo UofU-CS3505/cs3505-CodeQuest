@@ -361,6 +361,8 @@ void MainWindow::clearLevel1Visuals()
     walls.clear();
     princess = nullptr;
     castle = nullptr;
+    dragon1 = nullptr;
+    dragon2 = nullptr;
 }
 
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
@@ -423,14 +425,17 @@ void MainWindow::resetDragonsToStart(){
 
     activeRoute.clear();
 
-    if (dragon1) {
-        dragon1->move(125, 180);
-        dragon2->move(265, 180);
-    } else if (dragon2) {
-        dragon1->move(125, 180);
-        dragon2->move(265, 180);
+    if (currentLevel == 1){
+        if (dragon1) {
+            dragon1->move(125, 180);
+            dragon2->move(265, 180);
+        } else if (dragon2) {
+            dragon1->move(125, 180);
+            dragon2->move(265, 180);
+        }
+    } else if (currentLevel == 2){
+        dragon1->move(230, 180);
     }
-
     dragon1Direction = -1;
     dragon2Direction = -1;
 
@@ -704,9 +709,7 @@ void MainWindow::on_levelOneButton_clicked()
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
     // completeCurrentLevel();
-    gameStarted = false;
-    resetPrincessToStart();
-    resetDragonsToStart();
+    openSpecificLevel(1);
 }
 
 void MainWindow::on_levelTwoButton_clicked()
@@ -803,6 +806,19 @@ void MainWindow::openSpecificLevel(int levelNumber)
     currentLevel = levelNumber;
     ui->levelTitleLabel->setText("Level " + QString::number(levelNumber));
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+
+    if (levelNumber == 1) {
+        setUpLevel1();
+        gameStarted = false;
+        resetPrincessToStart();
+        resetDragonsToStart();
+    }
+    else if (levelNumber == 2) {
+        setUpLevel2();
+        gameStarted = false;
+        resetPrincessToStart();
+        resetDragonsToStart();
+    }
 }
 
 void MainWindow::completeCurrentLevel()
