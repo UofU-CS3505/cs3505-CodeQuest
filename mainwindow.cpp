@@ -1,24 +1,3 @@
-/* IDEA FOR LEVELS
-
-level one: teach user what a method is
-- has to use basic move methods to move princess to castle through a maze
-
-level two: teach user what a for-loop is
-- same thing as level one, move princess to castle through a maze, but use a for-loop this time
-
-level three: teach user what an if-statement is
-- have a dragon be moving across the screen side to side and have the user move the princess to the castle,
-but if a dragon is in the way, use wait method (or something like that?)
-- move princess to castle while avoiding the dragon
-
-level four: teach user what a function is
-- have the user use a function called something like "moveToCastle" or "avoidDragon" and then they can add
-the code in for that function and then use that function name in the "main method" to get the princess to the castle.
-
-level five: ? I was thinking maybe we could do like a free for all and the user can try and get the princess to the
-castle using the skills they learned and try to use the least amount of code blocks while accomplishing this task?
-*/
-
 #include "mainwindow.h"
 #include "workspace.h"
 #include "ui_mainwindow.h"
@@ -82,6 +61,10 @@ MainWindow::MainWindow(QWidget *parent)
     confetti->raise();
     connect(this, &MainWindow::levelCompleted, confetti, &Confetti::startConfetti);
 
+    running = false;
+    gameStarted = false;
+    dragonMovementEnabled = false;
+
     moveTimer = new QTimer(this);
     moveTimer->setInterval(16);
 
@@ -98,13 +81,19 @@ void MainWindow::applyDarkTheme()
 {
     ui->startPage->setStyleSheet(
         "QWidget#startPage {"
-        "  background-color: #0d0d1a;"
+        "  background-color: #232338;"
         "}"
         );
 
     ui->levelSelectionPage->setStyleSheet(
         "QWidget#levelSelectionPage {"
-        "  background-color: #0d0d1a;"
+        "  background-color: #232338"
+        "}"
+        );
+
+    ui->levelSelectionLabel->setStyleSheet(
+        "QLabel {"
+        "  color: #e0e0e0;"
         "}"
         );
 
@@ -149,7 +138,7 @@ void MainWindow::applyDarkTheme()
 
     ui->codePage->setStyleSheet(
         "QWidget#codePage {"
-        "  background-color: #111120;"
+        "  background-color: #232338"
         "}"
         );
 
@@ -203,6 +192,11 @@ void MainWindow::applyDarkTheme()
         "}"
         "QPushButton:pressed {"
         "  background-color: #111130;"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: #0f0f18;"
+        "  color: #555566;"
+        "  border: 1px solid #222233;"
         "}";
 
     ui->backToLevelsButton->setStyleSheet(codePageButtonStyle);
@@ -223,7 +217,7 @@ void MainWindow::applyDarkTheme()
         "  background-color: #112211;"
         "}"
         );
-    ui->resetButton->setStyleSheet(
+    ui->clearButton->setStyleSheet(
         "QPushButton {"
         "  background-color: #3a1a1a;"
         "  color: #ff8866;"
@@ -238,6 +232,11 @@ void MainWindow::applyDarkTheme()
         "}"
         "QPushButton:pressed {"
         "  background-color: #221111;"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: #0f0f18;"
+        "  color: #555566;"
+        "  border: 1px solid #222233;"
         "}"
         );
     ui->hintButton->setStyleSheet(
@@ -254,6 +253,11 @@ void MainWindow::applyDarkTheme()
         "}"
         "QPushButton:pressed {"
         "  background-color: #111a22;"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: #0f0f18;"
+        "  color: #555566;"
+        "  border: 1px solid #222233;"
         "}"
         );
 
@@ -335,12 +339,13 @@ void MainWindow::setUpLevel1()
     castle = new QLabel(canvas);
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
-    castle->setFixedSize(TILE, TILE);
+    castle->setFixedSize(TILE * 4, TILE * 4);
     castle->move(levelPointPositions[goalPoint] + QPoint(25, -10));
 
     setUpDragons();
 
     princess->raise();
+    castle->raise();
 }
 
 void MainWindow::clearLevel1Visuals()
@@ -392,7 +397,6 @@ QStringList MainWindow::getProgramRoute() const
             route << block->text();
         }
     }
-
     return route;
 }
 
@@ -410,16 +414,18 @@ void MainWindow::resetPrincessToStart()
 }
 
 void MainWindow::resetDragonsToStart(){
+    dragonMovementEnabled = false;
+
     if(dragonTimer){
         dragonTimer->stop();
     }
 
     activeRoute.clear();
 
-    if(dragon1){
+    if (dragon1) {
         dragon1->move(125, 180);
         dragon2->move(265, 180);
-    } else if (dragon2){
+    } else if (dragon2) {
         dragon1->move(125, 180);
         dragon2->move(265, 180);
     }
@@ -430,7 +436,9 @@ void MainWindow::resetDragonsToStart(){
     // stop for 2s then continue moving.
     if (gameStarted) {
         QTimer::singleShot(2000, this, [this]() {
-            dragonTimer->start(20);
+            if (dragonMovementEnabled && gameStarted) {
+                dragonTimer->start(20);
+            }
         });
     }
 }
@@ -519,8 +527,7 @@ bool MainWindow::isTouchingDragon() const
 
 void MainWindow::handlePlayerDeath()
 {
-    resetPrincessToStart();
-    resetDragonsToStart();
+    on_runButton_clicked();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -559,13 +566,13 @@ void MainWindow::setUpDragons(){
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
-    dragon1->setFixedSize(90, 90);
+    dragon1->setFixedSize(TILE, TILE);
     dragon1->move(125, 180);
 
     dragon2 = new QLabel(canvas);
     dragon2->setPixmap(QPixmap(":/images/dragon.png"));
     dragon2->setScaledContents(true);
-    dragon2->setFixedSize(90, 90);
+    dragon2->setFixedSize(TILE, TILE);
     dragon2->move(265, 180);
 
     // set up how far the dragon moves each time, and how often it triggers a movement.
@@ -578,6 +585,8 @@ void MainWindow::setUpDragons(){
 
 void MainWindow::dragonStartMove()
 {
+    dragonMovementEnabled = true;
+
     if (dragonTimer) {
         dragonTimer->start(20);
     }
@@ -842,26 +851,46 @@ void MainWindow::on_backToLevelsButton_clicked()
 
 void MainWindow::on_runButton_clicked()
 {
-    exitRoutePointSelectionMode();
+    if (running) {
+        // reset
+        setRunning(false);
 
-    gameStarted = true;
-    dragonStartMove();
-
-    QStringList route = getProgramRoute();
-    if (route.isEmpty()) {
+        if (moveTimer) moveTimer->stop();
+        if (dragonTimer) dragonTimer->stop();
+        activeRoute.clear();
+        exitRoutePointSelectionMode();
+        resetPrincessToStart();
+        resetDragonsToStart();
         return;
     }
 
+    // run
+    QStringList route = getProgramRoute();
+    if (route.isEmpty()) return;
+
+    setRunning(true);
+
+    exitRoutePointSelectionMode();
+
+    gameStarted = true;
     startPlayerMovement(route);
     dragonStartMove();
 }
 
-void MainWindow::on_resetButton_clicked()
+void MainWindow::setRunning(bool isRunning) {
+    running = isRunning;
+    ui->runButton->setText(isRunning ? "Reset" : "Run");
+
+    ui->hintButton->setDisabled(isRunning);
+    ui->clearButton->setDisabled(isRunning);
+    ui->backToLevelsButton->setDisabled(isRunning);
+    ui->workspaceWidget->setEnabled(!isRunning);
+    ui->blockSpaceWidget->setEnabled(!isRunning);
+}
+
+void MainWindow::on_clearButton_clicked()
 {
-    exitRoutePointSelectionMode();
     ui->workspaceWidget->clearBlocks();
-    resetPrincessToStart();
-    resetDragonsToStart();
 }
 
 void MainWindow::on_hintButton_clicked()

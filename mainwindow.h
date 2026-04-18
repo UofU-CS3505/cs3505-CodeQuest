@@ -34,6 +34,7 @@ private:
     void enterRoutePointSelectionMode(CodeBlock *moveBlock);
     void exitRoutePointSelectionMode();
     void createRoutePointBlocks();
+    bool running;
 
     QVector<CodeBlock*> routePointBlocks;
     QVector<CodeBlock*> normalPaletteBlocks;
@@ -47,6 +48,8 @@ private:
     bool routePointsVisible = false;
     bool routePointSelectionMode = false;
     CodeBlock *selectedMoveBlock = nullptr;
+
+    QString normalButtonStyle;
 
     SaveFile saveFile;
     int currentLevel = 1;
@@ -88,7 +91,8 @@ private:
     int dragon1Direction = -1;
     int dragon2Direction = -1;
 
-    bool gameStarted = false;
+    bool gameStarted;
+    bool dragonMovementEnabled;
 
     void setUpLevels();
     void setUpLevel1();
@@ -105,6 +109,9 @@ private:
     void addPointVisual(const QString &name, const QPoint &pos);
     bool isTouchingDragon() const;
     void handlePlayerDeath();
+
+    void setRunning(bool isRunning);
+    void dimButtons(bool gameStarted);
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
@@ -189,10 +196,10 @@ private slots:
     void on_runButton_clicked();
 
     /**
-     * Clears the workspace and resets the game state.
+     * Clears the workspace.
      * @brief on_resetButton_clicked
      */
-    void on_resetButton_clicked();
+    void on_clearButton_clicked();
 
     /**
      * @brief on_hintButton_clicked

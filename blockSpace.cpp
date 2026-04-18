@@ -31,8 +31,6 @@ void BlockSpace::dragEnterEvent(QDragEnterEvent *event)
 
 void BlockSpace::dropEvent(QDropEvent *event)
 {
-    // This is your DELETE ZONE logic (workspace → palette = delete)
-
     CodeBlock *block = qobject_cast<CodeBlock*>(event->source());
 
     if (block && block->parentWidget()) {
