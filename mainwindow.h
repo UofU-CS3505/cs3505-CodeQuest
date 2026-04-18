@@ -80,6 +80,9 @@ private:
     QLabel *castle;
     QLabel *dragon1;
     QLabel *dragon2;
+    QLabel *dragonAlertZone = nullptr;
+    QLabel *guard = nullptr;
+    QLabel *guardZone = nullptr;
     QTimer *dragonTimer;
     QVector<QLabel*> walls;
     static const int TILE = 40;
@@ -98,7 +101,6 @@ private:
 
     void setUpLevels();
     void setUpLevel1();
-    void setUpLevel2();
     void setUpLevel3();
     void setUpLevel4();
     void addWall(int x, int y);

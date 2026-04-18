@@ -409,6 +409,13 @@ void MainWindow::setUpLevel2()
     castle->move(levelPointPositions["moveToB();"] + QPoint(28, -18));
     castle->show();
 
+    dragon1 = new QLabel(canvas);
+    dragon1->setPixmap(QPixmap(":/images/dragon.png"));
+    dragon1->setScaledContents(true);
+    dragon1->setFixedSize(TILE, TILE);
+    dragon1->move(320, 200);
+    dragon1->show();
+
     guard = new QLabel("G", canvas);
     guard->setAlignment(Qt::AlignCenter);
     guard->setGeometry(levelPointPositions["moveToA();"].x() + 55,
@@ -422,10 +429,42 @@ void MainWindow::setUpLevel2()
         "font-weight: bold;"
         );
     guard->show();
+    showDragonAlertZone();
+
+    bg->lower();
+    dragonAlertZone->raise();
 
     princess->raise();
     castle->raise();
     guard->raise();
+}
+
+void MainWindow::showDragonAlertZone()
+{
+    if (dragonAlertZone) {
+        delete dragonAlertZone;
+        dragonAlertZone = nullptr;
+    }
+
+    QWidget *canvas = ui->gameCanvasFrame;
+
+    const int alertDiameter = 100;
+
+    dragonAlertZone = new QLabel(canvas);
+    dragonAlertZone->setFixedSize(alertDiameter, alertDiameter);
+
+    QPoint dragonCenter = dragon1->geometry().center();
+    int x = dragonCenter.x() - alertDiameter / 2;
+    int y = dragonCenter.y() - alertDiameter / 2;
+    dragonAlertZone->move(x, y);
+
+    dragonAlertZone->setStyleSheet(
+        "background-color: rgba(255, 0, 0, 50);"
+        "border: 3px solid rgba(153, 0, 0, 180);"
+        "border-radius: 50px;"
+        );
+
+    dragonAlertZone->show();
 }
 
 void MainWindow::clearLevel2Visuals()
@@ -895,6 +934,30 @@ void MainWindow::openSpecificLevel(int levelNumber)
     currentLevel = levelNumber;
     ui->levelTitleLabel->setText("Level " + QString::number(levelNumber));
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
+
+    setRunning(false);
+
+    if (moveTimer) moveTimer->stop();
+    if (dragonTimer) dragonTimer->stop();
+    activeRoute.clear();
+    gameStarted = false;
+
+    if (levelNumber == 1) {
+        currentLevelRoutePoints = {
+            "moveToA();", "moveToB();", "moveToC();",
+            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
+        };
+        createRoutePointBlocks();
+        setUpLevel1();
+        resetPrincessToStart();
+        resetDragonsToStart();
+    }
+    else if (levelNumber == 2) {
+        currentLevelRoutePoints = { "moveToA();", "moveToB();" };
+        createRoutePointBlocks();
+        setUpLevel2();
+        resetPrincessToStart();
+    }
 }
 
 void MainWindow::completeCurrentLevel()
