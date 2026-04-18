@@ -365,6 +365,87 @@ void MainWindow::clearLevel1Visuals()
     dragon2 = nullptr;
 }
 
+void MainWindow::setUpLevel2()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+    canvas->setFixedSize(COLS * TILE, ROWS * TILE);
+
+    clearLevel2Visuals();
+
+    QLabel *bg = new QLabel(canvas);
+    bg->setPixmap(QPixmap(":/images/grass.png").scaled(
+        canvas->size(),
+        Qt::IgnoreAspectRatio,
+        Qt::SmoothTransformation
+        ));
+    bg->setGeometry(0, 0, canvas->width(), canvas->height());
+    bg->show();
+    bg->lower();
+
+    levelPointPositions.clear();
+
+    startPoint = "start";
+    goalPoint = "moveToB();";
+    playerTriggeredMonster = false;
+
+    levelPointPositions["start"] = QPoint(40, 200);
+    levelPointPositions["moveToA();"] = QPoint(220, 90);
+    levelPointPositions["moveToB();"] = QPoint(400, 200);
+
+    addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
+    addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
+
+    princess = new QLabel(canvas);
+    princess->setPixmap(QPixmap(":/images/princess.png"));
+    princess->setScaledContents(true);
+    princess->setFixedSize(TILE, TILE);
+    princess->move(levelPointPositions["start"]);
+    princess->show();
+
+    castle = new QLabel(canvas);
+    castle->setPixmap(QPixmap(":/images/castle.png"));
+    castle->setScaledContents(true);
+    castle->setFixedSize(TILE * 2, TILE * 2);
+    castle->move(levelPointPositions["moveToB();"] + QPoint(28, -18));
+    castle->show();
+
+    guard = new QLabel("G", canvas);
+    guard->setAlignment(Qt::AlignCenter);
+    guard->setGeometry(levelPointPositions["moveToA();"].x() + 55,
+                       levelPointPositions["moveToA();"].y() - 5,
+                       32, 32);
+    guard->setStyleSheet(
+        "background-color: darkred;"
+        "color: white;"
+        "border: 2px solid black;"
+        "border-radius: 16px;"
+        "font-weight: bold;"
+        );
+    guard->show();
+
+    princess->raise();
+    castle->raise();
+    guard->raise();
+}
+
+void MainWindow::clearLevel2Visuals()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+
+    QList<QLabel*> labels = canvas->findChildren<QLabel*>(QString(), Qt::FindDirectChildrenOnly);
+    for (QLabel *label : labels) {
+        delete label;
+    }
+
+    walls.clear();
+    princess = nullptr;
+    castle = nullptr;
+    guard = nullptr;
+    guardZone = nullptr;
+    dragon1 = nullptr;
+    dragon2 = nullptr;
+}
+
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
 {
     QLabel *point = new QLabel(name, ui->gameCanvasFrame);
@@ -706,6 +787,14 @@ void MainWindow::setLevelDescriptionStyles()
 
 void MainWindow::on_levelOneButton_clicked()
 {
+    setRunning(false);
+
+    if (moveTimer) moveTimer->stop();
+    if (dragonTimer) dragonTimer->stop();
+    activeRoute.clear();
+
+    setUpLevel1();
+
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
     // completeCurrentLevel();
@@ -806,19 +895,6 @@ void MainWindow::openSpecificLevel(int levelNumber)
     currentLevel = levelNumber;
     ui->levelTitleLabel->setText("Level " + QString::number(levelNumber));
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
-
-    if (levelNumber == 1) {
-        setUpLevel1();
-        gameStarted = false;
-        resetPrincessToStart();
-        resetDragonsToStart();
-    }
-    else if (levelNumber == 2) {
-        setUpLevel2();
-        gameStarted = false;
-        resetPrincessToStart();
-        resetDragonsToStart();
-    }
 }
 
 void MainWindow::completeCurrentLevel()
@@ -1075,12 +1151,13 @@ void MainWindow::on_restartButton_clicked()
 
 void MainWindow::createRoutePointBlocks()
 {
-    // for (CodeBlock *block : routePointBlocks) {
-    //     if (block) {
-    //         block->deleteLater();
-    //     }
-    // }
-    //routePointBlocks.clear();
+    for (CodeBlock *block : routePointBlocks) {
+        if (block) {
+            ui->blockSpaceWidget->getLayout()->removeWidget(block);
+            block->deleteLater();
+        }
+    }
+    routePointBlocks.clear();
 
     for (const QString &pointName : currentLevelRoutePoints) {
         CodeBlock *pointBlock = new CodeBlock(pointName, "routePoint");
