@@ -35,6 +35,8 @@ private:
     void exitRoutePointSelectionMode();
     void createRoutePointBlocks();
     bool running;
+    bool playerTriggeredMonster = false;
+
 
     QVector<CodeBlock*> routePointBlocks;
     QVector<CodeBlock*> normalPaletteBlocks;
@@ -78,6 +80,8 @@ private:
     QLabel *castle;
     QLabel *dragon1;
     QLabel *dragon2;
+    QLabel *guard = nullptr;
+    QLabel *guardZone = nullptr;
     QTimer *dragonTimer;
     QVector<QLabel*> walls;
     static const int TILE = 40;
@@ -112,6 +116,14 @@ private:
 
     void setRunning(bool isRunning);
     void dimButtons(bool gameStarted);
+
+    //for level2
+    void setUpGuard();
+    void resetIfLevelState();
+    void updateGuardCheck();
+    void updateIfLevelLogic();
+    void setUpLevel2();
+    void clearLevel2Visuals();
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
