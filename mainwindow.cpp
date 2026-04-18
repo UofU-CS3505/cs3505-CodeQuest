@@ -1030,7 +1030,9 @@ void MainWindow::on_runButton_clicked()
 
     gameStarted = true;
     startPlayerMovement(route);
-    dragonStartMove();
+    if (currentLevel == 1) {
+        dragonStartMove();
+    }
 }
 
 void MainWindow::setRunning(bool isRunning) {
