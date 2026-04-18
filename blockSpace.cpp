@@ -22,6 +22,10 @@ void BlockSpace::addBlock(CodeBlock *block)
     block->show();
 }
 
+QVBoxLayout* BlockSpace::getLayout() {
+    return layout;
+}
+
 void BlockSpace::dragEnterEvent(QDragEnterEvent *event)
 {
     if (event->mimeData()->hasFormat("application/x-codeblock")) {

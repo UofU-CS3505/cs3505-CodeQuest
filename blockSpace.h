@@ -13,6 +13,7 @@ public:
     BlockSpace(QWidget *parent = nullptr);
 
     void addBlock(CodeBlock *block);
+    QVBoxLayout* getLayout();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;

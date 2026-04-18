@@ -16,7 +16,7 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
 
     if (type == "move" || type == "method") {
         setStyleSheet(
-            "background-color: lightgreen;"
+            "background-color: blue;"
             "border: 2px solid rgba(0,0,0,0.6);"
             "border-bottom: 4px solid rgba(0,0,0,0.25);"
             "border-radius: 12px;"
@@ -26,6 +26,7 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     else if (type == "routePoint") {
         setStyleSheet(
             "background-color: lightblue;"
+            "font-weight: bold;"
             "border: 2px solid rgba(0,0,0,0.6);"
             "border-bottom: 4px solid rgba(0,0,0,0.25);"
             "border-radius: 12px;"

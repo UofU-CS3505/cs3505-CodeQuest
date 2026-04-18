@@ -287,13 +287,14 @@ void MainWindow::applyDarkTheme()
 void MainWindow::setUpLevels()
 {
     setUpLevel1();
-    CodeBlock *moveBlock = new CodeBlock("move", "move");
-    ui->blockSpaceWidget->addBlock(moveBlock);
-    normalPaletteBlocks.append(moveBlock);
+    QLabel *methodsLabel = new QLabel("METHODS", this);
+    methodsLabel->setStyleSheet("color: white; font-weight: bold;" "font-size: 15px;");
+    ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
+    //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"a", "b", "c", "d", "e", "f", "g"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
     createRoutePointBlocks();
-    setRoutePointsVisible(false);
+    setRoutePointsVisible(true);
 }
 
 void MainWindow::setUpLevel1()
@@ -314,21 +315,21 @@ void MainWindow::setUpLevel1()
 
     levelPointPositions.clear();
     levelPointPositions["start"] = QPoint(20, 200);
-    levelPointPositions["a"] = QPoint(90, 80);
-    levelPointPositions["b"] = QPoint(220, 80);
-    levelPointPositions["c"] = QPoint(350, 80);
-    levelPointPositions["d"] = QPoint(90, 320);
-    levelPointPositions["e"] = QPoint(220, 320);
-    levelPointPositions["f"] = QPoint(350, 320);
-    levelPointPositions["g"] = QPoint(430, 200);
+    levelPointPositions["moveToA();"] = QPoint(90, 80);
+    levelPointPositions["moveToB();"] = QPoint(220, 80);
+    levelPointPositions["moveToC();"] = QPoint(350, 80);
+    levelPointPositions["moveToD();"] = QPoint(90, 320);
+    levelPointPositions["moveToE();"] = QPoint(220, 320);
+    levelPointPositions["moveToF();"] = QPoint(350, 320);
+    levelPointPositions["moveToG();"] = QPoint(430, 200);
 
-    addPointVisual("a", levelPointPositions["a"] + QPoint(6, 6));
-    addPointVisual("b", levelPointPositions["b"] + QPoint(6, 6));
-    addPointVisual("c", levelPointPositions["c"] + QPoint(6, 6));
-    addPointVisual("d", levelPointPositions["d"] + QPoint(6, 6));
-    addPointVisual("e", levelPointPositions["e"] + QPoint(6, 6));
-    addPointVisual("f", levelPointPositions["f"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["g"] + QPoint(6, 6));
+    addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
+    addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
+    addPointVisual("c", levelPointPositions["moveToC();"] + QPoint(6, 6));
+    addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
+    addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
+    addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -339,8 +340,8 @@ void MainWindow::setUpLevel1()
     castle = new QLabel(canvas);
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 4, TILE * 4);
-    castle->move(levelPointPositions[goalPoint] + QPoint(25, -10));
+    castle->setFixedSize(TILE * 2, TILE * 2);
+    castle->move(levelPointPositions[goalPoint]);
 
     setUpDragons();
 
@@ -461,7 +462,6 @@ void MainWindow::stepPlayerMovement()
 
         if (won()) {
             completeCurrentLevel();
-            emit levelCompleted();
         }
         return;
     }
@@ -820,6 +820,7 @@ void MainWindow::completeCurrentLevel()
     unlockLevelButtons();
 
     // If the current level is cleared, a window pops up (containing text, the score, and options).
+    emit levelCompleted();
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("Level Complete!");
     msgBox.setText("Congratulations! You completed this level!\n"
@@ -858,7 +859,7 @@ void MainWindow::on_runButton_clicked()
         if (moveTimer) moveTimer->stop();
         if (dragonTimer) dragonTimer->stop();
         activeRoute.clear();
-        exitRoutePointSelectionMode();
+        //exitRoutePointSelectionMode();
         resetPrincessToStart();
         resetDragonsToStart();
         return;
@@ -870,7 +871,7 @@ void MainWindow::on_runButton_clicked()
 
     setRunning(true);
 
-    exitRoutePointSelectionMode();
+    //exitRoutePointSelectionMode();
 
     gameStarted = true;
     startPlayerMovement(route);
@@ -880,12 +881,9 @@ void MainWindow::on_runButton_clicked()
 void MainWindow::setRunning(bool isRunning) {
     running = isRunning;
     ui->runButton->setText(isRunning ? "Reset" : "Run");
-
     ui->hintButton->setDisabled(isRunning);
     ui->clearButton->setDisabled(isRunning);
     ui->backToLevelsButton->setDisabled(isRunning);
-    ui->workspaceWidget->setEnabled(!isRunning);
-    ui->blockSpaceWidget->setEnabled(!isRunning);
 }
 
 void MainWindow::on_clearButton_clicked()
@@ -1061,20 +1059,20 @@ void MainWindow::on_restartButton_clicked()
 
 void MainWindow::createRoutePointBlocks()
 {
-    for (CodeBlock *block : routePointBlocks) {
-        if (block) {
-            block->deleteLater();
-        }
-    }
-    routePointBlocks.clear();
+    // for (CodeBlock *block : routePointBlocks) {
+    //     if (block) {
+    //         block->deleteLater();
+    //     }
+    // }
+    //routePointBlocks.clear();
 
     for (const QString &pointName : currentLevelRoutePoints) {
         CodeBlock *pointBlock = new CodeBlock(pointName, "routePoint");
         ui->blockSpaceWidget->addBlock(pointBlock);
-        pointBlock->hide();
+        //pointBlock->hide();
 
-        connect(pointBlock, &CodeBlock::blockClicked,
-                this, &MainWindow::on_route_point_block_clicked);
+        // connect(pointBlock, &CodeBlock::blockClicked,
+        //         this, &MainWindow::on_route_point_block_clicked);
 
         routePointBlocks.append(pointBlock);
     }
@@ -1101,7 +1099,7 @@ void MainWindow::enterRoutePointSelectionMode(CodeBlock *moveBlock)
 
 void MainWindow::exitRoutePointSelectionMode()
 {
-    setRoutePointsVisible(false);
+    setRoutePointsVisible(true);
     setNormalPaletteBlocksVisible(true);
 
     selectedMoveBlock = nullptr;

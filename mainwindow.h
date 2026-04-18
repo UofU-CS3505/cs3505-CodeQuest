@@ -57,7 +57,7 @@ private:
     QMap<QString, QPoint> levelPointPositions;
 
     QString startPoint = "start";
-    QString goalPoint = "g";
+    QString goalPoint = "moveToG();";
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
