@@ -613,6 +613,7 @@ void MainWindow::clearLevel2Visuals()
     guardZone = nullptr;
     dragon1 = nullptr;
     dragon2 = nullptr;
+    dragonAlertZone = nullptr;
 }
 
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
@@ -778,10 +779,10 @@ void MainWindow::stepPlayerMovement()
                     return;
                 } else {
                     activeRoute.removeFirst();
-                    activeRoute.removeFirst();
-                    if (!activeRoute.isEmpty()) {
-                        activeRoute.removeFirst();
-                    }
+                    // activeRoute.removeFirst();
+                    // if (!activeRoute.isEmpty()) {
+                    //     activeRoute.removeFirst();
+                    // }
 
                     if (activeRoute.isEmpty()) {
                         moveTimer->stop();
@@ -897,12 +898,14 @@ void MainWindow::setUpDragons(){
     dragon1->setScaledContents(true);
     dragon1->setFixedSize(TILE, TILE);
     dragon1->move(125, 180);
+    dragon1->show();
 
     dragon2 = new QLabel(canvas);
     dragon2->setPixmap(QPixmap(":/images/dragon.png"));
     dragon2->setScaledContents(true);
     dragon2->setFixedSize(TILE, TILE);
     dragon2->move(265, 180);
+    dragon2->show();
 
     // set up how far the dragon moves each time, and how often it triggers a movement.
     dragonTimer = new QTimer(this);
