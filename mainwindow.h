@@ -131,8 +131,11 @@ private:
 
     // for level3
     int doorHitCount = 0;
-    static const int DOOR_HITS_NEEDED = 3;
+    static const int DOOR_HITS_NEEDED = 2;
     QLabel *door = nullptr;
+    QVector<QLabel*> lockLabels;   // locks above A, disappear one by one on each A visit
+    QVector<QLabel*> keyLabels;    // keys above B, one picked up on each B visit
+    QLabel *carriedKey = nullptr;  // the key currently following the princess
     void clearLevel3Visuals();
     void resetLevel3();
     QStringList expandForLoops(const QStringList &raw) const;

@@ -4,5 +4,7 @@
         <file>dragon.png</file>
         <file>princess.png</file>
         <file>grass.png</file>
+        <file>key.png</file>
+        <file>lock.png</file>
     </qresource>
 </RCC>

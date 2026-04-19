@@ -682,7 +682,30 @@ void MainWindow::setUpLevel3()
     addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
     addPointVisual("C", levelPointPositions["moveToC();"] + QPoint(6, 6));
 
-    // Door/wall between B and C
+    // 2 locks above A
+    lockLabels.clear();
+    for (int i = 0; i < DOOR_HITS_NEEDED; i++) {
+        QLabel *lock = new QLabel(canvas);
+        lock->setPixmap(QPixmap(":/images/lock.png").scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        lock->setGeometry(levelPointPositions["moveToA();"].x() - 10 + i * 26, 160, 22, 22);
+        lock->setStyleSheet("background: transparent;");
+        lock->show();
+        lockLabels.append(lock);
+    }
+
+    // 2 keys above B
+    keyLabels.clear();
+    for (int i = 0; i < DOOR_HITS_NEEDED; i++) {
+        QLabel *key = new QLabel(canvas);
+        key->setPixmap(QPixmap(":/images/key.png").scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        key->setGeometry(levelPointPositions["moveToB();"].x() - 10 + i * 26, 160, 22, 22);
+        key->setStyleSheet("background: transparent;");
+        key->show();
+        keyLabels.append(key);
+    }
+
+    carriedKey = nullptr;
+
     door = new QLabel("X\nX\nX\nX\nX\nX\nX\nX", canvas);
     door->setAlignment(Qt::AlignCenter);
     door->setGeometry(368, 0, 28, canvas->height());
@@ -722,6 +745,9 @@ void MainWindow::clearLevel3Visuals()
     dragon1  = nullptr; dragon2 = nullptr;
     door     = nullptr;
     dragonAlertZone = nullptr;
+    lockLabels.clear();
+    keyLabels.clear();
+    carriedKey = nullptr;
 }
 
 void MainWindow::resetLevel3()
@@ -736,6 +762,11 @@ void MainWindow::resetLevel3()
             "border-left: 3px solid #660000; border-right: 3px solid #660000;");
         door->show();
     }
+
+    // restore all locks and keys, drop any carried key
+    for (QLabel *lock : lockLabels) if (lock) lock->show();
+    for (QLabel *key  : keyLabels)  if (key)  key->show();
+    carriedKey = nullptr;
 }
 
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
@@ -782,7 +813,6 @@ QStringList MainWindow::getProgramRoute() const
             (block->getType() == "scopeBracket" && block->text() == "}")) {
             route << block->text();
         }
-        // { is visual only — } marks end of for loop body
     }
     return route;
 }
@@ -823,7 +853,7 @@ void MainWindow::resetDragonsToStart(){
     dragon1Direction = -1;
     dragon2Direction = -1;
 
-    // stop for 2s then continue moving.
+    // stop for 2s then continue moving
     if (gameStarted) {
         QTimer::singleShot(2000, this, [this]() {
             if (dragonMovementEnabled && gameStarted) {
@@ -913,9 +943,22 @@ void MainWindow::stepPlayerMovement()
                 }
             }
         } else if (currentLevel == 3) {
-            // once it hits the threshold, hide the door so C can go
+            // arriving at B: pick up one key (it will follow the princess until she reaches A)
             if (targetName == "moveToB();") {
+                if (!keyLabels.isEmpty()) {
+                    carriedKey = keyLabels.takeLast();
+                }
+            }
+
+            // arriving at A while carrying a key: drop the key and remove one lock
+            if (targetName == "moveToA();" && carriedKey) {
+                carriedKey->hide();
+                carriedKey = nullptr;
                 doorHitCount++;
+                if (!lockLabels.isEmpty()) {
+                    QLabel *lock = lockLabels.takeLast();
+                    lock->hide();
+                }
                 if (doorHitCount >= DOOR_HITS_NEEDED && door) {
                     door->hide();
                 }
@@ -958,6 +1001,12 @@ void MainWindow::stepPlayerMovement()
         if (princess->x() + princess->width() > wallX) {
             princess->move(wallX - princess->width(), princess->y());
         }
+    }
+
+    // carried key floats just above the princess while she's moving
+    if (currentLevel == 3 && carriedKey) {
+        carriedKey->move(princess->x() + princess->width() / 2 - 11,
+                         princess->y() - 24);
     }
 
     if (currentLevel == 2) {
