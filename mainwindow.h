@@ -123,7 +123,7 @@ private:
 
     //for level2
     void setUpGuard();
-    void resetIfLevelState();
+    void resetLevel2();
     void updateGuardCheck();
     void updateIfLevelLogic();
     void setUpLevel2();

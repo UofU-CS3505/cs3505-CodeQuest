@@ -33,9 +33,17 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
             "padding: 6px;"
             );
     }
-    // else if (type == "ifStatement") {
-    //     setStyleSheet("background-color: purple; color: white; padding: 6px; border: 1px solid black;");
-    // }
+    else if (type == "ifStatement") {
+        setStyleSheet(
+            "background-color: purple;"
+            "color: white;"
+            "border: 2px solid rgba(0,0,0,0.6);"
+            "border-bottom: 4px solid rgba(0,0,0,0.25);"
+            "border-radius: 12px;"
+            "padding: 6px;"
+            "font-weight: bold;"
+            );
+    }
     // else if (type == "turnLeft") {
     //     setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
     // }
