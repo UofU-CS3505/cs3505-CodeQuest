@@ -343,7 +343,8 @@ void MainWindow::setUpLevel1()
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
     castle->setFixedSize(TILE * 2, TILE * 2);
-    castle->move(levelPointPositions[goalPoint]);
+    QPoint p = levelPointPositions[goalPoint];
+    castle->move(p.x() - TILE/2, p.y() - TILE/2);
     castle->show();
 
     setUpDragons();
@@ -412,6 +413,8 @@ void MainWindow::setUpLevel2()
     castle->setPixmap(QPixmap(":/images/castle.png"));
     castle->setScaledContents(true);
     castle->setFixedSize(TILE * 2, TILE * 2);
+    QPoint p = levelPointPositions["moveToB()"];
+    castle->move(p.x() - TILE/2, p.y() - TILE/2);
     castle->move(levelPointPositions["moveToB();"] + QPoint(28, -18));
     castle->show();
 
@@ -1232,7 +1235,6 @@ void MainWindow::on_runButton_clicked()
         if (moveTimer) moveTimer->stop();
         if (dragonTimer) dragonTimer->stop();
         activeRoute.clear();
-        //exitRoutePointSelectionMode();
         resetPrincessToStart();
         if (currentLevel == 1) {
             resetDragonsToStart();
@@ -1244,11 +1246,7 @@ void MainWindow::on_runButton_clicked()
 
     // run
     QStringList route = getProgramRoute();
-    if (route.isEmpty()) return;
-
     setRunning(true);
-
-    //exitRoutePointSelectionMode();
 
     gameStarted = true;
     startPlayerMovement(route);
