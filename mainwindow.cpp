@@ -292,7 +292,7 @@ void MainWindow::setUpLevels()
     ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
     createRoutePointBlocks();
     setRoutePointsVisible(true);
 }
@@ -322,7 +322,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToG();"] = QPoint(430, 200);
+    levelPointPositions["moveToCastle();"] = QPoint(430, 200);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -330,7 +330,7 @@ void MainWindow::setUpLevel1()
     addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
     addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
     addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToCastle();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -776,7 +776,7 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->setGeometry(pos.x(), pos.y(), 28, 28);
 
     bool isGoal =
-        (goalPoint == "moveToG();" && name.toLower() == "g") ||
+        (goalPoint == "moveToCastle();" && name.toLower() == "g") ||
         (goalPoint == "moveToB();" && name.toLower() == "b") ||
         (goalPoint == "moveToC();" && name.toLower() == "c");
 
@@ -1360,7 +1360,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
     if (levelNumber == 1) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
+            "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"
         };
         createRoutePointBlocks();
         setUpLevel1();
