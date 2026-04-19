@@ -630,6 +630,7 @@ QStringList MainWindow::expandForLoops(const QStringList &raw) const
             int times = token.mid(4, token.size() - 5).toInt(&ok);
             if (!ok || times <= 0) { i++; continue; }
 
+            // collect everything between for(N) and the closing }
             QStringList body;
             int j = i + 1;
             while (j < raw.size()
@@ -637,12 +638,15 @@ QStringList MainWindow::expandForLoops(const QStringList &raw) const
                    && !raw[j].startsWith("for(")) {
                 body << raw[j++];
             }
+            // consume the } so it doesn't leak into the result
             if (j < raw.size() && raw[j] == "}") j++;
 
+            // repeat the body N times
             for (int t = 0; t < times; t++)
                 result << body;
             i = j;
         } else if (token == "}") {
+            // orphan } with no matching for — skip it
             i++;
         } else {
             result << token;
@@ -909,6 +913,7 @@ void MainWindow::stepPlayerMovement()
                 }
             }
         } else if (currentLevel == 3) {
+            // once it hits the threshold, hide the door so C can go
             if (targetName == "moveToB();") {
                 doorHitCount++;
                 if (doorHitCount >= DOOR_HITS_NEEDED && door) {
@@ -916,6 +921,8 @@ void MainWindow::stepPlayerMovement()
                 }
             }
 
+            // if the player tries to go to C before the door is open,
+            // snap back to B
             if (targetName == "moveToC();" && doorHitCount < DOOR_HITS_NEEDED) {
                 princess->move(levelPointPositions["moveToB();"]);
                 activeRoute.removeFirst();
@@ -1310,12 +1317,14 @@ void MainWindow::openSpecificLevel(int levelNumber)
         setUpLevel1();
         resetPrincessToStart();
         resetDragonsToStart();
+        QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 2) {
         currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
         createRoutePointBlocks();
         setUpLevel2();
         resetPrincessToStart();
+        QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 3) {
         currentLevelRoutePoints = {
@@ -1325,6 +1334,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
         createRoutePointBlocks();
         setUpLevel3();
         resetPrincessToStart();
+        QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
 }
 
