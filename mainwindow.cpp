@@ -909,7 +909,6 @@ void MainWindow::stepPlayerMovement()
                 }
             }
         } else if (currentLevel == 3) {
-            // Count B visits; open door after DOOR_HITS_NEEDED
             if (targetName == "moveToB();") {
                 doorHitCount++;
                 if (doorHitCount >= DOOR_HITS_NEEDED && door) {
@@ -919,6 +918,7 @@ void MainWindow::stepPlayerMovement()
 
             if (targetName == "moveToC();" && doorHitCount < DOOR_HITS_NEEDED) {
                 princess->move(levelPointPositions["moveToB();"]);
+                activeRoute.removeFirst();
                 if (activeRoute.isEmpty()) moveTimer->stop();
                 return;
             }
