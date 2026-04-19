@@ -292,7 +292,7 @@ void MainWindow::setUpLevels()
     ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
     createRoutePointBlocks();
     setRoutePointsVisible(true);
 }
@@ -322,7 +322,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToCastle();"] = QPoint(430, 200);
+    levelPointPositions["moveToG();"] = QPoint(430, 200);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -330,7 +330,7 @@ void MainWindow::setUpLevel1()
     addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
     addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
     addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["moveToCastle();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -619,6 +619,121 @@ void MainWindow::clearLevel2Visuals()
     dragonAlertZone = nullptr;
 }
 
+QStringList MainWindow::expandForLoops(const QStringList &raw) const
+{
+    QStringList result;
+    int i = 0;
+    while (i < raw.size()) {
+        const QString &token = raw[i];
+        if (token.startsWith("for(") && token.endsWith(")")) {
+            bool ok = false;
+            int times = token.mid(4, token.size() - 5).toInt(&ok);
+            if (!ok || times <= 0) { i++; continue; }
+
+            QStringList body;
+            int j = i + 1;
+            while (j < raw.size()
+                   && raw[j] != "}"
+                   && !raw[j].startsWith("for(")) {
+                body << raw[j++];
+            }
+            if (j < raw.size() && raw[j] == "}") j++;
+
+            for (int t = 0; t < times; t++)
+                result << body;
+            i = j;
+        } else if (token == "}") {
+            i++;
+        } else {
+            result << token;
+            i++;
+        }
+    }
+    return result;
+}
+
+void MainWindow::setUpLevel3()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+    canvas->setFixedSize(COLS * TILE, ROWS * TILE);
+    clearLevel3Visuals();
+
+    QLabel *bg = new QLabel(canvas);
+    bg->setPixmap(QPixmap(":/images/grass.png").scaled(
+        canvas->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    bg->setGeometry(0, 0, canvas->width(), canvas->height());
+    bg->lower(); bg->show();
+
+    startPoint = "start";
+    goalPoint  = "moveToC();";
+    doorHitCount = 0;
+
+    levelPointPositions.clear();
+    levelPointPositions["start"]      = QPoint(20,  200);
+    levelPointPositions["moveToA();"] = QPoint(140, 200);
+    levelPointPositions["moveToB();"] = QPoint(300, 200);
+    levelPointPositions["moveToC();"] = QPoint(420, 200);
+
+    addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
+    addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
+    addPointVisual("C", levelPointPositions["moveToC();"] + QPoint(6, 6));
+
+    // Door/wall between B and C
+    door = new QLabel("X\nX\nX\nX\nX\nX\nX\nX", canvas);
+    door->setAlignment(Qt::AlignCenter);
+    door->setGeometry(368, 0, 28, canvas->height());
+    door->setStyleSheet(
+        "background-color: #aa2222; color: white; font-weight: bold;"
+        "font-size: 14px; letter-spacing: 2px;"
+        "border-left: 3px solid #660000; border-right: 3px solid #660000;");
+    door->show();
+
+    princess = new QLabel(canvas);
+    princess->setPixmap(QPixmap(":/images/princess.png"));
+    princess->setScaledContents(true);
+    princess->setFixedSize(TILE, TILE);
+    princess->move(levelPointPositions[startPoint]);
+    princess->show();
+
+    castle = new QLabel(canvas);
+    castle->setPixmap(QPixmap(":/images/castle.png"));
+    castle->setScaledContents(true);
+    castle->setFixedSize(TILE * 2, TILE * 2);
+    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
+    castle->show();
+
+    princess->raise();
+    castle->raise();
+    door->raise();
+}
+
+void MainWindow::clearLevel3Visuals()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+    const auto labels = canvas->findChildren<QLabel*>(QString(), Qt::FindDirectChildrenOnly);
+    for (QLabel *l : labels) delete l;
+
+    walls.clear();
+    princess = nullptr; castle = nullptr;
+    dragon1  = nullptr; dragon2 = nullptr;
+    door     = nullptr;
+    dragonAlertZone = nullptr;
+}
+
+void MainWindow::resetLevel3()
+{
+    doorHitCount = 0;
+
+    if (door) {
+        door->setText("X\nX\nX\nX\nX\nX\nX\nX");
+        door->setStyleSheet(
+            "background-color: #aa2222; color: white; font-weight: bold;"
+            "font-size: 14px; letter-spacing: 2px;"
+            "border-left: 3px solid #660000; border-right: 3px solid #660000;");
+        door->show();
+    }
+}
+
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
 {
     QLabel *point = new QLabel(name, ui->gameCanvasFrame);
@@ -626,8 +741,9 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->setGeometry(pos.x(), pos.y(), 28, 28);
 
     bool isGoal =
-        (goalPoint == "moveToCastle();" && name.toLower() == "g") ||
-        (goalPoint == "moveToB();" && name.toLower() == "b");
+        (goalPoint == "moveToG();" && name.toLower() == "g") ||
+        (goalPoint == "moveToB();" && name.toLower() == "b") ||
+        (goalPoint == "moveToC();" && name.toLower() == "c");
 
     if (isGoal) {
         point->setStyleSheet(
@@ -657,9 +773,12 @@ QStringList MainWindow::getProgramRoute() const
         if (!block) continue;
 
         if (block->getType() == "routePoint" ||
-            block->getType() == "ifStatement") {
+            block->getType() == "ifStatement" ||
+            block->getType() == "forLoop" ||
+            (block->getType() == "scopeBracket" && block->text() == "}")) {
             route << block->text();
         }
+        // { is visual only — } marks end of for loop body
     }
     return route;
 }
@@ -737,8 +856,8 @@ void MainWindow::stepPlayerMovement()
     bool hasReactiveIf =
         (currentLevel == 2 &&
          activeRoute.size() >= 3 &&
-         (activeRoute[1] == "if (InAlertZone) {" ||
-          activeRoute[1] == "if (monsterDead) {") &&
+         (activeRoute[1] == "if (InAlertZone)" ||
+          activeRoute[1] == "if (monsterDead)") &&
          levelPointPositions.contains(activeRoute[2]));
 
     auto reactiveIfTriggered = [this]() -> bool {
@@ -746,11 +865,11 @@ void MainWindow::stepPlayerMovement()
             return false;
         }
 
-        if (activeRoute[1] == "if (InAlertZone) {") {
+        if (activeRoute[1] == "if (InAlertZone)") {
             return playerTriggeredMonster;
         }
 
-        if (activeRoute[1] == "if (monsterDead) {") {
+        if (activeRoute[1] == "if (monsterDead)") {
             return (!dragon1 || !dragon1->isVisible());
         }
 
@@ -782,20 +901,26 @@ void MainWindow::stepPlayerMovement()
                     return;
                 } else {
                     activeRoute.removeFirst();
-                    // activeRoute.removeFirst();
-                    // if (!activeRoute.isEmpty()) {
-                    //     activeRoute.removeFirst();
-                    // }
-
                     if (activeRoute.isEmpty()) {
                         moveTimer->stop();
-
-                        if (won()) {
-                            completeCurrentLevel();
-                        }
+                        if (won()) completeCurrentLevel();
                     }
                     return;
                 }
+            }
+        } else if (currentLevel == 3) {
+            // Count B visits; open door after DOOR_HITS_NEEDED
+            if (targetName == "moveToB();") {
+                doorHitCount++;
+                if (doorHitCount >= DOOR_HITS_NEEDED && door) {
+                    door->hide();
+                }
+            }
+
+            if (targetName == "moveToC();" && doorHitCount < DOOR_HITS_NEEDED) {
+                princess->move(levelPointPositions["moveToB();"]);
+                if (activeRoute.isEmpty()) moveTimer->stop();
+                return;
             }
         } else {
             if (isTouchingDragon()) {
@@ -820,6 +945,13 @@ void MainWindow::stepPlayerMovement()
     int nextY = static_cast<int>(std::round(currentPos.y() + (dy / distance) * playerSpeed));
 
     princess->move(nextX, nextY);
+
+    if (currentLevel == 3 && door && door->isVisible()) {
+        const int wallX = door->x();
+        if (princess->x() + princess->width() > wallX) {
+            princess->move(wallX - princess->width(), princess->y());
+        }
+    }
 
     if (currentLevel == 2) {
         updateIfLevelLogic();
@@ -970,6 +1102,10 @@ bool MainWindow::won()
 
     if (currentLevel == 2) {
         return !dragon1 || !dragon1->isVisible();
+    }
+
+    if (currentLevel == 3) {
+        return doorHitCount >= DOOR_HITS_NEEDED;
     }
 
     return true;
@@ -1163,10 +1299,12 @@ void MainWindow::openSpecificLevel(int levelNumber)
     activeRoute.clear();
     gameStarted = false;
 
+    ui->workspaceWidget->clearBlocks();
+
     if (levelNumber == 1) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"
+            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
         };
         createRoutePointBlocks();
         setUpLevel1();
@@ -1174,9 +1312,18 @@ void MainWindow::openSpecificLevel(int levelNumber)
         resetDragonsToStart();
     }
     else if (levelNumber == 2) {
-        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone) {", "if (monsterDead) {"};
+        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
         createRoutePointBlocks();
         setUpLevel2();
+        resetPrincessToStart();
+    }
+    else if (levelNumber == 3) {
+        currentLevelRoutePoints = {
+            "moveToA();", "moveToB();", "moveToC();",
+            "for(3)", "for(2)", "{", "}"
+        };
+        createRoutePointBlocks();
+        setUpLevel3();
         resetPrincessToStart();
     }
 }
@@ -1240,12 +1387,18 @@ void MainWindow::on_runButton_clicked()
             resetDragonsToStart();
         } else if (currentLevel == 2) {
             resetLevel2();
+        } else if (currentLevel == 3) {
+            resetLevel3();
         }
         return;
     }
 
-    // run
-    QStringList route = getProgramRoute();
+    QStringList rawRoute = getProgramRoute();
+    if (rawRoute.isEmpty()) return;
+
+    QStringList route = (currentLevel == 3) ? expandForLoops(rawRoute) : rawRoute;
+    if (route.isEmpty()) return;
+
     setRunning(true);
 
     gameStarted = true;
@@ -1279,31 +1432,47 @@ void MainWindow::on_hintButton_clicked()
     static const HintContent hints[] = {
         // Level 1
         {
-            "Level 1 Hint — Methods",
-            "<b>What's a method?</b><br><br>"
-            "A method is a named action you can call to make something happen.<br><br>"
-            "<b>How to play:</b><br>"
-            "1. Drag a <span style='color:#90ee90;'>move</span> block into your workspace.<br>"
-            "2. Click the move block to pick a destination (A–G).<br>"
-            "3. Chain multiple move blocks to navigate around the dragons.<br><br>"
-            "<b>Tip:</b> The dragons patrol vertically in the middle. "
-            "Try going (some routes, need to be fill later)...."
+            "Level 1 — Methods",
+            "<b>What is a method?</b><br>"
+            "A method is a named action — calling it makes something happen. "
+            "<span style='color:#90ee90;'>moveToA();</span> tells the princess to walk to point A.<br><br>"
+            "<b>How blocks work:</b><br>"
+            "Drag destination blocks into <i>Your Code</i>. They run <b>top to bottom</b>, one after another — just like lines of code.<br><br>"
+            "<b>About the dragons:</b><br>"
+            "They patrol <b>up and down</b> along fixed columns and never leave those columns. "
+            "If the princess shares space with a dragon at any moment, the run resets.<br><br>"
+            "<i>Look at the map — which points are safely out of the dragons' reach?</i>"
         },
         // Level 2
         {
-            "Level 2 Hint — For Loops",
-            "<b>Coming soon!</b><br><br>"
-            "This level will teach you how to use a <b>for loop</b> "
-            "to repeat actions without duplicating blocks.<br><br>"
-            "<i>()</i>"
+            "Level 2 — if Statements",
+            "<b>What is an if statement?</b><br>"
+            "An if statement checks a condition and changes what happens next based on the result.<br><br>"
+            "<b>How it works here:</b><br>"
+            "Place a destination block, then an <span style='color:#dd88ff;'>if</span> block directly below it. "
+            "When the princess <b>arrives</b> at that destination, the condition is checked.<br>"
+            "· If the condition is <b>true</b> → the next destination is <b>skipped</b>.<br>"
+            "· If the condition is <b>false</b> → the next destination is <b>visited</b>.<br><br>"
+            "<b>The dragon and the guard:</b><br>"
+            "The dragon chases the princess once she enters its red zone. "
+            "The guard eliminates any dragon that wanders into the gold zone.<br><br>"
+            "<i>Think: how can you use the guard to remove the obstacle blocking your path?</i>"
         },
         // Level 3
         {
-            "Level 3 Hint — If Statements",
-            "<b>Coming soon!</b><br><br>"
-            "This level will teach you how to use an <b>if statement</b> "
-            "to react to what's happening on screen.<br><br>"
-            "<i>()</i>"
+            "Level 3 — for Loops",
+            "<b>What is a for loop?</b><br>"
+            "A for loop repeats a set of actions a fixed number of times — "
+            "instead of writing the same blocks over and over, you write them once and say how many times to repeat.<br><br>"
+            "<b>How to use it:</b><br>"
+            "Drag <span style='color:#88ff88;'>for(N)</span> into your workspace, "
+            "then wrap the blocks you want repeated inside <span style='color:#ffd700;'>{</span> "
+            "and <span style='color:#ffd700;'>}</span>. "
+            "Anything <b>outside</b> the braces runs only once, after the loop finishes.<br><br>"
+            "<b>The door:</b><br>"
+            "The red wall only opens after the princess visits point B a certain number of times. "
+            "Once it disappears, the path to C is clear.<br><br>"
+            "<i>How many times does the door need to be visited? What should be inside the loop, and what should be outside?</i>"
         },
         // Level 4
         {
@@ -1328,7 +1497,7 @@ void MainWindow::on_hintButton_clicked()
 
     QDialog dialog(this);
     dialog.setWindowTitle("Hint");
-    dialog.setFixedSize(420, 300);
+    dialog.setFixedSize(460, 380);
     dialog.setStyleSheet(
         "QDialog {"
         "  background-color: #0d0d1a;"
@@ -1445,7 +1614,10 @@ void MainWindow::createRoutePointBlocks()
     routePointBlocks.clear();
 
     for (const QString &pointName : currentLevelRoutePoints) {
-        QString blockType = pointName.startsWith("if") ? "ifStatement" : "routePoint";
+        QString blockType = pointName.startsWith("if")    ? "ifStatement"
+                            : pointName.startsWith("for(")  ? "forLoop"
+                            : (pointName == "{" || pointName == "}") ? "scopeBracket"
+                                                                     : "routePoint";
         CodeBlock *pointBlock = new CodeBlock(pointName, blockType);
         ui->blockSpaceWidget->addBlock(pointBlock);
         //pointBlock->hide();

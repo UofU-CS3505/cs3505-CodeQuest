@@ -44,6 +44,29 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
             "font-weight: bold;"
             );
     }
+    else if (type == "forLoop") {
+        setStyleSheet(
+            "background-color: #1a6b1a;"
+            "color: #ccffcc;"
+            "border: 2px solid rgba(0,0,0,0.6);"
+            "border-bottom: 4px solid rgba(0,0,0,0.25);"
+            "border-radius: 12px;"
+            "padding: 6px;"
+            "font-weight: bold;"
+            );
+    }
+    else if (type == "scopeBracket") {
+        setStyleSheet(
+            "background-color: #2a2a2a;"
+            "color: #ffd700;"
+            "border: 2px solid #555555;"
+            "border-radius: 6px;"
+            "font-size: 18px;"
+            "font-weight: bold;"
+            );
+        setMinimumWidth(40);
+        setMaximumWidth(60);
+    }
     // else if (type == "turnLeft") {
     //     setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
     // }

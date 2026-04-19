@@ -59,7 +59,7 @@ private:
     QMap<QString, QPoint> levelPointPositions;
 
     QString startPoint = "start";
-    QString goalPoint = "moveToCastle();";
+    QString goalPoint = "moveToG();";
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
@@ -128,6 +128,14 @@ private:
     void updateIfLevelLogic();
     void setUpLevel2();
     void clearLevel2Visuals();
+
+    // for level3
+    int doorHitCount = 0;
+    static const int DOOR_HITS_NEEDED = 3;
+    QLabel *door = nullptr;
+    void clearLevel3Visuals();
+    void resetLevel3();
+    QStringList expandForLoops(const QStringList &raw) const;
 
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
