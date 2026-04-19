@@ -292,7 +292,7 @@ void MainWindow::setUpLevels()
     ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
     createRoutePointBlocks();
     setRoutePointsVisible(true);
 }
@@ -322,7 +322,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToG();"] = QPoint(430, 200);
+    levelPointPositions["moveToCastle();"] = QPoint(430, 200);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -330,7 +330,7 @@ void MainWindow::setUpLevel1()
     addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
     addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
     addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToCastle();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -626,7 +626,7 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->setGeometry(pos.x(), pos.y(), 28, 28);
 
     bool isGoal =
-        (goalPoint == "moveToG();" && name.toLower() == "g") ||
+        (goalPoint == "moveToCastle();" && name.toLower() == "g") ||
         (goalPoint == "moveToB();" && name.toLower() == "b");
 
     if (isGoal) {
@@ -737,8 +737,8 @@ void MainWindow::stepPlayerMovement()
     bool hasReactiveIf =
         (currentLevel == 2 &&
          activeRoute.size() >= 3 &&
-         (activeRoute[1] == "if (InAlertZone)" ||
-          activeRoute[1] == "if (monsterDead)") &&
+         (activeRoute[1] == "if (InAlertZone) {" ||
+          activeRoute[1] == "if (monsterDead) {") &&
          levelPointPositions.contains(activeRoute[2]));
 
     auto reactiveIfTriggered = [this]() -> bool {
@@ -746,11 +746,11 @@ void MainWindow::stepPlayerMovement()
             return false;
         }
 
-        if (activeRoute[1] == "if (InAlertZone)") {
+        if (activeRoute[1] == "if (InAlertZone) {") {
             return playerTriggeredMonster;
         }
 
-        if (activeRoute[1] == "if (monsterDead)") {
+        if (activeRoute[1] == "if (monsterDead) {") {
             return (!dragon1 || !dragon1->isVisible());
         }
 
@@ -1166,7 +1166,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
     if (levelNumber == 1) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
+            "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"
         };
         createRoutePointBlocks();
         setUpLevel1();
@@ -1174,7 +1174,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
         resetDragonsToStart();
     }
     else if (levelNumber == 2) {
-        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
+        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone) {", "if (monsterDead) {"};
         createRoutePointBlocks();
         setUpLevel2();
         resetPrincessToStart();
