@@ -70,6 +70,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(moveTimer, &QTimer::timeout,
             this, &MainWindow::stepPlayerMovement);
+
+    // tracking score
+    scoreTimer = new QTimer(this);
+    scoreTimer->setInterval(100);
+
+    connect(scoreTimer, &QTimer::timeout, this, [this]() {
+        finalScore -= 5;
+        if (finalScore < 0) {
+            finalScore = 0;
+        }
+    });
 }
 
 MainWindow::~MainWindow()
@@ -769,6 +780,28 @@ void MainWindow::resetLevel3()
     carriedKey = nullptr;
 }
 
+//-------------------- For score --------------------
+void MainWindow::resetScore()
+{
+    finalScore = 5000;
+}
+
+void MainWindow::startScoreTracking()
+{
+    resetScore();
+
+    if (scoreTimer) {
+        scoreTimer->start();
+    }
+}
+
+void MainWindow::stopScoreTracking()
+{
+    if (scoreTimer) {
+        scoreTimer->stop();
+    }
+}
+
 void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
 {
     QLabel *point = new QLabel(name, ui->gameCanvasFrame);
@@ -1048,6 +1081,7 @@ bool MainWindow::isTouchingDragon() const
 
 void MainWindow::handlePlayerDeath()
 {
+    stopScoreTracking();
     on_runButton_clicked();
 }
 
@@ -1295,30 +1329,30 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
             ui->levelDescriptionLabel->setText("Level One:\n"
                                                "Basic method\n"
                                                "Learn how to use the move(); method\n"
-                                               "Score: " + QString::number(saveFile.getScore(1)));
+                                               "Highest Score: " + QString::number(saveFile.getScore(1)));
         } else if (levelButton == ui->level_2_Button){
             ui->levelDescriptionLabel->setText("Level Two:\n"
                                                "for loop\n"
                                                "Learn how to simplify code by using a loop\n"
                                                "simplify the code you made last round by using loops\n"
-                                               "Score: " + QString::number(saveFile.getScore(2)));
+                                               "Highest Score: " + QString::number(saveFile.getScore(2)));
         } else if (levelButton == ui->level_3_Button){
             ui->levelDescriptionLabel->setText("Level Three:\n"
                                                "if statement\n"
                                                "learn that if you see the enemy, wait\n"
-                                               "Score: " + QString::number(saveFile.getScore(3)));
+                                               "Highest Score: " + QString::number(saveFile.getScore(3)));
         } else if (levelButton == ui->level_4_Button){
             ui->levelDescriptionLabel->setText("Level Four\n"
                                                "function\n"
                                                "learn that you can put multiple methods\n"
                                                "in a function and call it later\n"
-                                               "Score: " + QString::number(saveFile.getScore(4)));
+                                               "Highest Score: " + QString::number(saveFile.getScore(4)));
         } else {
             ui->levelDescriptionLabel->setText("Level Five:\n"
                                                "free for all: solve the level however you want\n"
                                                "using the skills that you learned\n"
                                                "try and get the simplest code that completes the same task\n"
-                                               "Score: " + QString::number(saveFile.getScore(5)));
+                                               "Highest Score: " + QString::number(saveFile.getScore(5)));
         }
     }
     return QMainWindow::eventFilter(levelButton, hoverEvent);
@@ -1389,6 +1423,12 @@ void MainWindow::openSpecificLevel(int levelNumber)
 
 void MainWindow::completeCurrentLevel()
 {
+    stopScoreTracking();
+    setRunning(false);
+
+    saveFile.updateScore(currentLevel, finalScore);
+    saveFile.save();
+
     int unlockedLevel = saveFile.getLatestUnlocked();
 
     // If the currently completed level is one prior to Level 5, unlock the next level.
@@ -1406,7 +1446,7 @@ void MainWindow::completeCurrentLevel()
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("Level Complete!");
     msgBox.setText("Congratulations! You completed this level!\n"
-                   "Your total score is " + QString::number(saveFile.getScore(currentLevel)));
+                   "Your total score is " + QString::QString::number(finalScore));
 
     // Create three option buttons.
     QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
@@ -1429,6 +1469,7 @@ void MainWindow::completeCurrentLevel()
 // -------------------- Game Page Slots --------------------
 void MainWindow::on_backToLevelsButton_clicked()
 {
+    stopScoreTracking();
     ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
 }
 
@@ -1440,6 +1481,8 @@ void MainWindow::on_runButton_clicked()
 
         if (moveTimer) moveTimer->stop();
         if (dragonTimer) dragonTimer->stop();
+        stopScoreTracking();
+
         activeRoute.clear();
         resetPrincessToStart();
         if (currentLevel == 1) {
@@ -1461,6 +1504,7 @@ void MainWindow::on_runButton_clicked()
     setRunning(true);
 
     gameStarted = true;
+    startScoreTracking();
     startPlayerMovement(route);
     if (currentLevel == 1) {
         dragonStartMove();

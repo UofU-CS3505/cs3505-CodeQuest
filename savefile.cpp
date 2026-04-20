@@ -54,6 +54,11 @@ void SaveFile::load() {
     latestUnlockedIndex = obj["unlockedLevels"].toInt();
 
     scores = vector<int>(5);
+    QJsonArray scoreArray = obj["scores"].toArray();
+
+    for (int i = 0; i < scoreArray.size() && i < 5; i++) {
+        scores[i] = scoreArray[i].toInt();
+    }
 }
 
 QJsonObject SaveFile::toJSON() const {
@@ -83,7 +88,7 @@ void SaveFile::updateUnlockedLevels(int levelIndex){
 }
 
 void SaveFile::updateScore(int levelIndex, int score){
-    if(score != 0 && score < scores[levelIndex - 1]){
+    if(score != 0 && score > scores[levelIndex - 1]){
         scores[levelIndex - 1] = score;
     }
 }
