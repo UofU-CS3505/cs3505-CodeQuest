@@ -1796,7 +1796,8 @@ void MainWindow::on_runButton_clicked()
         } else if (currentLevel == 2) {
             resetLevel2();
         } else if (currentLevel == 3) {
-            resetLevel3();
+            setUpLevel3();
+            resetPrincessToStart();
         }else if (currentLevel == 4) {
             setUpLevel4();
         }
