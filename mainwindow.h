@@ -253,26 +253,34 @@ private slots:
     void on_clearButton_clicked();
 
     /**
+     * Activates when the hint button is clicked.
      * @brief on_hintButton_clicked
      */
     void on_hintButton_clicked();
 
     /**
+     * Activates when the restart button is clicked.
      * @brief on_restartButton_clicked
      */
     void on_restartButton_clicked();
 
     /**
+     * Activates when the workspace move block is clicked.
      * @brief on_workspace_move_block_clicked
      */
     void on_workspace_move_block_clicked(CodeBlock *block);
 
     /**
+     * Activates when the on route point block is clicked.
      * @brief on_route_point_block_clicked
      */
     void on_route_point_block_clicked(CodeBlock *block);
 
 signals:
+    /**
+     * Activated when the level is completed.
+     * @brief levelCompleted
+     */
     void levelCompleted();
 };
 #endif // MAINWINDOW_H
