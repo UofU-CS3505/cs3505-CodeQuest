@@ -76,6 +76,7 @@ private:
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);
     void completeCurrentLevel();
+    void failCurrentLevel();
 
     // Canvas setup
     QLabel *princess;

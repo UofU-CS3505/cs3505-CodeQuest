@@ -1331,6 +1331,7 @@ void MainWindow::handlePlayerDeath()
 {
     stopScoreTracking();
     on_runButton_clicked();
+    failCurrentLevel();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -1852,6 +1853,33 @@ void MainWindow::completeCurrentLevel()
         } else {
             openSpecificLevel(currentLevel + 1);
         }
+    } else if (msgBox.clickedButton() == quitButton) {
+        ui->stackedWidget->setCurrentIndex(START_PAGE);
+    }
+}
+
+void MainWindow::failCurrentLevel()
+{
+    stopScoreTracking();
+    setRunning(false);
+
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("You Failed!");
+    msgBox.setText("You Failed this level!\n");
+
+    // Create three option buttons.
+    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
+    QPushButton *chooseLevelButton = msgBox.addButton("Choose Level", QMessageBox::ActionRole);
+    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+
+    msgBox.exec();
+
+    // Implement the functionality of each button.
+    if (msgBox.clickedButton() == restartButton) {
+        ui->workspaceWidget->clearBlocks();
+        openSpecificLevel(currentLevel);
+    } else if (msgBox.clickedButton() == chooseLevelButton) {
+        ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
     } else if (msgBox.clickedButton() == quitButton) {
         ui->stackedWidget->setCurrentIndex(START_PAGE);
     }
