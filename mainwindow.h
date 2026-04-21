@@ -140,6 +140,16 @@ private:
     void resetLevel3();
     QStringList expandForLoops(const QStringList &raw) const;
 
+    // for get the level score
+    QTimer *scoreTimer = nullptr;
+
+    // initial score is 5000.
+    int finalScore = 5000;
+
+    void startScoreTracking();
+    void stopScoreTracking();
+    void resetScore();
+
 protected:
     // --------Mouse events, Qt calls these when user interacts with the window----------
     /**
