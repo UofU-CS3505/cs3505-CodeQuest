@@ -1692,8 +1692,8 @@ void MainWindow::completeCurrentLevel()
 
     int unlockedLevel = saveFile.getLatestUnlocked();
 
-    // If the currently completed level is one prior to Level 5, unlock the next level.
-    if (unlockedLevel < 5) {
+    // only unlock up to level 4 — that's all we have for now
+    if (unlockedLevel < 4) {
         if (currentLevel == unlockedLevel) {
             saveFile.updateUnlockedLevels(unlockedLevel + 1);
             saveFile.save();
@@ -1721,7 +1721,52 @@ void MainWindow::completeCurrentLevel()
         ui->workspaceWidget->clearBlocks();
         openSpecificLevel(currentLevel);
     } else if (msgBox.clickedButton() == nextLevelButton) {
-        openSpecificLevel(currentLevel + 1);
+        if (currentLevel >= 4) {
+            // show a styled "coming soon" dialog instead of trying to open level 5
+            QDialog done(this);
+            done.setWindowTitle("You finished it!");
+            done.setFixedSize(380, 200);
+            done.setStyleSheet(
+                "QDialog {"
+                "  background-color: #0d0d1a;"
+                "  border: 2px solid #ffd700;"
+                "  border-radius: 12px;"
+                "}");
+
+            QVBoxLayout *vl = new QVBoxLayout(&done);
+            vl->setContentsMargins(28, 24, 28, 24);
+            vl->setSpacing(12);
+
+            QLabel *title = new QLabel("You've completed all levels!", &done);
+            title->setStyleSheet("color: #ffd700; font-size: 15px; font-weight: bold; background: transparent;");
+            title->setWordWrap(true);
+            title->setAlignment(Qt::AlignCenter);
+
+            QLabel *body = new QLabel("More levels are coming soon.\nStay tuned!", &done);
+            body->setStyleSheet("color: #c8d8e8; font-size: 13px; background: transparent;");
+            body->setAlignment(Qt::AlignCenter);
+
+            QPushButton *okBtn = new QPushButton("Back to Menu", &done);
+            okBtn->setFixedHeight(34);
+            okBtn->setStyleSheet(
+                "QPushButton {"
+                "  background-color: #1a1a2e; color: #ffd700;"
+                "  border: 1px solid #ffd700; border-radius: 6px;"
+                "  font-size: 13px; font-weight: bold;"
+                "}"
+                "QPushButton:hover { background-color: #252550; }");
+            connect(okBtn, &QPushButton::clicked, &done, &QDialog::accept);
+
+            vl->addWidget(title);
+            vl->addWidget(body);
+            vl->addStretch();
+            vl->addWidget(okBtn);
+
+            done.exec();
+            ui->stackedWidget->setCurrentIndex(START_PAGE);
+        } else {
+            openSpecificLevel(currentLevel + 1);
+        }
     } else if (msgBox.clickedButton() == quitButton) {
         ui->stackedWidget->setCurrentIndex(START_PAGE);
     }
