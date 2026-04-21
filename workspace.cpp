@@ -42,6 +42,7 @@ void Workspace::removeBlock(CodeBlock *block)
 
     layout->removeWidget(block);
     blocks.removeAll(block);
+    reindentAll();
 }
 
 void Workspace::insertRoutePointAfterMove(CodeBlock *moveBlock, CodeBlock *routePointBlock)
@@ -66,6 +67,37 @@ void Workspace::insertRoutePointAfterMove(CodeBlock *moveBlock, CodeBlock *route
     layout->insertWidget(insertIndex, routePointBlock);
     routePointBlock->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     routePointBlock->show();
+    reindentAll();
+}
+
+void Workspace::reindentAll()
+{
+    const int NORMAL_WIDTH  = 180;
+    const int BODY_WIDTH    = 150;  // narrower inside {}
+
+    int depth = 0;
+    for (CodeBlock *b : blocks) {
+        if (!b) continue;
+        QString type = b->getType();
+        QString text = b->text();
+
+        if (type == "scopeBracket" && text == "}") {
+            if (depth > 0) depth--;
+        }
+
+        if (type == "scopeBracket") {
+            // { and } keep their own small fixed size set in codeBlock.cpp
+            b->setMaximumWidth(60);
+            b->setMinimumWidth(40);
+        } else {
+            int w = (depth > 0) ? BODY_WIDTH : NORMAL_WIDTH;
+            b->setFixedWidth(w);
+        }
+
+        if (type == "scopeBracket" && text == "{") {
+            depth++;
+        }
+    }
 }
 
 void Workspace::dragEnterEvent(QDragEnterEvent *event)
@@ -130,4 +162,6 @@ void Workspace::dropEvent(QDropEvent *event)
     layout->insertWidget(insertIndex, block);
     block->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     event->acceptProposedAction();
+
+    reindentAll();
 }
