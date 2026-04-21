@@ -365,9 +365,6 @@ void MainWindow::applyDarkTheme()
 void MainWindow::setUpLevels()
 {
     setUpLevel1();
-    QLabel *methodsLabel = new QLabel("METHODS", this);
-    methodsLabel->setStyleSheet("color: white; font-weight: bold;" "font-size: 15px;");
-    ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
     currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
