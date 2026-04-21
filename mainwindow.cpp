@@ -104,7 +104,7 @@ void MainWindow::applyDarkTheme()
 
     ui->levelSelectionLabel->setStyleSheet(
         "QLabel {"
-        "  color: #e0e0e0;"
+        "  color: #FFCC00;"
         "}"
         );
 
@@ -1517,6 +1517,8 @@ void MainWindow::setLevelDescriptionStyles()
 {
     ui->levelDescriptionLabel->setStyleSheet(
         "border: 3px solid rgb(255, 215, 0);"
+        "background-color: rgba(255, 255, 0, 80);"
+        "color: black;"
         "border-radius: 12px;"
         );
 }

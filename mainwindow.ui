@@ -178,16 +178,16 @@
      <widget class="QLabel" name="levelSelectionLabel">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>400</x>
         <y>40</y>
-        <width>271</width>
+        <width>311</width>
         <height>71</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>Monotype Corsiva</family>
-        <pointsize>25</pointsize>
+        <pointsize>31</pointsize>
         <italic>true</italic>
         <bold>true</bold>
        </font>
@@ -545,6 +545,7 @@
         <font>
          <family>MV Boli</family>
          <pointsize>11</pointsize>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
