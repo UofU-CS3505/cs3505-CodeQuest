@@ -665,7 +665,6 @@ void MainWindow::clearLevel2Visuals()
 
     walls.clear();
     princess = nullptr;
-    //castle = nullptr;
     guard = nullptr;
     guardZone = nullptr;
     dragon1 = nullptr;
@@ -775,16 +774,7 @@ void MainWindow::setUpLevel3()
     princess->setFixedSize(TILE, TILE);
     princess->move(levelPointPositions[startPoint]);
     princess->show();
-
-    // castle = new QLabel(canvas);
-    // castle->setPixmap(QPixmap(":/images/castle.png"));
-    // castle->setScaledContents(true);
-    // castle->setFixedSize(TILE * 2, TILE * 2);
-    // castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
-    // castle->show();
-
     princess->raise();
-   // castle->raise();
     door->raise();
 }
 
