@@ -34,13 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->level_2_Button->installEventFilter(this);
     ui->level_3_Button->installEventFilter(this);
     ui->level_4_Button->installEventFilter(this);
-    // ui->level_5_Button->installEventFilter(this);
-
-    // Add code blocks to blockSpace
-    //ui->blockSpaceWidget->addBlock("move();", "move");
-    // ui->blockSpaceWidget->addBlock("if {", "ifStatement");
-    // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
-    // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
     setUpLevels();
 
@@ -51,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_2_Button, &QPushButton::clicked, this, &MainWindow::on_levelTwoButton_clicked);
     connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
-    // connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
     connect(ui->workspaceWidget, &Workspace::moveBlockClicked,
             this, &MainWindow::on_workspace_move_block_clicked);
 
@@ -416,20 +408,9 @@ void MainWindow::setUpLevel1()
     princess->setFixedSize(TILE, TILE);
     princess->move(levelPointPositions[startPoint]);
     princess->show();
-
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    QPoint p = levelPointPositions[goalPoint];
-    //castle->move(p.x() - TILE/2, p.y() - TILE/2);
-    castle->move(QPoint(400, 200));
-    castle->show();
+    princess->raise();
 
     setUpDragons();
-
-    princess->raise();
-    castle->raise();
 }
 
 void MainWindow::clearLevel1Visuals()
@@ -443,7 +424,6 @@ void MainWindow::clearLevel1Visuals()
 
     walls.clear();
     princess = nullptr;
-    castle = nullptr;
     dragon1 = nullptr;
     dragon2 = nullptr;
     dragonAlertZone = nullptr;
@@ -488,15 +468,6 @@ void MainWindow::setUpLevel2()
     princess->move(levelPointPositions["start"]);
     princess->show();
 
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    QPoint p = levelPointPositions["moveToB()"];
-    castle->move(p.x() - TILE/2, p.y() - TILE/2);
-    castle->move(levelPointPositions["moveToB();"] + QPoint(28, -18));
-    castle->show();
-
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
@@ -518,7 +489,6 @@ void MainWindow::setUpLevel2()
 
     dragon1->raise();
     princess->raise();
-    castle->raise();
 
     if (guard) {
         guard->raise();
@@ -547,14 +517,6 @@ void MainWindow::setUpGuard()
     guard->setFixedSize(TILE * 1.4, TILE * 1.4);
     guard->setGeometry(guardPos.x(), guardPos.y(), 32, 32);
     guard->setScaledContents(true);
-
-    // guard->setStyleSheet(
-    //     "background-color: darkred;"
-    //     "color: white;"
-    //     "border: 2px solid black;"
-    //     "border-radius: 16px;"
-    //     "font-weight: bold;"
-    //     );
     guard->show();
 
     const int zoneDiameter = 160;
@@ -703,7 +665,7 @@ void MainWindow::clearLevel2Visuals()
 
     walls.clear();
     princess = nullptr;
-    castle = nullptr;
+    //castle = nullptr;
     guard = nullptr;
     guardZone = nullptr;
     dragon1 = nullptr;
@@ -814,15 +776,15 @@ void MainWindow::setUpLevel3()
     princess->move(levelPointPositions[startPoint]);
     princess->show();
 
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
-    castle->show();
+    // castle = new QLabel(canvas);
+    // castle->setPixmap(QPixmap(":/images/castle.png"));
+    // castle->setScaledContents(true);
+    // castle->setFixedSize(TILE * 2, TILE * 2);
+    // castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
+    // castle->show();
 
     princess->raise();
-    castle->raise();
+   // castle->raise();
     door->raise();
 }
 
@@ -833,8 +795,9 @@ void MainWindow::clearLevel3Visuals()
     for (QLabel *l : labels) delete l;
 
     walls.clear();
-    princess = nullptr; castle = nullptr;
-    dragon1  = nullptr; dragon2 = nullptr;
+    princess = nullptr;
+    dragon1  = nullptr;
+    dragon2 = nullptr;
     door     = nullptr;
     dragonAlertZone = nullptr;
     lockLabels.clear();
@@ -903,12 +866,10 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
             "font-weight: bold;"
             );
     } else if (isGoal) {
-        point->setStyleSheet(
-            "background-color: gold;"
-            "border: 2px solid black;"
-            "border-radius: 14px;"
-            "font-weight: bold;"
-            );
+        point->setPixmap(QPixmap(":/images/castle.png"));
+        point->setScaledContents(true);
+        point->setFixedSize(TILE * 2, TILE * 2);
+        point->show();
     } else {
         point->setStyleSheet(
             "background-color: blue;"
@@ -990,13 +951,6 @@ void MainWindow::setUpLevel4()
     princess->move(levelPointPositions[startPoint]);
     princess->show();
 
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
-    castle->show();
-
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
@@ -1009,7 +963,6 @@ void MainWindow::setUpLevel4()
     if (dragonAlertZone) dragonAlertZone->raise();
     dragon1->raise();
     princess->raise();
-    castle->raise();
     door->raise();
 }
 

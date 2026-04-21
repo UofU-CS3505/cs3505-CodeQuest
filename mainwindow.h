@@ -80,7 +80,6 @@ private:
 
     // Canvas setup
     QLabel *princess;
-    QLabel *castle;
     QLabel *dragon1;
     QLabel *dragon2;
     QLabel *dragonAlertZone = nullptr;
