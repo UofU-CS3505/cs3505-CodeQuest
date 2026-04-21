@@ -81,11 +81,71 @@ MainWindow::MainWindow(QWidget *parent)
             finalScore = 0;
         }
     });
+
+    // set up menu button jiggle after layout is fully resolved
+    QTimer::singleShot(0, this, &MainWindow::initJiggle);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+// -------------------- Menu button jiggle (Box2D) --------------------
+
+void MainWindow::initJiggle()
+{
+    const QList<QPushButton*> btns = {
+        ui->restartButton, ui->levelsButton, ui->startButton, ui->aboutButton
+    };
+
+    for (QPushButton *btn : btns) {
+        b2BodyDef def;
+        def.type           = b2_dynamicBody;
+        def.position.Set(0.f, 0.f);
+        def.linearDamping  = 8.f;  // heavy damping — settles in ~0.5s
+        def.angularDamping = 8.f;
+        b2Body *body = jiggleWorld.CreateBody(&def);
+
+        b2PolygonShape shape;
+        shape.SetAsBox(1.f, 1.f);
+        b2FixtureDef fix;
+        fix.shape   = &shape;
+        fix.density = 1.f;
+        body->CreateFixture(&fix);
+
+        ButtonJiggle jg;
+        jg.button = btn;
+        jg.origin = btn->pos();
+        jg.body   = body;
+        jiggleBodies.append(jg);
+
+        btn->installEventFilter(this);
+    }
+
+    jiggleTimer = new QTimer(this);
+    jiggleTimer->setInterval(16);  // ~60fps
+    connect(jiggleTimer, &QTimer::timeout, this, &MainWindow::stepJiggle);
+    jiggleTimer->start();
+}
+
+void MainWindow::stepJiggle()
+{
+    jiggleWorld.Step(1.f / 60.f, 6, 2);
+
+    for (ButtonJiggle &jg : jiggleBodies) {
+        if (!jg.body || !jg.button) continue;
+
+        b2Vec2 pos = jg.body->GetPosition();
+
+        // spring force pulling back to origin
+        const float k = 40.f;
+        jg.body->ApplyForceToCenter(b2Vec2(-k * pos.x, -k * pos.y), true);
+
+        // apply offset to button position
+        jg.button->move(jg.origin + QPoint(static_cast<int>(pos.x),
+                                           static_cast<int>(pos.y)));
+    }
 }
 
 void MainWindow::applyDarkTheme()
@@ -1569,6 +1629,18 @@ void MainWindow::on_levelFiveButton_clicked()
 
 bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
 {
+    // menu button jiggle — kick the body on mouse enter
+    if (hoverEvent->type() == QEvent::Enter) {
+        for (ButtonJiggle &jg : jiggleBodies) {
+            if (jg.button == levelButton && jg.body) {
+                float ix = ((rand() % 201) - 100) / 10.f;  // ±10 units
+                float iy = ((rand() % 201) - 100) / 10.f;
+                jg.body->ApplyLinearImpulse(b2Vec2(ix, iy), jg.body->GetWorldCenter(), true);
+                break;
+            }
+        }
+    }
+
     // Check if the event corresponds to a mouse hover state.
     if (hoverEvent->type() == QEvent::Enter){
 

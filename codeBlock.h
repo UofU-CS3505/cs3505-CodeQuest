@@ -38,16 +38,19 @@ protected:
 
 private:
     /**
-     * @brief blockType The type of block (move, if, etc.)
+     * The type of block (move, if, etc.)
+     * @brief blockType
      */
     QString blockType;
     /**
-     *
+     * The position your mouse is in when the block is being dragged
+     * Keeps track of where to put the block.
      * @brief dragStartPos
      */
     QPoint dragStartPos;
     /**
-     * @brief dragged Whether the block is being dragged
+     * Whether the block is being dragged
+     * @brief dragged
      */
     bool dragged = false;
 };

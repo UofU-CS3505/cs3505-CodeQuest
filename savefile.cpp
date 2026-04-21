@@ -32,7 +32,7 @@ void SaveFile::load() {
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "No save detected!";
         latestUnlockedIndex = 1;
-        scores = vector<int>(5);
+        scores = vector<int>(4);
         save();
         return;
     }
@@ -56,7 +56,7 @@ void SaveFile::load() {
     scores = vector<int>(5);
     QJsonArray scoreArray = obj["scores"].toArray();
 
-    for (int i = 0; i < scoreArray.size() && i < 5; i++) {
+    for (int i = 0; i < scoreArray.size() && i < 4; i++) {
         scores[i] = scoreArray[i].toInt();
     }
 }
@@ -98,5 +98,5 @@ int SaveFile::getScore(int levelIndex){
 }
 
 void SaveFile::resetScores() {
-    scores = vector<int>(5);
+    scores = vector<int>(4);
 }
