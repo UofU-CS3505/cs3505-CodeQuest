@@ -365,9 +365,6 @@ void MainWindow::applyDarkTheme()
 void MainWindow::setUpLevels()
 {
     setUpLevel1();
-    QLabel *methodsLabel = new QLabel("METHODS", this);
-    methodsLabel->setStyleSheet("color: white; font-weight: bold;" "font-size: 15px;");
-    ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
     currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
@@ -1303,9 +1300,7 @@ bool MainWindow::isTouchingDragon() const
     if (dragon1 && dragon1->isVisible()) {
         QRect dragon1Rect = dragon1->geometry();
 
-        if (currentLevel == 4) {
-            dragon1Rect = dragon1Rect.adjusted(15, 15, -15, -15);
-        }
+        dragon1Rect = dragon1Rect.adjusted(15, 15, -15, -15);
 
         if (playerRect.intersects(dragon1Rect)) {
             return true;
@@ -1668,23 +1663,23 @@ bool MainWindow::eventFilter(QObject *levelButton, QEvent *hoverEvent)
                                                "Highest Score: " + QString::number(saveFile.getScore(1)));
         } else if (levelButton == ui->level_2_Button){
             ui->levelDescriptionLabel->setText("Level Two:\n"
-                                               "for loop\n"
-                                               "Learn how to simplify code by using a loop\n"
-                                               "simplify the code you made last round by using loops\n"
+                                               "if statement\n"
+                                               "learn that if you see the enemy, wait\n"
                                                "Highest Score: " + QString::number(saveFile.getScore(2)));
         } else if (levelButton == ui->level_3_Button){
             ui->levelDescriptionLabel->setText("Level Three:\n"
-                                               "if statement\n"
-                                               "learn that if you see the enemy, wait\n"
+                                               "for loop\n"
+                                               "Learn how to simplify code by using a loop\n"
+                                               "simplify the code you made last round by using loops\n"
                                                "Highest Score: " + QString::number(saveFile.getScore(3)));
         } else if (levelButton == ui->level_4_Button){
-            ui->levelDescriptionLabel->setText("Level Four\n"
+            ui->levelDescriptionLabel->setText("Level Four:\n"
                                                "function\n"
                                                "learn that you can put multiple methods\n"
                                                "in a function and call it later\n"
                                                "Highest Score: " + QString::number(saveFile.getScore(4)));
         } else {
-            ui->levelDescriptionLabel->setText("Level Five:\n"
+            ui->levelDescriptionLabel->setText("Level Check:\n"
                                                "free for all: solve the level however you want\n"
                                                "using the skills that you learned\n"
                                                "try and get the simplest code that completes the same task\n"
