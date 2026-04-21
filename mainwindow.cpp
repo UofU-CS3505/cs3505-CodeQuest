@@ -1300,9 +1300,7 @@ bool MainWindow::isTouchingDragon() const
     if (dragon1 && dragon1->isVisible()) {
         QRect dragon1Rect = dragon1->geometry();
 
-        if (currentLevel == 4) {
-            dragon1Rect = dragon1Rect.adjusted(15, 15, -15, -15);
-        }
+        dragon1Rect = dragon1Rect.adjusted(15, 15, -15, -15);
 
         if (playerRect.intersects(dragon1Rect)) {
             return true;
