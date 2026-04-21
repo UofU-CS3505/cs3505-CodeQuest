@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->level_2_Button->installEventFilter(this);
     ui->level_3_Button->installEventFilter(this);
     ui->level_4_Button->installEventFilter(this);
-    ui->level_5_Button->installEventFilter(this);
+    // ui->level_5_Button->installEventFilter(this);
 
     // Add code blocks to blockSpace
     //ui->blockSpaceWidget->addBlock("move();", "move");
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_2_Button, &QPushButton::clicked, this, &MainWindow::on_levelTwoButton_clicked);
     connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
-    connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
+    // connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
     connect(ui->workspaceWidget, &Workspace::moveBlockClicked,
             this, &MainWindow::on_workspace_move_block_clicked);
 
@@ -1260,7 +1260,7 @@ void MainWindow::setLevelButtonStyles()
     ui->level_2_Button->setStyleSheet(levelStyle);
     ui->level_3_Button->setStyleSheet(levelStyle);
     ui->level_4_Button->setStyleSheet(levelStyle);
-    ui->level_5_Button->setStyleSheet(levelStyle);
+    // ui->level_5_Button->setStyleSheet(levelStyle);
 }
 
 void MainWindow::setLevelDescriptionStyles()
@@ -1364,7 +1364,7 @@ void MainWindow::unlockLevelButtons()
     ui->level_2_Button->setEnabled(saveFile.isLevelUnlocked(2));
     ui->level_3_Button->setEnabled(saveFile.isLevelUnlocked(3));
     ui->level_4_Button->setEnabled(saveFile.isLevelUnlocked(4));
-    ui->level_5_Button->setEnabled(saveFile.isLevelUnlocked(5));
+    // ui->level_5_Button->setEnabled(saveFile.isLevelUnlocked(5));
 }
 
 void MainWindow::openSpecificLevel(int levelNumber)
