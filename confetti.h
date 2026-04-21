@@ -6,6 +6,7 @@
 #include <vector>
 #include <Box2D/Box2D.h>
 
+
 class Confetti : public QWidget
 {
     Q_OBJECT
