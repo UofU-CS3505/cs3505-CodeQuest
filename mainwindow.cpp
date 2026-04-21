@@ -530,7 +530,7 @@ void MainWindow::updateGuardCheck()
 
 void MainWindow::updateIfLevelLogic()
 {
-    if (currentLevel != 2 || !princess || !dragon1 || !dragon1->isVisible()) {
+    if ((currentLevel != 2 && currentLevel != 4) || !princess || !dragon1 || !dragon1->isVisible()) {
         return;
     }
 
@@ -540,7 +540,13 @@ void MainWindow::updateIfLevelLogic()
         playerTriggeredMonster = true;
     }
 
-    if (playerTriggeredMonster) {
+    if (currentLevel == 4 &&
+        levelPointPositions.contains("moveToH();") &&
+        princess->pos() == levelPointPositions["moveToH();"]) {
+        playerTriggeredMonster = false;
+    }
+
+    if (playerTriggeredMonster && currentLevel == 2) {
         QPoint dragonPos = dragon1->pos();
         QPoint playerPos = princess->pos();
 
@@ -581,7 +587,10 @@ void MainWindow::showDragonAlertZone()
 
     QWidget *canvas = ui->gameCanvasFrame;
 
-    const int alertDiameter = 140;
+    int alertDiameter = 140;
+    if (currentLevel == 4) {
+        alertDiameter = 95;
+    }
 
     dragonAlertZone = new QLabel(canvas);
     dragonAlertZone->setFixedSize(alertDiameter, alertDiameter);
@@ -591,11 +600,11 @@ void MainWindow::showDragonAlertZone()
     int y = dragonCenter.y() - alertDiameter / 2;
     dragonAlertZone->move(x, y);
 
-    dragonAlertZone->setStyleSheet(
-        "background-color: rgba(255, 0, 0, 50);"
-        "border: 3px solid rgba(153, 0, 0, 180);"
-        "border-radius: 70px;"
-        );
+    dragonAlertZone->setStyleSheet(QString(
+                                       "background-color: rgba(255, 0, 0, 50);"
+                                       "border: 3px solid rgba(153, 0, 0, 180);"
+                                       "border-radius: %1px;"
+                                       ).arg(alertDiameter / 2));
 
     dragonAlertZone->show();
 }
@@ -780,7 +789,15 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
         (goalPoint == "moveToB();" && name.toLower() == "b") ||
         (goalPoint == "moveToC();" && name.toLower() == "c");
 
-    if (isGoal) {
+    if (name.toUpper() == "H") {
+        point->setStyleSheet(
+            "background-color: mediumseagreen;"
+            "color: white;"
+            "border: 2px solid black;"
+            "border-radius: 14px;"
+            "font-weight: bold;"
+            );
+    } else if (isGoal) {
         point->setStyleSheet(
             "background-color: gold;"
             "border: 2px solid black;"
@@ -797,6 +814,98 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     }
 
     point->show();
+}
+
+void MainWindow::setUpLevel4()
+{
+    QWidget *canvas = ui->gameCanvasFrame;
+    canvas->setFixedSize(COLS * TILE, ROWS * TILE);
+    clearLevel3Visuals();
+
+    QLabel *bg = new QLabel(canvas);
+    bg->setPixmap(QPixmap(":/images/grass.png").scaled(
+        canvas->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    bg->setGeometry(0, 0, canvas->width(), canvas->height());
+    bg->lower();
+    bg->show();
+
+    startPoint = "start";
+    goalPoint  = "moveToC();";
+    doorHitCount = 0;
+    playerTriggeredMonster = false;
+    dragon1Direction = 1;
+
+    levelPointPositions.clear();
+    levelPointPositions["start"]      = QPoint(20,  220);
+    levelPointPositions["moveToA();"] = QPoint(80,  220);
+    levelPointPositions["moveToB();"] = QPoint(260, 220);
+    levelPointPositions["moveToH();"] = QPoint(170, 90);
+    levelPointPositions["moveToC();"] = QPoint(410, 220);
+
+    addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
+    addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
+    addPointVisual("H", levelPointPositions["moveToH();"] + QPoint(6, 6));
+    addPointVisual("C", levelPointPositions["moveToC();"] + QPoint(6, 6));
+
+    lockLabels.clear();
+    for (int i = 0; i < DOOR_HITS_NEEDED; i++) {
+        QLabel *lock = new QLabel(canvas);
+        lock->setPixmap(QPixmap(":/images/lock.png").scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        lock->setGeometry(levelPointPositions["moveToA();"].x() - 10 + i * 26, 160, 22, 22);
+        lock->setStyleSheet("background: transparent;");
+        lock->show();
+        lockLabels.append(lock);
+    }
+
+    keyLabels.clear();
+    for (int i = 0; i < DOOR_HITS_NEEDED; i++) {
+        QLabel *key = new QLabel(canvas);
+        key->setPixmap(QPixmap(":/images/key.png").scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        key->setGeometry(levelPointPositions["moveToB();"].x() - 10 + i * 26, 160, 22, 22);
+        key->setStyleSheet("background: transparent;");
+        key->show();
+        keyLabels.append(key);
+    }
+
+    carriedKey = nullptr;
+
+    door = new QLabel("X\nX\nX\nX\nX\nX\nX\nX", canvas);
+    door->setAlignment(Qt::AlignCenter);
+    door->setGeometry(340, 0, 28, canvas->height());
+    door->setStyleSheet(
+        "background-color: #aa2222; color: white; font-weight: bold;"
+        "font-size: 14px; letter-spacing: 2px;"
+        "border-left: 3px solid #660000; border-right: 3px solid #660000;");
+    door->show();
+
+    princess = new QLabel(canvas);
+    princess->setPixmap(QPixmap(":/images/princess.png"));
+    princess->setScaledContents(true);
+    princess->setFixedSize(TILE, TILE);
+    princess->move(levelPointPositions[startPoint]);
+    princess->show();
+
+    castle = new QLabel(canvas);
+    castle->setPixmap(QPixmap(":/images/castle.png"));
+    castle->setScaledContents(true);
+    castle->setFixedSize(TILE * 2, TILE * 2);
+    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
+    castle->show();
+
+    dragon1 = new QLabel(canvas);
+    dragon1->setPixmap(QPixmap(":/images/dragon.png"));
+    dragon1->setScaledContents(true);
+    dragon1->setFixedSize(TILE, TILE);
+    dragon1->move(170, 220);
+    dragon1->show();
+
+    showDragonAlertZone();
+
+    if (dragonAlertZone) dragonAlertZone->raise();
+    dragon1->raise();
+    princess->raise();
+    castle->raise();
+    door->raise();
 }
 
 QStringList MainWindow::getProgramRoute() const
@@ -885,7 +994,23 @@ void MainWindow::stepPlayerMovement()
         return;
     }
 
+    if (activeRoute.isEmpty()) {
+        if (moveTimer) {
+            moveTimer->stop();
+        }
+
+        if (won()) {
+            completeCurrentLevel();
+        }
+        return;
+    }
+
     QString targetName = activeRoute.first();
+
+    bool hasGlobalAlertHandler = false;
+    if (currentLevel == 4) {
+        hasGlobalAlertHandler = activeRoute.contains("if (InAlertZone) -> H");
+    }
 
     bool hasReactiveIf =
         (currentLevel == 2 &&
@@ -942,7 +1067,25 @@ void MainWindow::stepPlayerMovement()
                     return;
                 }
             }
-        } else if (currentLevel == 3) {
+        }
+
+        if (currentLevel == 4) {
+            updateIfLevelLogic();
+        }
+
+        if (currentLevel == 4 &&
+            targetName == "moveToH();" &&
+            dragon1 &&
+            levelPointPositions.contains("moveToA();")) {
+
+            int defaultY = levelPointPositions["moveToA();"].y();
+
+            if (dragon1->y() != defaultY) {
+                return;
+            }
+        }
+
+        if (currentLevel == 3 || currentLevel == 4) {
             // arriving at B: pick up one key (it will follow the princess until she reaches A)
             if (targetName == "moveToB();") {
                 if (!keyLabels.isEmpty()) {
@@ -996,7 +1139,7 @@ void MainWindow::stepPlayerMovement()
 
     princess->move(nextX, nextY);
 
-    if (currentLevel == 3 && door && door->isVisible()) {
+    if ((currentLevel == 3 || currentLevel == 4) && door && door->isVisible()) {
         const int wallX = door->x();
         if (princess->x() + princess->width() > wallX) {
             princess->move(wallX - princess->width(), princess->y());
@@ -1004,7 +1147,7 @@ void MainWindow::stepPlayerMovement()
     }
 
     // carried key floats just above the princess while she's moving
-    if (currentLevel == 3 && carriedKey) {
+    if ((currentLevel == 3 || currentLevel == 4) && carriedKey) {
         carriedKey->move(princess->x() + princess->width() / 2 - 11,
                          princess->y() - 24);
     }
@@ -1017,7 +1160,23 @@ void MainWindow::stepPlayerMovement()
             activeRoute.removeFirst();
             return;
         }
-    } else {
+    }
+    else if (currentLevel == 4) {
+        updateIfLevelLogic();
+
+        if (targetName != "moveToH();" &&
+            hasGlobalAlertHandler &&
+            playerTriggeredMonster) {
+
+            QString interruptedTarget = targetName;
+
+            activeRoute.removeFirst();
+            activeRoute.prepend(interruptedTarget);
+            activeRoute.prepend("moveToH();");
+            return;
+        }
+    }
+    else {
         if (isTouchingDragon()) {
             handlePlayerDeath();
             return;
@@ -1033,14 +1192,32 @@ bool MainWindow::isTouchingDragon() const
 
     QRect playerRect = princess->geometry();
 
-    if (dragon1 && dragon1->isVisible() &&
-        playerRect.intersects(dragon1->geometry())) {
-        return true;
+    if (currentLevel == 4) {
+        playerRect = playerRect.adjusted(10, 10, -10, -10);
     }
 
-    if (dragon2 && dragon2->isVisible() &&
-        playerRect.intersects(dragon2->geometry())) {
-        return true;
+    if (dragon1 && dragon1->isVisible()) {
+        QRect dragon1Rect = dragon1->geometry();
+
+        if (currentLevel == 4) {
+            dragon1Rect = dragon1Rect.adjusted(15, 15, -15, -15);
+        }
+
+        if (playerRect.intersects(dragon1Rect)) {
+            return true;
+        }
+    }
+
+    if (dragon2 && dragon2->isVisible()) {
+        QRect dragon2Rect = dragon2->geometry();
+
+        if (currentLevel == 4) {
+            dragon2Rect = dragon2Rect.adjusted(15, 15, -15, -15);
+        }
+
+        if (playerRect.intersects(dragon2Rect)) {
+            return true;
+        }
     }
 
     return false;
@@ -1116,6 +1293,79 @@ void MainWindow::dragonStartMove()
 }
 
 void MainWindow::moveDragons(int dy){
+    // for level 4
+    if (currentLevel == 4) {
+        if (!dragon1) return;
+
+        const int leftX = levelPointPositions["moveToA();"].x();
+        const int rightX = levelPointPositions["moveToB();"].x();
+        const int defaultY = levelPointPositions["moveToA();"].y();
+
+        bool playerAtH =
+            princess &&
+            levelPointPositions.contains("moveToH();") &&
+            princess->pos() == levelPointPositions["moveToH();"];
+
+        if (playerAtH) {
+            playerTriggeredMonster = false;
+        }
+
+        if (playerTriggeredMonster && princess && !playerAtH) {
+            QPoint dragonPos = dragon1->pos();
+            QPoint playerPos = princess->pos();
+
+            double dx = playerPos.x() - dragonPos.x();
+            double dy2 = playerPos.y() - dragonPos.y();
+            double distance = std::sqrt(dx * dx + dy2 * dy2);
+            const double dragonSpeed = 1.8;
+
+            if (distance > dragonSpeed) {
+                int nextX = static_cast<int>(std::round(dragonPos.x() + (dx / distance) * dragonSpeed));
+                int nextY = static_cast<int>(std::round(dragonPos.y() + (dy2 / distance) * dragonSpeed));
+                dragon1->move(nextX, nextY);
+            } else {
+                dragon1->move(playerPos);
+            }
+        }
+        else if (dragon1->y() != defaultY) {
+            int newY = dragon1->y();
+
+            if (newY < defaultY) {
+                newY += dy;
+                if (newY > defaultY) newY = defaultY;
+            } else if (newY > defaultY) {
+                newY -= dy;
+                if (newY < defaultY) newY = defaultY;
+            }
+
+            dragon1->move(dragon1->x(), newY);
+        }
+        else {
+            int newX = dragon1->x() + dy * dragon1Direction;
+
+            if (newX <= leftX) {
+                newX = leftX;
+                dragon1Direction = 1;
+            } else if (newX >= rightX) {
+                newX = rightX;
+                dragon1Direction = -1;
+            }
+
+            dragon1->move(newX, defaultY);
+        }
+
+        if (dragonAlertZone) {
+            QPoint center = dragon1->geometry().center();
+            dragonAlertZone->move(center.x() - dragonAlertZone->width() / 2,
+                                  center.y() - dragonAlertZone->height() / 2);
+        }
+
+        if (isTouchingDragon()) {
+            handlePlayerDeath();
+        }
+        return;
+    }
+
     // update dragon position
     int newY1 = dragon1->y() + dy * dragon1Direction;
     int newY2 = dragon2->y() + dy * dragon2Direction;
@@ -1160,7 +1410,7 @@ bool MainWindow::won()
         return !dragon1 || !dragon1->isVisible();
     }
 
-    if (currentLevel == 3) {
+    if (currentLevel == 3 || currentLevel == 4) {
         return doorHitCount >= DOOR_HITS_NEEDED;
     }
 
@@ -1385,6 +1635,17 @@ void MainWindow::openSpecificLevel(int levelNumber)
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
+    else if (levelNumber == 4) {
+        currentLevelRoutePoints = {
+            "moveToA();", "moveToB();", "moveToC();",
+            "if (InAlertZone) -> H",
+            "for(2)", "{", "}"
+        };
+        createRoutePointBlocks();
+        setUpLevel4();
+        resetPrincessToStart();
+        QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
+    }
 }
 
 void MainWindow::completeCurrentLevel()
@@ -1448,6 +1709,8 @@ void MainWindow::on_runButton_clicked()
             resetLevel2();
         } else if (currentLevel == 3) {
             resetLevel3();
+        }else if (currentLevel == 4) {
+            setUpLevel4();
         }
         return;
     }
@@ -1455,14 +1718,14 @@ void MainWindow::on_runButton_clicked()
     QStringList rawRoute = getProgramRoute();
     if (rawRoute.isEmpty()) return;
 
-    QStringList route = (currentLevel == 3) ? expandForLoops(rawRoute) : rawRoute;
+    QStringList route = (currentLevel == 3 || currentLevel == 4) ? expandForLoops(rawRoute) : rawRoute;
     if (route.isEmpty()) return;
 
     setRunning(true);
 
     gameStarted = true;
     startPlayerMovement(route);
-    if (currentLevel == 1) {
+    if (currentLevel == 1 || currentLevel == 4) {
         dragonStartMove();
     }
 }

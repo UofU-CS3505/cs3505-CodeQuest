@@ -43,6 +43,8 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
             "padding: 6px;"
             "font-weight: bold;"
             );
+        setMinimumWidth(200);
+        setMaximumWidth(300);
     }
     else if (type == "forLoop") {
         setStyleSheet(
