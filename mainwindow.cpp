@@ -542,15 +542,19 @@ void MainWindow::setUpGuard()
     QPoint guardPos = levelPointPositions["moveToA();"] + QPoint(55, -5);
 
     guard = new QLabel("G", canvas);
+    guard->setPixmap(QPixmap(":/images/knight.png"));
     guard->setAlignment(Qt::AlignCenter);
+    guard->setFixedSize(TILE * 1.4, TILE * 1.4);
     guard->setGeometry(guardPos.x(), guardPos.y(), 32, 32);
-    guard->setStyleSheet(
-        "background-color: darkred;"
-        "color: white;"
-        "border: 2px solid black;"
-        "border-radius: 16px;"
-        "font-weight: bold;"
-        );
+    guard->setScaledContents(true);
+
+    // guard->setStyleSheet(
+    //     "background-color: darkred;"
+    //     "color: white;"
+    //     "border: 2px solid black;"
+    //     "border-radius: 16px;"
+    //     "font-weight: bold;"
+    //     );
     guard->show();
 
     const int zoneDiameter = 160;

@@ -6,5 +6,6 @@
         <file>grass.png</file>
         <file>key.png</file>
         <file>lock.png</file>
+        <file>knight.png</file>
     </qresource>
 </RCC>
