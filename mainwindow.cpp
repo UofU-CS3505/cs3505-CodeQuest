@@ -392,7 +392,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToCastle();"] = QPoint(430, 200);
+    levelPointPositions["moveToCastle();"] = QPoint(400, 160);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
