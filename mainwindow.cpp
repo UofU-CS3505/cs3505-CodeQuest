@@ -858,7 +858,7 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     } else if (isGoal) {
         point->setPixmap(QPixmap(":/images/castle.png"));
         point->setScaledContents(true);
-        point->setFixedSize(TILE * 2, TILE * 2);
+        point->setFixedSize(TILE * 2.5, TILE * 2.5);
         point->show();
     } else {
         point->setStyleSheet(
@@ -1036,9 +1036,9 @@ void MainWindow::stepPlayerMovement()
             moveTimer->stop();
         }
 
-        if (won()) {
-            completeCurrentLevel();
-        }
+        // if (won()) {
+        //     completeCurrentLevel();
+        // }
         return;
     }
 
@@ -1047,9 +1047,9 @@ void MainWindow::stepPlayerMovement()
             moveTimer->stop();
         }
 
-        if (won()) {
-            completeCurrentLevel();
-        }
+        // if (won()) {
+        //     completeCurrentLevel();
+        // }
         return;
     }
 
@@ -1110,7 +1110,7 @@ void MainWindow::stepPlayerMovement()
                     activeRoute.removeFirst();
                     if (activeRoute.isEmpty()) {
                         moveTimer->stop();
-                        if (won()) completeCurrentLevel();
+                        //if (won()) completeCurrentLevel();
                     }
                     return;
                 }
@@ -1175,9 +1175,9 @@ void MainWindow::stepPlayerMovement()
         if (activeRoute.isEmpty()) {
             moveTimer->stop();
 
-            if (won()) {
-                completeCurrentLevel();
-            }
+            // if (won()) {
+            //     completeCurrentLevel();
+            // }
         }
         return;
     }
@@ -1273,7 +1273,7 @@ void MainWindow::handlePlayerDeath()
 {
     stopScoreTracking();
     on_runButton_clicked();
-    failCurrentLevel();
+    //failCurrentLevel();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -1872,12 +1872,21 @@ void MainWindow::on_runButton_clicked()
     }
 }
 
+void MainWindow::on_submitButton_clicked() {
+    if (won()) {
+        completeCurrentLevel();
+    } else {
+        failCurrentLevel();
+    }
+}
+
 void MainWindow::setRunning(bool isRunning) {
     running = isRunning;
     ui->runButton->setText(isRunning ? "Reset" : "Run");
     ui->hintButton->setDisabled(isRunning);
     ui->clearButton->setDisabled(isRunning);
     ui->backToLevelsButton->setDisabled(isRunning);
+    ui->submitButton->setDisabled(!isRunning);
 }
 
 void MainWindow::on_clearButton_clicked()

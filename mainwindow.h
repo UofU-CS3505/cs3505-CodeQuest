@@ -247,6 +247,12 @@ private slots:
     void on_runButton_clicked();
 
     /**
+     * Submits the player's code and checks if they won or lost the round.
+     * @brief on_submitButton_clicked
+     */
+    void on_submitButton_clicked();
+
+    /**
      * Clears the workspace.
      * @brief on_resetButton_clicked
      */
