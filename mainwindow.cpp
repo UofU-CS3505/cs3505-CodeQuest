@@ -373,6 +373,9 @@ void MainWindow::setUpLevel1()
     QWidget *canvas = ui->gameCanvasFrame;
     canvas->setFixedSize(COLS * TILE, ROWS * TILE);
 
+    startPoint = "start";
+    goalPoint = "moveToCastle();";
+
     clearLevel1Visuals();
 
     QLabel *bg = new QLabel(canvas);
