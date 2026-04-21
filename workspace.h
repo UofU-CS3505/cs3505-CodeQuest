@@ -19,6 +19,7 @@ public:
 
     void removeBlock(CodeBlock *block);
     void insertRoutePointAfterMove(CodeBlock *moveBlock, CodeBlock *routePointBlock);
+    void reindentAll();
 
 signals:
     void moveBlockClicked(CodeBlock *block);
