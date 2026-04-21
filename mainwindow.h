@@ -7,7 +7,9 @@
 #include <QLabel>
 #include <QMap>
 #include <QTimer>
+#include <QPushButton>
 #include "savefile.h"
+#include <Box2D/Box2D.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -120,6 +122,18 @@ private:
 
     void setRunning(bool isRunning);
     void dimButtons(bool gameStarted);
+
+    // box2d jiggle for menu buttons
+    struct ButtonJiggle {
+        QPushButton *button = nullptr;
+        QPoint       origin;
+        b2Body      *body   = nullptr;
+    };
+    QVector<ButtonJiggle> jiggleBodies;
+    b2World               jiggleWorld{b2Vec2(0.f, 0.f)};  // no gravity, spring only
+    QTimer               *jiggleTimer = nullptr;
+    void initJiggle();
+    void stepJiggle();
 
     //for level2
     void setUpGuard();
