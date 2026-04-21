@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="startPage">
      <layout class="QVBoxLayout" name="startPageLayout">
@@ -88,7 +88,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="restartButton">
+       <widget class="QPushButton" name="startButton">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -101,7 +101,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Start a New Game</string>
+         <string>Start Game</string>
         </property>
        </widget>
       </item>
@@ -124,7 +124,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="startButton">
+       <widget class="QPushButton" name="restartButton">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -137,7 +137,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Resume Game</string>
+         <string>Reset Game Progress</string>
         </property>
        </widget>
       </item>
