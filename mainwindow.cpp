@@ -183,6 +183,13 @@ void MainWindow::applyDarkTheme()
         "}"
         );
 
+    ui->levelDescriptionFrame->setStyleSheet(
+        "QFrame#levelDescriptionFrame {"
+        "  background-color: #232338;"
+        "  border-radius: 12px;"
+        "}"
+        );
+
     // Shared style for all start-page buttons
     QString menuButtonStyle =
         "QPushButton {"
