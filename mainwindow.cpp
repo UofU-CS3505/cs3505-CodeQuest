@@ -415,7 +415,8 @@ void MainWindow::setUpLevel1()
     castle->setScaledContents(true);
     castle->setFixedSize(TILE * 2, TILE * 2);
     QPoint p = levelPointPositions[goalPoint];
-    castle->move(p.x() - TILE/2, p.y() - TILE/2);
+    //castle->move(p.x() - TILE/2, p.y() - TILE/2);
+    castle->move(QPoint(400, 200));
     castle->show();
 
     setUpDragons();
@@ -1879,10 +1880,7 @@ void MainWindow::on_runButton_clicked()
     }
 
     QStringList rawRoute = getProgramRoute();
-    if (rawRoute.isEmpty()) return;
-
     QStringList route = (currentLevel == 3 || currentLevel == 4) ? expandForLoops(rawRoute) : rawRoute;
-    if (route.isEmpty()) return;
 
     setRunning(true);
 
