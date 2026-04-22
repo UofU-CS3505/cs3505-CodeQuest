@@ -1074,6 +1074,28 @@ void MainWindow::stepPlayerMovement()
 
     QString targetName = activeRoute.first();
 
+    if (currentLevel == 2 &&
+        activeRoute.size() >= 2 &&
+        (activeRoute[0] == "if (InAlertZone)" || activeRoute[0] == "if (monsterDead)") &&
+        levelPointPositions.contains(activeRoute[1])) {
+
+        updateIfLevelLogic();
+
+        bool frontIfTriggered = false;
+
+        if (activeRoute[0] == "if (InAlertZone)") {
+            frontIfTriggered = playerTriggeredMonster;
+        } else if (activeRoute[0] == "if (monsterDead)") {
+            frontIfTriggered = (!dragon1 || !dragon1->isVisible());
+        }
+
+        if (frontIfTriggered) {
+            activeRoute.removeFirst();
+        } else {
+            return;
+        }
+    }
+
     bool hasGlobalAlertHandler = false;
     if (currentLevel == 4) {
         hasGlobalAlertHandler = activeRoute.contains("if (inDragonVision) -> H");
@@ -1335,14 +1357,14 @@ void MainWindow::setUpDragons(){
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
-    dragon1->setFixedSize(TILE, TILE);
+    dragon1->setFixedSize(70, 70);
     dragon1->move(125, 180);
     dragon1->show();
 
     dragon2 = new QLabel(canvas);
     dragon2->setPixmap(QPixmap(":/images/dragon.png"));
     dragon2->setScaledContents(true);
-    dragon2->setFixedSize(TILE, TILE);
+    dragon2->setFixedSize(70, 70);
     dragon2->move(265, 180);
     dragon2->show();
 
@@ -1350,7 +1372,11 @@ void MainWindow::setUpDragons(){
     dragonTimer = new QTimer(this);
 
     connect(dragonTimer, &QTimer::timeout, this, [this]() {
-        moveDragons(2);
+        if (currentLevel == 1) {
+            moveDragons(3);
+        } else {
+            moveDragons(2);
+        }
     });
 }
 

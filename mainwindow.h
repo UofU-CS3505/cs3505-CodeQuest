@@ -66,7 +66,7 @@ private:
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
-    double playerSpeed = 2.5;
+    double playerSpeed = 2.3;
 
     QStringList getProgramRoute() const;
     void resetPrincessToStart();
