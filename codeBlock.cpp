@@ -102,6 +102,8 @@ void CodeBlock::mouseMoveEvent(QMouseEvent *event)
     QMimeData *mimeData = new QMimeData;
 
     mimeData->setText(command);
+    mimeData->setText(command);
+    mimeData->setData("application/x-displaytext", text().toUtf8());
     mimeData->setData("application/x-codeblock", blockType.toUtf8());
 
     drag->setMimeData(mimeData);

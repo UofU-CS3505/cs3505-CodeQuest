@@ -121,10 +121,7 @@ void Workspace::registerBlock(CodeBlock *block)
 // This method was generated using AI
 void Workspace::dropEvent(QDropEvent *event)
 {
-    if (!event->mimeData()->hasFormat("application/x-codeblock"))
-        return;
-
-    QString text = event->mimeData()->text();
+    QString command = event->mimeData()->text();
     QString type = QString::fromUtf8(event->mimeData()->data("application/x-codeblock"));
 
     CodeBlock *sourceBlock = qobject_cast<CodeBlock*>(event->source());
@@ -137,9 +134,12 @@ void Workspace::dropEvent(QDropEvent *event)
         layout->removeWidget(block);
         blocks.removeAll(block);
     }
-
     else {
-        block = new CodeBlock(text, type);
+        QString command = event->mimeData()->text();
+        QString type = QString::fromUtf8(event->mimeData()->data("application/x-codeblock"));
+        QString displayText = QString::fromUtf8(event->mimeData()->data("application/x-displaytext"));
+
+        block = new CodeBlock(displayText.isEmpty() ? command : displayText, type, command);
         registerBlock(block);
     }
 
