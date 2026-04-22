@@ -1600,8 +1600,6 @@ void MainWindow::on_levelOneButton_clicked()
     if (dragonTimer) dragonTimer->stop();
     activeRoute.clear();
 
-    setUpLevel1();
-
     ui->levelTitleLabel->setText("Level 1");
     ui->stackedWidget->setCurrentIndex(CODE_PAGE);
     // completeCurrentLevel();
