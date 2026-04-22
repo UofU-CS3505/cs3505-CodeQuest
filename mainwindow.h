@@ -61,7 +61,8 @@ private:
     QMap<QString, QPoint> levelPointPositions;
 
     QString startPoint = "start";
-    QString goalPoint = "moveToCastle();";
+    QString goalPoint;
+    const QString GOAL_BLOCK = "moveToCastle();";
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
