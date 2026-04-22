@@ -914,12 +914,12 @@ void MainWindow::setUpLevel4()
     levelPointPositions["start"]      = QPoint(20,  220);
     levelPointPositions["moveToA();"] = QPoint(80,  220);
     levelPointPositions["moveToB();"] = QPoint(260, 220);
-    levelPointPositions["moveToH();"] = QPoint(170, 90);
+    levelPointPositions["moveToSafety();"] = QPoint(170, 90);
     levelPointPositions["moveToC();"] = QPoint(410, 220);
 
     addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
-    addPointVisual("H", levelPointPositions["moveToH();"] + QPoint(6, 6));
+    addPointVisual("H", levelPointPositions["moveToSafety();"] + QPoint(6, 6));
     addPointVisual("C", levelPointPositions["moveToC();"] + QPoint(6, 6));
 
     lockLabels.clear();
@@ -1089,16 +1089,27 @@ void MainWindow::stepPlayerMovement()
             frontIfTriggered = (!dragon1 || !dragon1->isVisible());
         }
 
-        if (frontIfTriggered) {
-            activeRoute.removeFirst();
-        } else {
+        QString current = activeRoute.first();
+
+        if (currentLevel == 4 && current == "if (inDragonVision)") {
+            if (playerTriggeredMonster) {
+                princess->move(levelPointPositions["moveToSafety();"]);
+            }
+
+            activeRoute.pop_front();
             return;
         }
+
+        // if (frontIfTriggered) {
+        //     activeRoute.removeFirst();
+        // } else {
+        //     return;
+        // }
     }
 
     bool hasGlobalAlertHandler = false;
     if (currentLevel == 4) {
-        hasGlobalAlertHandler = activeRoute.contains("if (inDragonVision) -> H");
+        hasGlobalAlertHandler = activeRoute.contains("if (inDragonVision)");
     }
 
     bool hasReactiveIf =
@@ -1757,8 +1768,8 @@ void MainWindow::openSpecificLevel(int levelNumber)
     }
     else if (levelNumber == 4) {
         currentLevelRoutePoints = {
-            "moveToA();", "moveToB();", "moveToC();",
-            "if (inDragonVision) -> H",
+            "moveToA();", "moveToB();", "moveToC();", "moveToSafety();",
+            "if (inDragonVision)",
             "for(2)", "{", "}"
         };
         setUpLevel4();
