@@ -34,13 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->level_2_Button->installEventFilter(this);
     ui->level_3_Button->installEventFilter(this);
     ui->level_4_Button->installEventFilter(this);
-    // ui->level_5_Button->installEventFilter(this);
-
-    // Add code blocks to blockSpace
-    //ui->blockSpaceWidget->addBlock("move();", "move");
-    // ui->blockSpaceWidget->addBlock("if {", "ifStatement");
-    // ui->blockSpaceWidget->addBlock("turnLeft();", "turnLeft");
-    // ui->blockSpaceWidget->addBlock("turnRight();", "turnRight");
 
     setUpLevels();
 
@@ -51,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->level_2_Button, &QPushButton::clicked, this, &MainWindow::on_levelTwoButton_clicked);
     connect(ui->level_3_Button, &QPushButton::clicked, this, &MainWindow::on_levelThreeButton_clicked);
     connect(ui->level_4_Button, &QPushButton::clicked, this, &MainWindow::on_levelFourButton_clicked);
-    // connect(ui->level_5_Button, &QPushButton::clicked, this, &MainWindow::on_levelFiveButton_clicked);
     connect(ui->workspaceWidget, &Workspace::moveBlockClicked,
             this, &MainWindow::on_workspace_move_block_clicked);
 
@@ -338,6 +330,28 @@ void MainWindow::applyDarkTheme()
         "  border: 1px solid #222233;"
         "}"
         );
+    ui->submitButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #3a3a10;"
+        "  color: #ffff88;"
+        "  border: 2px solid #ffdd33;"
+        "  border-radius: 6px;"
+        "  padding: 5px 12px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #4a4a18;"
+        "  border: 2px solid #ffee55;"
+        "  color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #2a2a08;"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: #0f0f18;"
+        "  color: #555566;"
+        "  border: 1px solid #222233;"
+        "}"
+        );
 
     // Divider lines on code page
     ui->headerDivider->setStyleSheet("background-color: #ffd700;");
@@ -365,12 +379,9 @@ void MainWindow::applyDarkTheme()
 void MainWindow::setUpLevels()
 {
     setUpLevel1();
-    QLabel *methodsLabel = new QLabel("METHODS", this);
-    methodsLabel->setStyleSheet("color: white; font-weight: bold;" "font-size: 15px;");
-    ui->blockSpaceWidget->getLayout()->addWidget(methodsLabel);
     //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
     createRoutePointBlocks();
     setRoutePointsVisible(true);
 }
@@ -381,7 +392,7 @@ void MainWindow::setUpLevel1()
     canvas->setFixedSize(COLS * TILE, ROWS * TILE);
 
     startPoint = "start";
-    goalPoint = "moveToCastle();";
+    goalPoint = "moveToG();";
 
     clearLevel1Visuals();
 
@@ -403,7 +414,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToCastle();"] = QPoint(430, 200);
+    levelPointPositions["moveToG();"] = QPoint(400, 160);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -411,7 +422,7 @@ void MainWindow::setUpLevel1()
     addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
     addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
     addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["moveToCastle();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -419,20 +430,9 @@ void MainWindow::setUpLevel1()
     princess->setFixedSize(TILE, TILE);
     princess->move(levelPointPositions[startPoint]);
     princess->show();
-
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    QPoint p = levelPointPositions[goalPoint];
-    //castle->move(p.x() - TILE/2, p.y() - TILE/2);
-    castle->move(QPoint(400, 200));
-    castle->show();
+    princess->raise();
 
     setUpDragons();
-
-    princess->raise();
-    castle->raise();
 }
 
 void MainWindow::clearLevel1Visuals()
@@ -446,7 +446,6 @@ void MainWindow::clearLevel1Visuals()
 
     walls.clear();
     princess = nullptr;
-    castle = nullptr;
     dragon1 = nullptr;
     dragon2 = nullptr;
     dragonAlertZone = nullptr;
@@ -491,15 +490,6 @@ void MainWindow::setUpLevel2()
     princess->move(levelPointPositions["start"]);
     princess->show();
 
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    QPoint p = levelPointPositions["moveToB()"];
-    castle->move(p.x() - TILE/2, p.y() - TILE/2);
-    castle->move(levelPointPositions["moveToB();"] + QPoint(28, -18));
-    castle->show();
-
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
@@ -521,7 +511,6 @@ void MainWindow::setUpLevel2()
 
     dragon1->raise();
     princess->raise();
-    castle->raise();
 
     if (guard) {
         guard->raise();
@@ -545,15 +534,11 @@ void MainWindow::setUpGuard()
     QPoint guardPos = levelPointPositions["moveToA();"] + QPoint(55, -5);
 
     guard = new QLabel("G", canvas);
+    guard->setPixmap(QPixmap(":/images/knight.png"));
     guard->setAlignment(Qt::AlignCenter);
+    guard->setFixedSize(TILE * 1.4, TILE * 1.4);
     guard->setGeometry(guardPos.x(), guardPos.y(), 32, 32);
-    guard->setStyleSheet(
-        "background-color: darkred;"
-        "color: white;"
-        "border: 2px solid black;"
-        "border-radius: 16px;"
-        "font-weight: bold;"
-        );
+    guard->setScaledContents(true);
     guard->show();
 
     const int zoneDiameter = 160;
@@ -702,7 +687,6 @@ void MainWindow::clearLevel2Visuals()
 
     walls.clear();
     princess = nullptr;
-    castle = nullptr;
     guard = nullptr;
     guardZone = nullptr;
     dragon1 = nullptr;
@@ -767,7 +751,7 @@ void MainWindow::setUpLevel3()
     levelPointPositions["start"]      = QPoint(20,  200);
     levelPointPositions["moveToA();"] = QPoint(140, 200);
     levelPointPositions["moveToB();"] = QPoint(300, 200);
-    levelPointPositions["moveToC();"] = QPoint(420, 200);
+    levelPointPositions["moveToC();"] = QPoint(400, 170);
 
     addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -812,16 +796,7 @@ void MainWindow::setUpLevel3()
     princess->setFixedSize(TILE, TILE);
     princess->move(levelPointPositions[startPoint]);
     princess->show();
-
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
-    castle->show();
-
     princess->raise();
-    castle->raise();
     door->raise();
 }
 
@@ -832,8 +807,9 @@ void MainWindow::clearLevel3Visuals()
     for (QLabel *l : labels) delete l;
 
     walls.clear();
-    princess = nullptr; castle = nullptr;
-    dragon1  = nullptr; dragon2 = nullptr;
+    princess = nullptr;
+    dragon1  = nullptr;
+    dragon2 = nullptr;
     door     = nullptr;
     dragonAlertZone = nullptr;
     lockLabels.clear();
@@ -889,25 +865,20 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->setGeometry(pos.x(), pos.y(), 28, 28);
 
     bool isGoal =
-        (goalPoint == "moveToCastle();" && name.toLower() == "g") ||
+        (goalPoint == "moveToG();" && name.toLower() == "g") ||
         (goalPoint == "moveToB();" && name.toLower() == "b") ||
         (goalPoint == "moveToC();" && name.toLower() == "c");
 
     if (name.toUpper() == "H") {
-        point->setStyleSheet(
-            "background-color: mediumseagreen;"
-            "color: white;"
-            "border: 2px solid black;"
-            "border-radius: 14px;"
-            "font-weight: bold;"
-            );
+        point->setPixmap(QPixmap(":/images/hut.png"));
+        point->setScaledContents(true);
+        point->setFixedSize(TILE * 1.5, TILE * 1.5);
+        point->show();
     } else if (isGoal) {
-        point->setStyleSheet(
-            "background-color: gold;"
-            "border: 2px solid black;"
-            "border-radius: 14px;"
-            "font-weight: bold;"
-            );
+        point->setPixmap(QPixmap(":/images/castle.png"));
+        point->setScaledContents(true);
+        point->setFixedSize(TILE * 2.5, TILE * 2.5);
+        point->show();
     } else {
         point->setStyleSheet(
             "background-color: blue;"
@@ -943,12 +914,12 @@ void MainWindow::setUpLevel4()
     levelPointPositions["start"]      = QPoint(20,  220);
     levelPointPositions["moveToA();"] = QPoint(80,  220);
     levelPointPositions["moveToB();"] = QPoint(260, 220);
-    levelPointPositions["moveToH();"] = QPoint(170, 90);
+    levelPointPositions["moveToSafety();"] = QPoint(170, 90);
     levelPointPositions["moveToC();"] = QPoint(410, 220);
 
     addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
-    addPointVisual("H", levelPointPositions["moveToH();"] + QPoint(6, 6));
+    addPointVisual("H", levelPointPositions["moveToSafety();"] + QPoint(6, 6));
     addPointVisual("C", levelPointPositions["moveToC();"] + QPoint(6, 6));
 
     lockLabels.clear();
@@ -989,13 +960,6 @@ void MainWindow::setUpLevel4()
     princess->move(levelPointPositions[startPoint]);
     princess->show();
 
-    castle = new QLabel(canvas);
-    castle->setPixmap(QPixmap(":/images/castle.png"));
-    castle->setScaledContents(true);
-    castle->setFixedSize(TILE * 2, TILE * 2);
-    castle->move(levelPointPositions["moveToC();"] + QPoint(10, -20));
-    castle->show();
-
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
@@ -1008,7 +972,6 @@ void MainWindow::setUpLevel4()
     if (dragonAlertZone) dragonAlertZone->raise();
     dragon1->raise();
     princess->raise();
-    castle->raise();
     door->raise();
 }
 
@@ -1023,8 +986,8 @@ QStringList MainWindow::getProgramRoute() const
         if (block->getType() == "routePoint" ||
             block->getType() == "ifStatement" ||
             block->getType() == "forLoop" ||
-            (block->getType() == "scopeBracket" && block->text() == "}")) {
-            route << block->text();
+            (block->getType() == "scopeBracket" && block->getCommand() == "}")) {
+            route << block->getCommand();
         }
     }
     return route;
@@ -1092,9 +1055,9 @@ void MainWindow::stepPlayerMovement()
             moveTimer->stop();
         }
 
-        if (won()) {
-            completeCurrentLevel();
-        }
+        // if (won()) {
+        //     completeCurrentLevel();
+        // }
         return;
     }
 
@@ -1103,23 +1066,56 @@ void MainWindow::stepPlayerMovement()
             moveTimer->stop();
         }
 
-        if (won()) {
-            completeCurrentLevel();
-        }
+        // if (won()) {
+        //     completeCurrentLevel();
+        // }
         return;
     }
 
     QString targetName = activeRoute.first();
 
+    if (currentLevel == 2 &&
+        activeRoute.size() >= 2 &&
+        (activeRoute[0] == "if (InAlertZone)" || activeRoute[0] == "if (monsterDead)") &&
+        levelPointPositions.contains(activeRoute[1])) {
+
+        updateIfLevelLogic();
+
+        bool frontIfTriggered = false;
+
+        if (activeRoute[0] == "if (InAlertZone)") {
+            frontIfTriggered = playerTriggeredMonster;
+        } else if (activeRoute[0] == "if (monsterDead)") {
+            frontIfTriggered = (!dragon1 || !dragon1->isVisible());
+        }
+
+        QString current = activeRoute.first();
+
+        if (currentLevel == 4 && current == "if (inDragonVision)") {
+            if (playerTriggeredMonster) {
+                princess->move(levelPointPositions["moveToSafety();"]);
+            }
+
+            activeRoute.pop_front();
+            return;
+        }
+
+        // if (frontIfTriggered) {
+        //     activeRoute.removeFirst();
+        // } else {
+        //     return;
+        // }
+    }
+
     bool hasGlobalAlertHandler = false;
     if (currentLevel == 4) {
-        hasGlobalAlertHandler = activeRoute.contains("if (InAlertZone) -> H");
+        hasGlobalAlertHandler = activeRoute.contains("if (inDragonVision)");
     }
 
     bool hasReactiveIf =
         (currentLevel == 2 &&
          activeRoute.size() >= 3 &&
-         (activeRoute[1] == "if (InAlertZone)" ||
+         (activeRoute[1] == "if (inDragonVision)" ||
           activeRoute[1] == "if (monsterDead)") &&
          levelPointPositions.contains(activeRoute[2]));
 
@@ -1128,7 +1124,7 @@ void MainWindow::stepPlayerMovement()
             return false;
         }
 
-        if (activeRoute[1] == "if (InAlertZone)") {
+        if (activeRoute[1] == "if (inDragonVision)") {
             return playerTriggeredMonster;
         }
 
@@ -1146,6 +1142,10 @@ void MainWindow::stepPlayerMovement()
 
     QPoint currentPos = princess->pos();
     QPoint targetPos = levelPointPositions[targetName];
+    if (targetName == goalPoint) {
+        targetPos.setY(targetPos.y() +TILE);
+        targetPos.setX(targetPos.x() + TILE / 2);
+    }
 
     double dx = targetPos.x() - currentPos.x();
     double dy = targetPos.y() - currentPos.y();
@@ -1166,7 +1166,7 @@ void MainWindow::stepPlayerMovement()
                     activeRoute.removeFirst();
                     if (activeRoute.isEmpty()) {
                         moveTimer->stop();
-                        if (won()) completeCurrentLevel();
+                        //if (won()) completeCurrentLevel();
                     }
                     return;
                 }
@@ -1231,9 +1231,9 @@ void MainWindow::stepPlayerMovement()
         if (activeRoute.isEmpty()) {
             moveTimer->stop();
 
-            if (won()) {
-                completeCurrentLevel();
-            }
+            // if (won()) {
+            //     completeCurrentLevel();
+            // }
         }
         return;
     }
@@ -1329,6 +1329,7 @@ void MainWindow::handlePlayerDeath()
 {
     stopScoreTracking();
     on_runButton_clicked();
+    //failCurrentLevel();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -1367,14 +1368,14 @@ void MainWindow::setUpDragons(){
     dragon1 = new QLabel(canvas);
     dragon1->setPixmap(QPixmap(":/images/dragon.png"));
     dragon1->setScaledContents(true);
-    dragon1->setFixedSize(TILE, TILE);
+    dragon1->setFixedSize(70, 70);
     dragon1->move(125, 180);
     dragon1->show();
 
     dragon2 = new QLabel(canvas);
     dragon2->setPixmap(QPixmap(":/images/dragon.png"));
     dragon2->setScaledContents(true);
-    dragon2->setFixedSize(TILE, TILE);
+    dragon2->setFixedSize(70, 70);
     dragon2->move(265, 180);
     dragon2->show();
 
@@ -1382,7 +1383,11 @@ void MainWindow::setUpDragons(){
     dragonTimer = new QTimer(this);
 
     connect(dragonTimer, &QTimer::timeout, this, [this]() {
-        moveDragons(2);
+        if (currentLevel == 1) {
+            moveDragons(3);
+        } else {
+            moveDragons(2);
+        }
     });
 }
 
@@ -1500,10 +1505,19 @@ void MainWindow::moveDragons(int dy){
 
 bool MainWindow::won()
 {
-    bool reachedGoal =
-        princess &&
-        levelPointPositions.contains(goalPoint) &&
-        princess->pos() == levelPointPositions[goalPoint];
+    if (!princess || !levelPointPositions.contains(goalPoint)) {
+        return false;
+    }
+
+    QRect princessRect = princess->geometry();
+
+    // Goal area the same size as the castle
+    QRect goalRect(
+        levelPointPositions[goalPoint],
+        QSize(TILE * 2.5, TILE * 2.5)
+        );
+
+    bool reachedGoal = princessRect.intersects(goalRect);
 
     if (!reachedGoal) {
         return false;
@@ -1725,18 +1739,18 @@ void MainWindow::openSpecificLevel(int levelNumber)
     if (levelNumber == 1) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"
+            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
         };
-        createRoutePointBlocks();
         setUpLevel1();
+        createRoutePointBlocks();
         resetPrincessToStart();
         resetDragonsToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 2) {
-        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
-        createRoutePointBlocks();
+        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (inDragonVision)", "if (monsterDead)"};
         setUpLevel2();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
@@ -1745,19 +1759,19 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "moveToA();", "moveToB();", "moveToC();",
             "for(3)", "for(2)", "{", "}"
         };
-        createRoutePointBlocks();
         setUpLevel3();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 4) {
         currentLevelRoutePoints = {
-            "moveToA();", "moveToB();", "moveToC();",
-            "if (InAlertZone) -> H",
+            "moveToA();", "moveToB();", "moveToC();", "moveToSafety();",
+            "if (inDragonVision)",
             "for(2)", "{", "}"
         };
-        createRoutePointBlocks();
         setUpLevel4();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
@@ -1853,6 +1867,33 @@ void MainWindow::completeCurrentLevel()
     }
 }
 
+void MainWindow::failCurrentLevel()
+{
+    stopScoreTracking();
+    setRunning(false);
+
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("You Failed!");
+    msgBox.setText("You Failed this level!\n");
+
+    // Create three option buttons.
+    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
+    QPushButton *chooseLevelButton = msgBox.addButton("Choose Level", QMessageBox::ActionRole);
+    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+
+    msgBox.exec();
+
+    // Implement the functionality of each button.
+    if (msgBox.clickedButton() == restartButton) {
+        ui->workspaceWidget->clearBlocks();
+        openSpecificLevel(currentLevel);
+    } else if (msgBox.clickedButton() == chooseLevelButton) {
+        ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
+    } else if (msgBox.clickedButton() == quitButton) {
+        ui->stackedWidget->setCurrentIndex(START_PAGE);
+    }
+}
+
 // -------------------- Game Page Slots --------------------
 void MainWindow::on_backToLevelsButton_clicked()
 {
@@ -1898,12 +1939,21 @@ void MainWindow::on_runButton_clicked()
     }
 }
 
+void MainWindow::on_submitButton_clicked() {
+    if (won()) {
+        completeCurrentLevel();
+    } else {
+        failCurrentLevel();
+    }
+}
+
 void MainWindow::setRunning(bool isRunning) {
     running = isRunning;
     ui->runButton->setText(isRunning ? "Reset" : "Run");
     ui->hintButton->setDisabled(isRunning);
     ui->clearButton->setDisabled(isRunning);
     ui->backToLevelsButton->setDisabled(isRunning);
+    ui->submitButton->setDisabled(!isRunning);
 }
 
 void MainWindow::on_clearButton_clicked()
@@ -2018,7 +2068,7 @@ void MainWindow::on_hintButton_clicked()
                                                   "Same key-and-lock mechanic: pick up a key at B, return to A to unlock.<br><br>"
                                                   "A <b>dragon patrols</b> between A and B. Entering its red zone triggers a chase. "
                                                   "Point <b>H</b> is a safe hiding spot — reaching it resets the dragon.<br><br>"
-                                                  "<span style='color:#dd88ff;'>if (InAlertZone) -&gt; H</span> automatically redirects "
+                                                  "<span style='color:#dd88ff;'>if (inDragonVision) -&gt; H</span> automatically redirects "
                                                   "the princess to H when chased, then resumes from where she left off."
                                               },
                                               {
@@ -2193,17 +2243,18 @@ void MainWindow::createRoutePointBlocks()
     routePointBlocks.clear();
 
     for (const QString &pointName : currentLevelRoutePoints) {
+        QString displayName = pointName;
+
+        if (pointName == goalPoint) {
+            displayName = GOAL_BLOCK;
+        }
+
         QString blockType = pointName.startsWith("if")    ? "ifStatement"
                             : pointName.startsWith("for(")  ? "forLoop"
                             : (pointName == "{" || pointName == "}") ? "scopeBracket"
                                                                      : "routePoint";
-        CodeBlock *pointBlock = new CodeBlock(pointName, blockType);
+        CodeBlock *pointBlock = new CodeBlock(displayName, blockType, pointName);
         ui->blockSpaceWidget->addBlock(pointBlock);
-        //pointBlock->hide();
-
-        // connect(pointBlock, &CodeBlock::blockClicked,
-        //         this, &MainWindow::on_route_point_block_clicked);
-
         routePointBlocks.append(pointBlock);
     }
 }

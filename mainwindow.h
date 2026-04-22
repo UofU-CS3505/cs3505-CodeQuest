@@ -61,11 +61,12 @@ private:
     QMap<QString, QPoint> levelPointPositions;
 
     QString startPoint = "start";
-    QString goalPoint = "moveToCastle();";
+    QString goalPoint;
+    const QString GOAL_BLOCK = "moveToCastle();";
 
     QTimer *moveTimer = nullptr;
     QStringList activeRoute;
-    double playerSpeed = 2.5;
+    double playerSpeed = 2.3;
 
     QStringList getProgramRoute() const;
     void resetPrincessToStart();
@@ -76,10 +77,10 @@ private:
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);
     void completeCurrentLevel();
+    void failCurrentLevel();
 
     // Canvas setup
     QLabel *princess;
-    QLabel *castle;
     QLabel *dragon1;
     QLabel *dragon2;
     QLabel *dragonAlertZone = nullptr;
@@ -245,6 +246,12 @@ private slots:
      * @brief on_runButton_clicked
      */
     void on_runButton_clicked();
+
+    /**
+     * Submits the player's code and checks if they won or lost the round.
+     * @brief on_submitButton_clicked
+     */
+    void on_submitButton_clicked();
 
     /**
      * Clears the workspace.
