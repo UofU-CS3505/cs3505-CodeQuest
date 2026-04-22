@@ -1090,6 +1090,10 @@ void MainWindow::stepPlayerMovement()
 
     QPoint currentPos = princess->pos();
     QPoint targetPos = levelPointPositions[targetName];
+    if (targetName == goalPoint) {
+        targetPos.setY(targetPos.y() +TILE);
+        targetPos.setX(targetPos.x() + TILE / 2);
+    }
 
     double dx = targetPos.x() - currentPos.x();
     double dy = targetPos.y() - currentPos.y();
@@ -1445,10 +1449,19 @@ void MainWindow::moveDragons(int dy){
 
 bool MainWindow::won()
 {
-    bool reachedGoal =
-        princess &&
-        levelPointPositions.contains(goalPoint) &&
-        princess->pos() == levelPointPositions[goalPoint];
+    if (!princess || !levelPointPositions.contains(goalPoint)) {
+        return false;
+    }
+
+    QRect princessRect = princess->geometry();
+
+    // Goal area the same size as the castle
+    QRect goalRect(
+        levelPointPositions[goalPoint],
+        QSize(TILE * 2.5, TILE * 2.5)
+        );
+
+    bool reachedGoal = princessRect.intersects(goalRect);
 
     if (!reachedGoal) {
         return false;
