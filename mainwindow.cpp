@@ -1076,14 +1076,14 @@ void MainWindow::stepPlayerMovement()
 
     if (currentLevel == 2 &&
         activeRoute.size() >= 2 &&
-        (activeRoute[0] == "if (InAlertZone)" || activeRoute[0] == "if (monsterDead)") &&
+        (activeRoute[0] == "if (inDragonVision)" || activeRoute[0] == "if (monsterDead)") &&
         levelPointPositions.contains(activeRoute[1])) {
 
         updateIfLevelLogic();
 
         bool frontIfTriggered = false;
 
-        if (activeRoute[0] == "if (InAlertZone)") {
+        if (activeRoute[0] == "if (inDragonVision)") {
             frontIfTriggered = playerTriggeredMonster;
         } else if (activeRoute[0] == "if (monsterDead)") {
             frontIfTriggered = (!dragon1 || !dragon1->isVisible());
@@ -1742,16 +1742,12 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "moveToD();", "moveToE();", "moveToF();", "moveToG();"
         };
         setUpLevel1();
-        createRoutePointBlocks();
-        resetPrincessToStart();
         resetDragonsToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 2) {
         currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (inDragonVision)", "if (monsterDead)"};
         setUpLevel2();
-        createRoutePointBlocks();
-        resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 3) {
@@ -1760,8 +1756,6 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "for(3)", "for(2)", "{", "}"
         };
         setUpLevel3();
-        createRoutePointBlocks();
-        resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 4) {
@@ -1771,10 +1765,10 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "for(2)", "{", "}"
         };
         setUpLevel4();
-        createRoutePointBlocks();
-        resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
+    createRoutePointBlocks();
+    resetPrincessToStart();
 }
 
 void MainWindow::completeCurrentLevel()
@@ -1788,11 +1782,9 @@ void MainWindow::completeCurrentLevel()
     int unlockedLevel = saveFile.getLatestUnlocked();
 
     // only unlock up to level 4 — that's all we have for now
-    if (unlockedLevel < 4) {
-        if (currentLevel == unlockedLevel) {
-            saveFile.updateUnlockedLevels(unlockedLevel + 1);
-            saveFile.save();
-        }
+    if (unlockedLevel < 4 && currentLevel == unlockedLevel) {
+        saveFile.updateUnlockedLevels(unlockedLevel + 1);
+        saveFile.save();
     }
 
     unlockLevelButtons();
@@ -1918,8 +1910,7 @@ void MainWindow::on_runButton_clicked()
         } else if (currentLevel == 2) {
             resetLevel2();
         } else if (currentLevel == 3) {
-            setUpLevel3();
-            resetPrincessToStart();
+            setUpLevel3();L
         }else if (currentLevel == 4) {
             setUpLevel4();
         }
