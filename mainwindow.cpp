@@ -381,7 +381,7 @@ void MainWindow::setUpLevels()
     setUpLevel1();
     //normalPaletteBlocks.append(moveBlock);
 
-    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"};
+    currentLevelRoutePoints = {"moveToA();", "moveToB();", "moveToC();", "moveToD();", "moveToE();", "moveToF();", "moveToG();"};
     createRoutePointBlocks();
     setRoutePointsVisible(true);
 }
@@ -392,7 +392,7 @@ void MainWindow::setUpLevel1()
     canvas->setFixedSize(COLS * TILE, ROWS * TILE);
 
     startPoint = "start";
-    goalPoint = "moveToCastle();";
+    goalPoint = "moveToG();";
 
     clearLevel1Visuals();
 
@@ -414,7 +414,7 @@ void MainWindow::setUpLevel1()
     levelPointPositions["moveToD();"] = QPoint(90, 320);
     levelPointPositions["moveToE();"] = QPoint(220, 320);
     levelPointPositions["moveToF();"] = QPoint(350, 320);
-    levelPointPositions["moveToCastle();"] = QPoint(400, 160);
+    levelPointPositions["moveToG();"] = QPoint(400, 160);
 
     addPointVisual("a", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("b", levelPointPositions["moveToB();"] + QPoint(6, 6));
@@ -422,7 +422,7 @@ void MainWindow::setUpLevel1()
     addPointVisual("d", levelPointPositions["moveToD();"] + QPoint(6, 6));
     addPointVisual("e", levelPointPositions["moveToE();"] + QPoint(6, 6));
     addPointVisual("f", levelPointPositions["moveToF();"] + QPoint(6, 6));
-    addPointVisual("g", levelPointPositions["moveToCastle();"] + QPoint(6, 6));
+    addPointVisual("g", levelPointPositions["moveToG();"] + QPoint(6, 6));
 
     princess = new QLabel(canvas);
     princess->setPixmap(QPixmap(":/images/princess.png"));
@@ -865,7 +865,7 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
     point->setGeometry(pos.x(), pos.y(), 28, 28);
 
     bool isGoal =
-        (goalPoint == "moveToCastle();" && name.toLower() == "g") ||
+        (goalPoint == "moveToG();" && name.toLower() == "g") ||
         (goalPoint == "moveToB();" && name.toLower() == "b") ||
         (goalPoint == "moveToC();" && name.toLower() == "c");
 
@@ -989,8 +989,8 @@ QStringList MainWindow::getProgramRoute() const
         if (block->getType() == "routePoint" ||
             block->getType() == "ifStatement" ||
             block->getType() == "forLoop" ||
-            (block->getType() == "scopeBracket" && block->text() == "}")) {
-            route << block->text();
+            (block->getType() == "scopeBracket" && block->getCommand() == "}")) {
+            route << block->getCommand();
         }
     }
     return route;
@@ -1707,18 +1707,18 @@ void MainWindow::openSpecificLevel(int levelNumber)
     if (levelNumber == 1) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "moveToD();", "moveToE();", "moveToF();", "moveToCastle();"
+            "moveToD();", "moveToE();", "moveToF();", "moveToG();"
         };
-        createRoutePointBlocks();
         setUpLevel1();
+        createRoutePointBlocks();
         resetPrincessToStart();
         resetDragonsToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 2) {
         currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
-        createRoutePointBlocks();
         setUpLevel2();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
@@ -1727,8 +1727,8 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "moveToA();", "moveToB();", "moveToC();",
             "for(3)", "for(2)", "{", "}"
         };
-        createRoutePointBlocks();
         setUpLevel3();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
@@ -1738,8 +1738,8 @@ void MainWindow::openSpecificLevel(int levelNumber)
             "if (InAlertZone) -> H",
             "for(2)", "{", "}"
         };
-        createRoutePointBlocks();
         setUpLevel4();
+        createRoutePointBlocks();
         resetPrincessToStart();
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
@@ -2211,17 +2211,18 @@ void MainWindow::createRoutePointBlocks()
     routePointBlocks.clear();
 
     for (const QString &pointName : currentLevelRoutePoints) {
+        QString displayName = pointName;
+
+        if (pointName == goalPoint) {
+            displayName = GOAL_BLOCK;
+        }
+
         QString blockType = pointName.startsWith("if")    ? "ifStatement"
                             : pointName.startsWith("for(")  ? "forLoop"
                             : (pointName == "{" || pointName == "}") ? "scopeBracket"
                                                                      : "routePoint";
-        CodeBlock *pointBlock = new CodeBlock(pointName, blockType);
+        CodeBlock *pointBlock = new CodeBlock(displayName, blockType, pointName);
         ui->blockSpaceWidget->addBlock(pointBlock);
-        //pointBlock->hide();
-
-        // connect(pointBlock, &CodeBlock::blockClicked,
-        //         this, &MainWindow::on_route_point_block_clicked);
-
         routePointBlocks.append(pointBlock);
     }
 }

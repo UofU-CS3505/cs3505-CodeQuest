@@ -5,7 +5,12 @@
 #include <QApplication>
 
 CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
-    : QLabel(text, parent), blockType(type)
+    : CodeBlock(text, type, text, parent)
+{
+}
+
+CodeBlock::CodeBlock(QString displayText, QString type, QString command, QWidget *parent)
+    : QLabel(displayText, parent), blockType(type), command(command)
 {
     setAlignment(Qt::AlignCenter);
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -14,16 +19,7 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
     setMinimumWidth(120);
     setMaximumWidth(220);
 
-    if (type == "move" || type == "method") {
-        setStyleSheet(
-            "background-color: blue;"
-            "border: 2px solid rgba(0,0,0,0.6);"
-            "border-bottom: 4px solid rgba(0,0,0,0.25);"
-            "border-radius: 12px;"
-            "padding: 6px;"
-            );
-    }
-    else if (type == "routePoint") {
+    if (type == "routePoint") {
         setStyleSheet(
             "background-color: lightblue;"
             "font-weight: bold;"
@@ -69,20 +65,16 @@ CodeBlock::CodeBlock(QString text, QString type, QWidget *parent)
         setMinimumWidth(40);
         setMaximumWidth(60);
     }
-    // else if (type == "turnLeft") {
-    //     setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
-    // }
-    // else if (type == "turnRight") {
-    //     setStyleSheet("background-color: khaki; padding: 6px; border: 1px solid black;");
-    // }
-    // else {
-    //     setStyleSheet("background-color: lightblue; padding: 6px; border: 1px solid black;");
-    // }
 }
 
 QString CodeBlock::getType() const
 {
     return blockType;
+}
+
+QString CodeBlock::getCommand() const
+{
+    return command;
 }
 
 void CodeBlock::mousePressEvent(QMouseEvent *event)
@@ -109,7 +101,7 @@ void CodeBlock::mouseMoveEvent(QMouseEvent *event)
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = new QMimeData;
 
-    mimeData->setText(this->text());
+    mimeData->setText(command);
     mimeData->setData("application/x-codeblock", blockType.toUtf8());
 
     drag->setMimeData(mimeData);
