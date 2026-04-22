@@ -1079,13 +1079,13 @@ void MainWindow::stepPlayerMovement()
 
     bool hasGlobalAlertHandler = false;
     if (currentLevel == 4) {
-        hasGlobalAlertHandler = activeRoute.contains("if (InAlertZone) -> H");
+        hasGlobalAlertHandler = activeRoute.contains("if (inDragonVision) -> H");
     }
 
     bool hasReactiveIf =
         (currentLevel == 2 &&
          activeRoute.size() >= 3 &&
-         (activeRoute[1] == "if (InAlertZone)" ||
+         (activeRoute[1] == "if (inDragonVision)" ||
           activeRoute[1] == "if (monsterDead)") &&
          levelPointPositions.contains(activeRoute[2]));
 
@@ -1094,7 +1094,7 @@ void MainWindow::stepPlayerMovement()
             return false;
         }
 
-        if (activeRoute[1] == "if (InAlertZone)") {
+        if (activeRoute[1] == "if (inDragonVision)") {
             return playerTriggeredMonster;
         }
 
@@ -1716,7 +1716,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
         QTimer::singleShot(0, this, &MainWindow::on_hintButton_clicked);
     }
     else if (levelNumber == 2) {
-        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (InAlertZone)", "if (monsterDead)"};
+        currentLevelRoutePoints = { "moveToA();", "moveToB();", "if (inDragonVision)", "if (monsterDead)"};
         setUpLevel2();
         createRoutePointBlocks();
         resetPrincessToStart();
@@ -1735,7 +1735,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
     else if (levelNumber == 4) {
         currentLevelRoutePoints = {
             "moveToA();", "moveToB();", "moveToC();",
-            "if (InAlertZone) -> H",
+            "if (inDragonVision) -> H",
             "for(2)", "{", "}"
         };
         setUpLevel4();
@@ -2036,7 +2036,7 @@ void MainWindow::on_hintButton_clicked()
                                                   "Same key-and-lock mechanic: pick up a key at B, return to A to unlock.<br><br>"
                                                   "A <b>dragon patrols</b> between A and B. Entering its red zone triggers a chase. "
                                                   "Point <b>H</b> is a safe hiding spot — reaching it resets the dragon.<br><br>"
-                                                  "<span style='color:#dd88ff;'>if (InAlertZone) -&gt; H</span> automatically redirects "
+                                                  "<span style='color:#dd88ff;'>if (inDragonVision) -&gt; H</span> automatically redirects "
                                                   "the princess to H when chased, then resumes from where she left off."
                                               },
                                               {
