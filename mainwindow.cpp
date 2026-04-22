@@ -330,6 +330,28 @@ void MainWindow::applyDarkTheme()
         "  border: 1px solid #222233;"
         "}"
         );
+    ui->submitButton->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #3a3a10;"
+        "  color: #ffff88;"
+        "  border: 2px solid #ffdd33;"
+        "  border-radius: 6px;"
+        "  padding: 5px 12px;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #4a4a18;"
+        "  border: 2px solid #ffee55;"
+        "  color: #ffffff;"
+        "}"
+        "QPushButton:pressed {"
+        "  background-color: #2a2a08;"
+        "}"
+        "QPushButton:disabled {"
+        "  background-color: #0f0f18;"
+        "  color: #555566;"
+        "  border: 1px solid #222233;"
+        "}"
+        );
 
     // Divider lines on code page
     ui->headerDivider->setStyleSheet("background-color: #ffd700;");
@@ -729,7 +751,7 @@ void MainWindow::setUpLevel3()
     levelPointPositions["start"]      = QPoint(20,  200);
     levelPointPositions["moveToA();"] = QPoint(140, 200);
     levelPointPositions["moveToB();"] = QPoint(300, 200);
-    levelPointPositions["moveToC();"] = QPoint(420, 200);
+    levelPointPositions["moveToC();"] = QPoint(400, 170);
 
     addPointVisual("A", levelPointPositions["moveToA();"] + QPoint(6, 6));
     addPointVisual("B", levelPointPositions["moveToB();"] + QPoint(6, 6));
