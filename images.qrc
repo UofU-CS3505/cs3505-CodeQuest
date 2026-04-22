@@ -7,5 +7,6 @@
         <file>key.png</file>
         <file>lock.png</file>
         <file>knight.png</file>
+        <file>hut.png</file>
     </qresource>
 </RCC>

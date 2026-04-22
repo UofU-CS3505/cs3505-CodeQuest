@@ -870,13 +870,10 @@ void MainWindow::addPointVisual(const QString &name, const QPoint &pos)
         (goalPoint == "moveToC();" && name.toLower() == "c");
 
     if (name.toUpper() == "H") {
-        point->setStyleSheet(
-            "background-color: mediumseagreen;"
-            "color: white;"
-            "border: 2px solid black;"
-            "border-radius: 14px;"
-            "font-weight: bold;"
-            );
+        point->setPixmap(QPixmap(":/images/hut.png"));
+        point->setScaledContents(true);
+        point->setFixedSize(TILE * 1.5, TILE * 1.5);
+        point->show();
     } else if (isGoal) {
         point->setPixmap(QPixmap(":/images/castle.png"));
         point->setScaledContents(true);
