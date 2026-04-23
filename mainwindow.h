@@ -73,6 +73,13 @@ private:
     void startPlayerMovement(const QStringList &route);
     void stepPlayerMovement();
 
+    // --- Block highlight ---
+    // Maps each step in the expanded activeRoute to a workspace block index.
+    // Built once at run-start; consumed count = originalRouteSize - activeRoute.size().
+    QList<int> highlightIndices;
+    int        originalRouteSize = 0;
+    void buildHighlightMap(const QStringList &expandedRoute);
+
     // Lock and Unlock Levels
     void unlockLevelButtons();
     void openSpecificLevel(int levelNumber);

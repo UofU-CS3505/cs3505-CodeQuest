@@ -39,6 +39,12 @@ public:
      */
     QString getCommand() const;
 
+    /**
+     * @brief setHighlighted Highlights or un-highlights this block during code execution.
+     * @param highlighted true to highlight, false to restore original style
+     */
+    void setHighlighted(bool highlighted);
+
 signals:
     /**
      * @brief blockClicked Broadcasted when the block is clicked.
@@ -70,7 +76,12 @@ private:
     bool dragged = false;
 
     /**
-     * @brief command the prncess will follo
+     * @brief command the princess will follow
      */
     QString command;
+
+    /**
+     * @brief originalStyle stores the stylesheet set at construction, used to restore after highlight
+     */
+    QString originalStyle;
 };

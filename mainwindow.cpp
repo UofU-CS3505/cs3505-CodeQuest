@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QTimer>
 #include <cmath>
+#include <functional>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -993,12 +994,86 @@ QStringList MainWindow::getProgramRoute() const
     return route;
 }
 
+// -------------------- Block highlight map --------------------
+// Walks the workspace blocks and simulates expandForLoops, recording
+// which block index corresponds to each step in the expanded route.
+void MainWindow::buildHighlightMap(const QStringList &expandedRoute)
+{
+    highlightIndices.clear();
+
+    QList<CodeBlock*> blocks = ui->workspaceWidget->getBlocks();
+    int ri = 0; // index into expandedRoute
+
+    std::function<void(int &)> process = [&](int &bi) {
+        while (bi < blocks.size() && ri < expandedRoute.size()) {
+            CodeBlock *b = blocks[bi];
+            QString type = b->getType();
+            QString cmd  = b->getCommand();
+
+            if (type == "forLoop") {
+                // parse repeat count
+                bool ok = false;
+                int times = cmd.mid(4, cmd.size() - 5).toInt(&ok);
+                if (!ok || times <= 0) { bi++; continue; }
+
+                bi++; // skip forLoop block
+
+                // skip opening {
+                if (bi < blocks.size() &&
+                    blocks[bi]->getType() == "scopeBracket" &&
+                    blocks[bi]->text() == "{") {
+                    bi++;
+                }
+
+                // collect body block indices
+                QList<int> bodyIndices;
+                int bodyStart = bi;
+                while (bi < blocks.size() &&
+                       !(blocks[bi]->getType() == "scopeBracket" && blocks[bi]->text() == "}")) {
+                    bodyIndices.append(bi);
+                    bi++;
+                }
+                if (bi < blocks.size()) bi++; // skip closing }
+
+                // emit body indices N times
+                for (int t = 0; t < times && ri < expandedRoute.size(); t++) {
+                    for (int idx : bodyIndices) {
+                        if (ri < expandedRoute.size()) {
+                            highlightIndices.append(idx);
+                            ri++;
+                        }
+                    }
+                }
+
+            } else if (type == "scopeBracket") {
+                bi++;
+            } else {
+                // normal block (routePoint, ifStatement, etc.)
+                if (ri < expandedRoute.size() && cmd == expandedRoute[ri]) {
+                    highlightIndices.append(bi);
+                    ri++;
+                }
+                bi++;
+            }
+        }
+    };
+
+    int bi = 0;
+    process(bi);
+}
+
 void MainWindow::resetPrincessToStart()
 {
     if (moveTimer) {
         moveTimer->stop();
     }
 
+    // Clear all highlights
+    for (CodeBlock *b : ui->workspaceWidget->getBlocks())
+        b->setHighlighted(false);
+
+    highlightIndices.clear();
+    originalRouteSize = 0;
     activeRoute.clear();
 
     if (princess && levelPointPositions.contains(startPoint)) {
@@ -1042,6 +1117,7 @@ void MainWindow::resetDragonsToStart(){
 void MainWindow::startPlayerMovement(const QStringList &route)
 {
     activeRoute = route;
+    originalRouteSize = route.size();
 
     if (!activeRoute.isEmpty() && moveTimer) {
         moveTimer->start();
@@ -1050,6 +1126,19 @@ void MainWindow::startPlayerMovement(const QStringList &route)
 
 void MainWindow::stepPlayerMovement()
 {
+    // ---- highlight the currently executing block ----
+    QList<CodeBlock*> wsBlocks = ui->workspaceWidget->getBlocks();
+    for (CodeBlock *b : wsBlocks)
+        b->setHighlighted(false);
+
+    int consumed = originalRouteSize - activeRoute.size();
+    if (consumed >= 0 && consumed < highlightIndices.size()) {
+        int blockIdx = highlightIndices[consumed];
+        if (blockIdx >= 0 && blockIdx < wsBlocks.size())
+            wsBlocks[blockIdx]->setHighlighted(true);
+    }
+    // ---- end highlight ----
+
     if (!princess || activeRoute.isEmpty()) {
         if (moveTimer) {
             moveTimer->stop();
@@ -2235,7 +2324,12 @@ void MainWindow::on_runButton_clicked()
     }
 
     QStringList rawRoute = getProgramRoute();
-    QStringList route = (currentLevel == 3 || currentLevel == 4) ? expandForLoops(rawRoute) : rawRoute;
+    QStringList route = (currentLevel == 3 || currentLevel == 4)
+                            ? expandForLoops(rawRoute)
+                            : rawRoute;
+
+    // Build the highlight map before starting movement
+    buildHighlightMap(route);
 
     setRunning(true);
 

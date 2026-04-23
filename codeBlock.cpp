@@ -65,6 +65,9 @@ CodeBlock::CodeBlock(QString displayText, QString type, QString command, QWidget
         setMinimumWidth(40);
         setMaximumWidth(60);
     }
+
+    // Save the style set at construction so we can restore it after highlighting
+    originalStyle = styleSheet();
 }
 
 QString CodeBlock::getType() const
@@ -75,6 +78,17 @@ QString CodeBlock::getType() const
 QString CodeBlock::getCommand() const
 {
     return command;
+}
+
+void CodeBlock::setHighlighted(bool highlighted)
+{
+    if (highlighted) {
+        setStyleSheet(originalStyle +
+                      "border: 3px solid #FFD700;"
+                      "background-color: rgba(255, 220, 0, 0.35);");
+    } else {
+        setStyleSheet(originalStyle);
+    }
 }
 
 void CodeBlock::mousePressEvent(QMouseEvent *event)
