@@ -1548,15 +1548,112 @@ void MainWindow::on_levelsButton_clicked()
 
 void MainWindow::on_aboutButton_clicked()
 {
-    QMessageBox::about(
-        this,
-        "About Code Quest",
-        "Code Quest\n\n"
-        "A block-based coding education game.\n"
-        "Drag and drop code blocks to solve each challenge.\n\n"
-        "Use the level buttons to pick where you want to start!"
-        "-----Developed by bitcat.-----"
+    QDialog about(this);
+    about.setWindowTitle("About Code Quest");
+    about.setFixedSize(420, 340);
+    about.setStyleSheet(
+        "QDialog {"
+        "  background-color: #0d0d1a;"
+        "  border: 2px solid #ffd700;"
+        "  border-radius: 12px;"
+        "}"
         );
+
+    QVBoxLayout *layout = new QVBoxLayout(&about);
+    layout->setContentsMargins(30, 26, 30, 22);
+    layout->setSpacing(10);
+
+    // Title
+    QLabel *titleLabel = new QLabel("Code Quest", &about);
+    titleLabel->setStyleSheet(
+        "color: #ffd700;"
+        "font-size: 20px;"
+        "font-weight: bold;"
+        "letter-spacing: 3px;"
+        "background: transparent;"
+        );
+    titleLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(titleLabel);
+
+    QLabel *taglineLabel = new QLabel("A block-based coding education game", &about);
+    taglineLabel->setStyleSheet(
+        "color: #8899aa;"
+        "font-size: 11px;"
+        "background: transparent;"
+        );
+    taglineLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(taglineLabel);
+
+    // Gold divider
+    QFrame *divider = new QFrame(&about);
+    divider->setFrameShape(QFrame::HLine);
+    divider->setStyleSheet("background-color: #ffd700; max-height: 1px; border: none;");
+    layout->addWidget(divider);
+
+    // How to play section
+    QLabel *howLabel = new QLabel("How to Play", &about);
+    howLabel->setStyleSheet(
+        "color: #ffd700;"
+        "font-size: 12px;"
+        "font-weight: bold;"
+        "background: transparent;"
+        );
+    layout->addWidget(howLabel);
+
+    QLabel *bodyLabel = new QLabel(
+        "Drag code blocks from the palette into your workspace to build a program.\n"
+        "Press Run to watch the princess follow your instructions.\n"
+        "Press Submit once she has reached the goal to complete the level.\n"
+        "Stuck? Use the Hint button.",
+        &about
+        );
+    bodyLabel->setWordWrap(true);
+    bodyLabel->setStyleSheet(
+        "color: #c8d0e0;"
+        "font-size: 11px;"
+        "background: transparent;"
+        );
+    layout->addWidget(bodyLabel, 1);
+
+    // Thin dim divider
+    QFrame *divider2 = new QFrame(&about);
+    divider2->setFrameShape(QFrame::HLine);
+    divider2->setStyleSheet("background-color: #2a2a44; max-height: 1px; border: none;");
+    layout->addWidget(divider2);
+
+    // Credits
+    QLabel *creditsLabel = new QLabel("Developed by  bitcat", &about);
+    creditsLabel->setStyleSheet(
+        "color: #556677;"
+        "font-size: 10px;"
+        "background: transparent;"
+        );
+    creditsLabel->setAlignment(Qt::AlignCenter);
+    layout->addWidget(creditsLabel);
+
+    // Close button
+    QPushButton *closeBtn = new QPushButton("Close", &about);
+    closeBtn->setFixedHeight(32);
+    closeBtn->setStyleSheet(
+        "QPushButton {"
+        "  background-color: #1a1a2e;"
+        "  color: #ffd700;"
+        "  border: 1px solid #ffd700;"
+        "  border-radius: 6px;"
+        "  font-size: 12px;"
+        "  font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "  background-color: #252550;"
+        "  border: 1px solid #ffee55;"
+        "  color: #ffee55;"
+        "}"
+        "QPushButton:pressed { background-color: #111130; }"
+        );
+    connect(closeBtn, &QPushButton::clicked, &about, &QDialog::accept);
+    layout->addWidget(closeBtn);
+
+    about.exec();
 }
 
 void MainWindow::on_backToStartButton_clicked()
@@ -1791,25 +1888,141 @@ void MainWindow::completeCurrentLevel()
 
     // If the current level is cleared, a window pops up (containing text, the score, and options).
     emit levelCompleted();
-    QMessageBox msgBox(this);
-    msgBox.setWindowTitle("Level Complete!");
-    msgBox.setText("Congratulations! You completed this level!\n"
-                   "Your total score is " + QString::QString::number(finalScore));
 
-    // Create three option buttons.
-    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
-    QPushButton *nextLevelButton = msgBox.addButton("Next Level", QMessageBox::ActionRole);
-    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+    QDialog winDialog(this);
+    winDialog.setWindowTitle("Level Complete");
+    winDialog.setFixedSize(400, 280);
+    winDialog.setStyleSheet(
+        "QDialog {"
+        "  background-color: #0d0d1a;"
+        "  border: 2px solid #ffd700;"
+        "  border-radius: 12px;"
+        "}"
+        );
 
-    msgBox.exec();
+    QVBoxLayout *mainLayout = new QVBoxLayout(&winDialog);
+    mainLayout->setContentsMargins(28, 24, 28, 20);
+    mainLayout->setSpacing(10);
 
-    // Implement the functionality of each button.
-    if (msgBox.clickedButton() == restartButton) {
+    // Title row
+    QHBoxLayout *titleRow = new QHBoxLayout;
+
+    QLabel *titleLabel = new QLabel("Level Complete!", &winDialog);
+    titleLabel->setStyleSheet(
+        "color: #ffd700;"
+        "font-size: 18px;"
+        "font-weight: bold;"
+        "background: transparent;"
+        );
+
+    titleRow->addWidget(titleLabel);
+    titleRow->addStretch();
+    mainLayout->addLayout(titleRow);
+
+    // Gold divider
+    QFrame *divider = new QFrame(&winDialog);
+    divider->setFrameShape(QFrame::HLine);
+    divider->setStyleSheet("background-color: #ffd700; max-height: 1px; border: none;");
+    mainLayout->addWidget(divider);
+
+    // Body text
+    QLabel *bodyLabel = new QLabel(
+        "The princess made it through safely.\n"
+        "Well done — your code was just right!",
+        &winDialog
+        );
+    bodyLabel->setWordWrap(true);
+    bodyLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    bodyLabel->setStyleSheet(
+        "color: #c8d0e0;"
+        "font-size: 12px;"
+        "background: transparent;"
+        );
+    mainLayout->addWidget(bodyLabel);
+
+    // Score display
+    QLabel *scoreLabel = new QLabel(
+        "Score:  " + QString::number(finalScore),
+        &winDialog
+        );
+    scoreLabel->setAlignment(Qt::AlignLeft);
+    scoreLabel->setStyleSheet(
+        "color: #ffd700;"
+        "font-size: 14px;"
+        "font-weight: bold;"
+        "background: transparent;"
+        );
+    mainLayout->addWidget(scoreLabel, 1);
+
+    // Button row
+    QHBoxLayout *btnRow = new QHBoxLayout;
+    btnRow->setSpacing(10);
+
+    QString baseBtnStyle =
+        "QPushButton {"
+        "  border-radius: 6px;"
+        "  font-size: 12px;"
+        "  font-weight: bold;"
+        "  padding: 6px 14px;"
+        "}"
+        "QPushButton:pressed { opacity: 0.8; }";
+
+    QPushButton *retryBtn = new QPushButton("Replay", &winDialog);
+    retryBtn->setStyleSheet(baseBtnStyle +
+                            "QPushButton {"
+                            "  background-color: #1a1a2e;"
+                            "  color: #aabbdd;"
+                            "  border: 1px solid #3a3a6e;"
+                            "}"
+                            "QPushButton:hover {"
+                            "  background-color: #252550;"
+                            "  border: 1px solid #8899cc;"
+                            "  color: #ccd8ee;"
+                            "}");
+
+    QPushButton *nextBtn = new QPushButton("Next Level", &winDialog);
+    nextBtn->setStyleSheet(baseBtnStyle +
+                           "QPushButton {"
+                           "  background-color: #3a3a10;"
+                           "  color: #ffd700;"
+                           "  border: 2px solid #ffd700;"
+                           "}"
+                           "QPushButton:hover {"
+                           "  background-color: #4a4a18;"
+                           "  border: 2px solid #ffee55;"
+                           "  color: #ffffff;"
+                           "}");
+
+    QPushButton *menuBtn = new QPushButton("Main Menu", &winDialog);
+    menuBtn->setStyleSheet(baseBtnStyle +
+                           "QPushButton {"
+                           "  background-color: #1a1a2e;"
+                           "  color: #aabbdd;"
+                           "  border: 1px solid #3a3a6e;"
+                           "}"
+                           "QPushButton:hover {"
+                           "  background-color: #252550;"
+                           "  border: 1px solid #8899cc;"
+                           "  color: #ccd8ee;"
+                           "}");
+
+    btnRow->addWidget(retryBtn);
+    btnRow->addWidget(nextBtn);
+    btnRow->addWidget(menuBtn);
+    mainLayout->addLayout(btnRow);
+
+    connect(retryBtn, &QPushButton::clicked, &winDialog, [&]() { winDialog.done(1); });
+    connect(nextBtn,  &QPushButton::clicked, &winDialog, [&]() { winDialog.done(2); });
+    connect(menuBtn,  &QPushButton::clicked, &winDialog, [&]() { winDialog.done(3); });
+
+    int result = winDialog.exec();
+
+    if (result == 1) {
         ui->workspaceWidget->clearBlocks();
         openSpecificLevel(currentLevel);
-    } else if (msgBox.clickedButton() == nextLevelButton) {
+    } else if (result == 2) {
         if (currentLevel >= 4) {
-            // show a styled "coming soon" dialog instead of trying to open level 5
+            // All levels done, show a "coming soon" dialog
             QDialog done(this);
             done.setWindowTitle("You finished it!");
             done.setFixedSize(380, 200);
@@ -1824,14 +2037,14 @@ void MainWindow::completeCurrentLevel()
             vl->setContentsMargins(28, 24, 28, 24);
             vl->setSpacing(12);
 
-            QLabel *title = new QLabel("You've completed all levels!", &done);
-            title->setStyleSheet("color: #ffd700; font-size: 15px; font-weight: bold; background: transparent;");
-            title->setWordWrap(true);
-            title->setAlignment(Qt::AlignCenter);
+            QLabel *doneTitle = new QLabel("You've completed all levels!", &done);
+            doneTitle->setStyleSheet("color: #ffd700; font-size: 15px; font-weight: bold; background: transparent;");
+            doneTitle->setWordWrap(true);
+            doneTitle->setAlignment(Qt::AlignCenter);
 
-            QLabel *body = new QLabel("More levels are coming soon.\nStay tuned!", &done);
-            body->setStyleSheet("color: #c8d8e8; font-size: 13px; background: transparent;");
-            body->setAlignment(Qt::AlignCenter);
+            QLabel *doneBody = new QLabel("More levels are coming soon.\nStay tuned!", &done);
+            doneBody->setStyleSheet("color: #c8d8e8; font-size: 13px; background: transparent;");
+            doneBody->setAlignment(Qt::AlignCenter);
 
             QPushButton *okBtn = new QPushButton("Back to Menu", &done);
             okBtn->setFixedHeight(34);
@@ -1844,8 +2057,8 @@ void MainWindow::completeCurrentLevel()
                 "QPushButton:hover { background-color: #252550; }");
             connect(okBtn, &QPushButton::clicked, &done, &QDialog::accept);
 
-            vl->addWidget(title);
-            vl->addWidget(body);
+            vl->addWidget(doneTitle);
+            vl->addWidget(doneBody);
             vl->addStretch();
             vl->addWidget(okBtn);
 
@@ -1854,7 +2067,7 @@ void MainWindow::completeCurrentLevel()
         } else {
             openSpecificLevel(currentLevel + 1);
         }
-    } else if (msgBox.clickedButton() == quitButton) {
+    } else if (result == 3) {
         ui->stackedWidget->setCurrentIndex(START_PAGE);
     }
 }
@@ -1864,24 +2077,128 @@ void MainWindow::failCurrentLevel()
     stopScoreTracking();
     setRunning(false);
 
-    QMessageBox msgBox(this);
-    msgBox.setWindowTitle("You Failed!");
-    msgBox.setText("You Failed this level!\n");
+    QDialog failDialog(this);
+    failDialog.setWindowTitle("Level Failed");
+    failDialog.setFixedSize(400, 260);
+    failDialog.setStyleSheet(
+        "QDialog {"
+        "  background-color: #0d0d1a;"
+        "  border: 2px solid #aa2222;"
+        "  border-radius: 12px;"
+        "}"
+        );
 
-    // Create three option buttons.
-    QPushButton *restartButton = msgBox.addButton("Restart", QMessageBox::ActionRole);
-    QPushButton *chooseLevelButton = msgBox.addButton("Choose Level", QMessageBox::ActionRole);
-    QPushButton *quitButton = msgBox.addButton("Quit", QMessageBox::ActionRole);
+    QVBoxLayout *mainLayout = new QVBoxLayout(&failDialog);
+    mainLayout->setContentsMargins(28, 24, 28, 20);
+    mainLayout->setSpacing(10);
 
-    msgBox.exec();
+    // Icon + title row
+    QHBoxLayout *titleRow = new QHBoxLayout;
 
-    // Implement the functionality of each button.
-    if (msgBox.clickedButton() == restartButton) {
+    QLabel *titleLabel = new QLabel("You Failed!", &failDialog);
+    titleLabel->setStyleSheet(
+        "color: #ff4444;"
+        "font-size: 18px;"
+        "font-weight: bold;"
+        "background: transparent;"
+        );
+
+    titleRow->addWidget(titleLabel);
+    titleRow->addStretch();
+    mainLayout->addLayout(titleRow);
+
+    // Thin red divider
+    QFrame *divider = new QFrame(&failDialog);
+    divider->setFrameShape(QFrame::HLine);
+    divider->setStyleSheet("background-color: #aa2222; max-height: 1px; border: none;");
+    mainLayout->addWidget(divider);
+
+    // Body text
+    QLabel *bodyLabel = new QLabel(
+        "The princess didn't make it this time.\n"
+        "Review your code and try again — you've got this!",
+        &failDialog
+        );
+    bodyLabel->setWordWrap(true);
+    bodyLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    bodyLabel->setStyleSheet(
+        "color: #c8d0e0;"
+        "font-size: 12px;"
+        "background: transparent;"
+        "line-height: 1.5;"
+        );
+    mainLayout->addWidget(bodyLabel, 1);
+
+    // Button row
+    QHBoxLayout *btnRow = new QHBoxLayout;
+    btnRow->setSpacing(10);
+
+    QString baseBtnStyle =
+        "QPushButton {"
+        "  border-radius: 6px;"
+        "  font-size: 12px;"
+        "  font-weight: bold;"
+        "  padding: 6px 14px;"
+        "}"
+        "QPushButton:pressed { opacity: 0.8; }";
+
+    QPushButton *retryBtn = new QPushButton("Try Again", &failDialog);
+    retryBtn->setStyleSheet(baseBtnStyle +
+                            "QPushButton {"
+                            "  background-color: #3a1a1a;"
+                            "  color: #ff8888;"
+                            "  border: 1px solid #aa2222;"
+                            "}"
+                            "QPushButton:hover {"
+                            "  background-color: #551a1a;"
+                            "  border: 1px solid #ff4444;"
+                            "  color: #ffaaaa;"
+                            "}");
+
+    QPushButton *levelsBtn = new QPushButton("Choose Level", &failDialog);
+    levelsBtn->setStyleSheet(baseBtnStyle +
+                             "QPushButton {"
+                             "  background-color: #1a1a2e;"
+                             "  color: #aabbdd;"
+                             "  border: 1px solid #3a3a6e;"
+                             "}"
+                             "QPushButton:hover {"
+                             "  background-color: #252550;"
+                             "  border: 1px solid #ffd700;"
+                             "  color: #ffd700;"
+                             "}");
+
+    QPushButton *menuBtn = new QPushButton("Main Menu", &failDialog);
+    menuBtn->setStyleSheet(baseBtnStyle +
+                           "QPushButton {"
+                           "  background-color: #1a1a2e;"
+                           "  color: #aabbdd;"
+                           "  border: 1px solid #3a3a6e;"
+                           "}"
+                           "QPushButton:hover {"
+                           "  background-color: #252550;"
+                           "  border: 1px solid #ffd700;"
+                           "  color: #ffd700;"
+                           "}");
+
+    btnRow->addWidget(retryBtn);
+    btnRow->addWidget(levelsBtn);
+    btnRow->addWidget(menuBtn);
+    mainLayout->addLayout(btnRow);
+
+    // Wire up buttons
+    connect(retryBtn,  &QPushButton::clicked, &failDialog, [&]() { failDialog.done(1); });
+    connect(levelsBtn, &QPushButton::clicked, &failDialog, [&]() { failDialog.done(2); });
+    connect(menuBtn,   &QPushButton::clicked, &failDialog, [&]() { failDialog.done(3); });
+
+    int result = failDialog.exec();
+
+    if (result == 1) {
         ui->workspaceWidget->clearBlocks();
         openSpecificLevel(currentLevel);
-    } else if (msgBox.clickedButton() == chooseLevelButton) {
+    } else if (result == 2) {
         ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
-    } else if (msgBox.clickedButton() == quitButton) {
+    } else if (result == 3) {
         ui->stackedWidget->setCurrentIndex(START_PAGE);
     }
 }
@@ -1910,7 +2227,7 @@ void MainWindow::on_runButton_clicked()
         } else if (currentLevel == 2) {
             resetLevel2();
         } else if (currentLevel == 3) {
-            setUpLevel3();L
+            setUpLevel3();
         }else if (currentLevel == 4) {
             setUpLevel4();
         }
@@ -1966,111 +2283,111 @@ void MainWindow::on_hintButton_clicked()
     };
 
     static const LevelHint hints[] = {
-                                      // Level 1
-                                      {
-                                          "Level 1 — Methods",
-                                          {
-                                              {
-                                                  "What you'll learn",
-                                                  "A <b>method</b> is a named action — when you call it, something happens.<br><br>"
-                                                  "<span style='color:#90ee90;'>moveToA();</span> tells the princess to walk to point A. "
-                                                  "Each block in your workspace is one method call.<br><br>"
-                                                  "Blocks run <b>top to bottom</b>, one at a time — just like lines in a real program."
-                                              },
-                                              {
-                                                  "How the game works",
-                                                  "Drag blocks from <i>Blocks</i> into <i>Your Code</i> and press <b>Run</b>.<br><br>"
-                                                  "Two dragons patrol <b>up and down</b> along fixed columns. "
-                                                  "They never leave those columns.<br><br>"
-                                                  "If the princess touches a dragon at any point, the run resets."
-                                              },
-                                              {
-                                                  "Finding a path",
-                                                  "<i>The dragons only cover certain vertical columns.<br><br>"
-                                                  "Some points sit above or below them — and some are completely outside their range.<br><br>"
-                                                  "A route that avoids both patrol columns the whole way will reach the castle safely.</i>"
-                                              }
-                                          }
-                                      },
-                                      // Level 2
-                                      {
-                                          "Level 2 — if Statements",
-                                          {
-                                              {
-                                                  "What you'll learn",
-                                                  "An <b>if statement</b> lets your code make a decision.<br><br>"
-                                                  "Place a destination block, then an <span style='color:#dd88ff;'>if</span> block below it. "
-                                                  "When the princess arrives, the condition is checked:<br><br>"
-                                                  "· Condition <b>true</b> → next destination is <b>skipped</b><br>"
-                                                  "· Condition <b>false</b> → next destination is <b>visited</b>"
-                                              },
-                                              {
-                                                  "How the game works",
-                                                  "The dragon starts chasing the princess once she enters its <b>red alert zone</b>.<br><br>"
-                                                  "The guard near A will <b>eliminate any dragon</b> that wanders into its gold zone.<br><br>"
-                                                  "The goal is at B — but the dragon is in the way."
-                                              },
-                                              {
-                                                  "Finding a path",
-                                                  "<i>The dragon won't move on its own — something has to lure it toward the guard.<br><br>"
-                                                  "Think about what draws the dragon out, and what condition tells you it's safe to proceed.<br><br>"
-                                                  "Once the obstacle is gone, the path to B is open.</i>"
-                                              }
-                                          }
-                                      },
-                                      // Level 3
-                                      {
-                                          "Level 3 — for Loops",
-                                          {
-                                              {
-                                                  "What you'll learn",
-                                                  "A <b>for loop</b> repeats actions a fixed number of times.<br><br>"
-                                                  "Use <span style='color:#88ff88;'>for(N)</span> with blocks wrapped in "
-                                                  "<span style='color:#ffd700;'>{</span> and <span style='color:#ffd700;'>}</span> "
-                                                  "to repeat them N times.<br><br>"
-                                                  "Anything <b>outside</b> the braces runs once, after the loop finishes."
-                                              },
-                                              {
-                                                  "How the game works",
-                                                  "There are <b>2 locks</b> above A and <b>2 keys</b> above B.<br><br>"
-                                                  "Each time the princess reaches B, she picks up a key — it follows her. "
-                                                  "When she returns to A with a key, the key and one lock disappear.<br><br>"
-                                                  "Once both locks are gone, the red wall opens and C is reachable."
-                                              },
-                                              {
-                                                  "Finding a path",
-                                                  "<i>Which steps need to repeat, and which step only happens once at the end?<br><br>"
-                                                  "The loop count should match exactly how many exchanges need to happen.<br><br>"
-                                                  "Once the last lock falls, one final move reaches the goal.</i>"
-                                              }
-                                          }
-                                      },
-                                      // Level 4
-                                      {
-                                          "Level 4 — Putting It Together",
-                                          {
-                                              {
-                                                  "What you'll learn",
-                                                  "Real programs combine concepts. This level uses both a <b>for loop</b> and an <b>if statement</b>.<br><br>"
-                                                  "The loop handles a repeating task. The if statement reacts to something unexpected happening during that loop."
-                                              },
-                                              {
-                                                  "How the game works",
-                                                  "Same key-and-lock mechanic: pick up a key at B, return to A to unlock.<br><br>"
-                                                  "A <b>dragon patrols</b> between A and B. Entering its red zone triggers a chase. "
-                                                  "Point <b>H</b> is a safe hiding spot — reaching it resets the dragon.<br><br>"
-                                                  "<span style='color:#dd88ff;'>if (inDragonVision) -&gt; H</span> automatically redirects "
-                                                  "the princess to H when chased, then resumes from where she left off."
-                                              },
-                                              {
-                                                  "Finding a path",
-                                                  "<i>The loop handles the exchange — but the dragon may interrupt at any step.<br><br>"
-                                                  "The if block needs to be placed where it can catch a chase mid-loop.<br><br>"
-                                                  "Once both locks are gone, one final move reaches the castle.</i>"
-                                              }
-                                          }
-                                      },
-                                      };
+        // Level 1
+        {
+            "Level 1 — Methods",
+            {
+                {
+                    "What you'll learn",
+                    "A <b>method</b> is a named action — when you call it, something happens.<br><br>"
+                    "<span style='color:#90ee90;'>moveToA();</span> tells the princess to walk to point A. "
+                    "Each block in your workspace is one method call.<br><br>"
+                    "Blocks run <b>top to bottom</b>, one at a time — just like lines in a real program."
+                },
+                {
+                    "How the game works",
+                    "Drag blocks from <i>Blocks</i> into <i>Your Code</i> and press <b>Run</b>.<br><br>"
+                    "Two dragons patrol <b>up and down</b> along fixed columns. "
+                    "They never leave those columns.<br><br>"
+                    "If the princess touches a dragon at any point, the run resets."
+                },
+                {
+                    "Finding a path",
+                    "<i>The dragons only cover certain vertical columns.<br><br>"
+                    "Some points sit above or below them — and some are completely outside their range.<br><br>"
+                    "A route that avoids both patrol columns the whole way will reach the castle safely.</i>"
+                }
+            }
+        },
+        // Level 2
+        {
+            "Level 2 — if Statements",
+            {
+                {
+                    "What you'll learn",
+                    "An <b>if statement</b> lets your code make a decision.<br><br>"
+                    "Place a destination block, then an <span style='color:#dd88ff;'>if</span> block below it. "
+                    "When the princess arrives, the condition is checked:<br><br>"
+                    "· Condition <b>true</b> → next destination is <b>skipped</b><br>"
+                    "· Condition <b>false</b> → next destination is <b>visited</b>"
+                },
+                {
+                    "How the game works",
+                    "The dragon starts chasing the princess once she enters its <b>red alert zone</b>.<br><br>"
+                    "The guard near A will <b>eliminate any dragon</b> that wanders into its gold zone.<br><br>"
+                    "The goal is at B — but the dragon is in the way."
+                },
+                {
+                    "Finding a path",
+                    "<i>The dragon won't move on its own — something has to lure it toward the guard.<br><br>"
+                    "Think about what draws the dragon out, and what condition tells you it's safe to proceed.<br><br>"
+                    "Once the obstacle is gone, the path to B is open.</i>"
+                }
+            }
+        },
+        // Level 3
+        {
+            "Level 3 — for Loops",
+            {
+                {
+                    "What you'll learn",
+                    "A <b>for loop</b> repeats actions a fixed number of times.<br><br>"
+                    "Use <span style='color:#88ff88;'>for(N)</span> with blocks wrapped in "
+                    "<span style='color:#ffd700;'>{</span> and <span style='color:#ffd700;'>}</span> "
+                    "to repeat them N times.<br><br>"
+                    "Anything <b>outside</b> the braces runs once, after the loop finishes."
+                },
+                {
+                    "How the game works",
+                    "There are <b>2 locks</b> above A and <b>2 keys</b> above B.<br><br>"
+                    "Each time the princess reaches B, she picks up a key — it follows her. "
+                    "When she returns to A with a key, the key and one lock disappear.<br><br>"
+                    "Once both locks are gone, the red wall opens and C is reachable."
+                },
+                {
+                    "Finding a path",
+                    "<i>Which steps need to repeat, and which step only happens once at the end?<br><br>"
+                    "The loop count should match exactly how many exchanges need to happen.<br><br>"
+                    "Once the last lock falls, one final move reaches the goal.</i>"
+                }
+            }
+        },
+        // Level 4
+        {
+            "Level 4 — Putting It Together",
+            {
+                {
+                    "What you'll learn",
+                    "Real programs combine concepts. This level uses both a <b>for loop</b> and an <b>if statement</b>.<br><br>"
+                    "The loop handles a repeating task. The if statement reacts to something unexpected happening during that loop."
+                },
+                {
+                    "How the game works",
+                    "Same key-and-lock mechanic: pick up a key at B, return to A to unlock.<br><br>"
+                    "A <b>dragon patrols</b> between A and B. Entering its red zone triggers a chase. "
+                    "Point <b>H</b> is a safe hiding spot — reaching it resets the dragon.<br><br>"
+                    "<span style='color:#dd88ff;'>if (inDragonVision) -&gt; H</span> automatically redirects "
+                    "the princess to H when chased, then resumes from where she left off."
+                },
+                {
+                    "Finding a path",
+                    "<i>The loop handles the exchange — but the dragon may interrupt at any step.<br><br>"
+                    "The if block needs to be placed where it can catch a chase mid-loop.<br><br>"
+                    "Once both locks are gone, one final move reaches the castle.</i>"
+                }
+            }
+        },
+    };
 
     int idx = qBound(1, currentLevel, 5) - 1;
     const LevelHint &hint = hints[idx];
