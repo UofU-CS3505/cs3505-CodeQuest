@@ -26,7 +26,7 @@ void Confetti::startConfetti()
 
 void Confetti::spawnConfetti()
 {
-    if (spawnCount >= maxSpawns) {
+    if (spawnCount >= MAX_SPAWNS) {
         spawnTimer.stop();
         return;
     }
