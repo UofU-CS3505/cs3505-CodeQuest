@@ -255,6 +255,17 @@ private:
      */
     bool won();
 
+    /**
+     * Checks whether all for-loops in the route have valid { } braces.
+     * A for-loop must be followed by an opening brace and eventually a
+     * matching closing brace.
+     *
+     * @brief hasValidForLoopSyntax validates loop block structure
+     * @param route ordered list of workspace blocks
+     * @return true if all for-loops are valid, false otherwise
+     */
+    bool hasValidForLoopSyntax(const QStringList &route);
+
     void applyDarkTheme();
     void clearLevel1Visuals();
     void addPointVisual(const QString &name, const QPoint &pos);

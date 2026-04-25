@@ -987,7 +987,7 @@ QStringList MainWindow::getProgramRoute() const
         if (block->getType() == "routePoint" ||
             block->getType() == "ifStatement" ||
             block->getType() == "forLoop" ||
-            (block->getType() == "scopeBracket" && block->getCommand() == "}")) {
+            (block->getType() == "scopeBracket")) {
             route << block->getCommand();
         }
     }
@@ -1027,7 +1027,6 @@ void MainWindow::buildHighlightMap(const QStringList &expandedRoute)
 
                 // collect body block indices
                 QList<int> bodyIndices;
-                int bodyStart = bi;
                 while (bi < blocks.size() &&
                        !(blocks[bi]->getType() == "scopeBracket" && blocks[bi]->text() == "}")) {
                     bodyIndices.append(bi);
@@ -1128,7 +1127,7 @@ void MainWindow::stepPlayerMovement()
 {
     // ---- highlight the currently executing block ----
     QList<CodeBlock*> wsBlocks = ui->workspaceWidget->getBlocks();
-    for (CodeBlock *b : wsBlocks)
+    for (CodeBlock *b : std::as_const(wsBlocks))
         b->setHighlighted(false);
 
     int consumed = originalRouteSize - activeRoute.size();
@@ -1143,10 +1142,6 @@ void MainWindow::stepPlayerMovement()
         if (moveTimer) {
             moveTimer->stop();
         }
-
-        // if (won()) {
-        //     completeCurrentLevel();
-        // }
         return;
     }
 
@@ -1154,10 +1149,6 @@ void MainWindow::stepPlayerMovement()
         if (moveTimer) {
             moveTimer->stop();
         }
-
-        // if (won()) {
-        //     completeCurrentLevel();
-        // }
         return;
     }
 
@@ -1255,7 +1246,6 @@ void MainWindow::stepPlayerMovement()
                     activeRoute.removeFirst();
                     if (activeRoute.isEmpty()) {
                         moveTimer->stop();
-                        //if (won()) completeCurrentLevel();
                     }
                     return;
                 }
@@ -1319,10 +1309,6 @@ void MainWindow::stepPlayerMovement()
 
         if (activeRoute.isEmpty()) {
             moveTimer->stop();
-
-            // if (won()) {
-            //     completeCurrentLevel();
-            // }
         }
         return;
     }
@@ -1621,6 +1607,40 @@ bool MainWindow::won()
     }
 
     return true;
+}
+
+bool MainWindow::hasValidForLoopSyntax(const QStringList &route)
+{
+    int openBraceCount = 0;
+
+    for (int i = 0; i < route.size(); i++) {
+        QString block = route[i];
+
+        // If this is a for loop, the next block must be an opening brace
+        if (block.startsWith("for(")) {
+            if (i + 1 >= route.size() || route[i + 1] != "{") {
+                return false;
+            }
+        }
+
+        // Count opening braces
+        if (block == "{") {
+            openBraceCount++;
+        }
+
+        // Count closing braces
+        if (block == "}") {
+            openBraceCount--;
+
+            // More closing braces than opening braces
+            if (openBraceCount < 0) {
+                return false;
+            }
+        }
+    }
+
+    // All braces must be balanced
+    return openBraceCount == 0;
 }
 
 // -------------------- Start Page Slots --------------------
@@ -2324,6 +2344,22 @@ void MainWindow::on_runButton_clicked()
     }
 
     QStringList rawRoute = getProgramRoute();
+
+    if (!hasValidForLoopSyntax(rawRoute)) {
+        QMessageBox::warning(
+            this,
+            "For Loop Error",
+            "Your for loop is missing { }.\n\n"
+            "A for loop must contain opening and closing braces.\n"
+            "Example:\n\n"
+            "for(2)\n"
+            "{\n"
+            "    moveToA();\n"
+            "}"
+            );
+        return;
+    }
+
     QStringList route = (currentLevel == 3 || currentLevel == 4)
                             ? expandForLoops(rawRoute)
                             : rawRoute;
