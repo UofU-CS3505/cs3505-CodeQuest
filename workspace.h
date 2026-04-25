@@ -1,3 +1,13 @@
+/**
+ * @file workspace.h
+ * @brief Header file for the Workspace class.
+ * @author BitCat
+ *
+ * Workspace manages the draggable code blocks that the player uses
+ * to build instructions for the princess. It supports drag-and-drop,
+ * block ordering, indentation logic, and block interaction handling.
+ */
+
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QDragEnterEvent>
@@ -7,6 +17,10 @@
 
 #pragma once
 
+/**
+ * Handles interactive code block placement and organization.
+ * @brief The Workspace class
+ */
 class CodeBlock;
 /**
  * Workspace class, which handles the code blocks in a way that the user can interact with.
@@ -16,6 +30,12 @@ class Workspace : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * Creates a new Workspace widget.
+     * @brief Constructs the workspace area
+     * @param parent The parent widget, or nullptr if none
+     * @return None
+     */
     Workspace(QWidget *parent = nullptr);
     /**
      * Clears all the blocks from the workspace.
@@ -70,7 +90,23 @@ protected:
      */
     void dropEvent(QDropEvent *event) override;
 private:
+    /**
+     * Vertical layout used to organize all workspace blocks.
+     * @brief layout
+     */
     QVBoxLayout *layout;
+
+    /**
+     * Connects block signals after creation or insertion.
+     * @brief Registers a block for interaction handling
+     * @param block The CodeBlock to register
+     * @return None
+     */
     void registerBlock(CodeBlock *block);
+
+    /**
+     * Stores all CodeBlock objects currently in the workspace.
+     * @brief blocks
+     */
     QList<CodeBlock*> blocks;
 };

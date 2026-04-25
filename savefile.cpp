@@ -4,7 +4,6 @@
 #include "QFile"
 #include "QDebug"
 #include "QJsonArray"
-#include "vector"
 
 QString filename = "save.txt";
 

@@ -1,3 +1,13 @@
+/**
+ * @file saveFile.h
+ * @brief Header file for the SaveFile class.
+ * @author BitCat
+ *
+ * SaveFile manages player progress and score data for the game.
+ * It stores unlocked levels and level scores using JSON data
+ * written to and loaded from a text file.
+ */
+
 #ifndef SAVEFILE_H
 #define SAVEFILE_H
 
