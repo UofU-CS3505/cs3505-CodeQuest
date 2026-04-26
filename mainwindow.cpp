@@ -709,6 +709,8 @@ QStringList MainWindow::expandForLoops(const QStringList &raw) const
             // collect everything between for(N) and the closing }
             QStringList body;
             int j = i + 1;
+            // skip the opening { if present
+            if (j < raw.size() && raw[j] == "{") j++;
             while (j < raw.size()
                    && raw[j] != "}"
                    && !raw[j].startsWith("for(")) {
@@ -1002,63 +1004,60 @@ void MainWindow::buildHighlightMap(const QStringList &expandedRoute)
     highlightIndices.clear();
 
     QList<CodeBlock*> blocks = ui->workspaceWidget->getBlocks();
-    int ri = 0; // index into expandedRoute
 
-    std::function<void(int &)> process = [&](int &bi) {
-        while (bi < blocks.size() && ri < expandedRoute.size()) {
-            CodeBlock *b = blocks[bi];
-            QString type = b->getType();
-            QString cmd  = b->getCommand();
-
-            if (type == "forLoop") {
-                // parse repeat count
-                bool ok = false;
-                int times = cmd.mid(4, cmd.size() - 5).toInt(&ok);
-                if (!ok || times <= 0) { bi++; continue; }
-
-                bi++; // skip forLoop block
-
-                // skip opening {
-                if (bi < blocks.size() &&
-                    blocks[bi]->getType() == "scopeBracket" &&
-                    blocks[bi]->text() == "{") {
-                    bi++;
-                }
-
-                // collect body block indices
-                QList<int> bodyIndices;
-                while (bi < blocks.size() &&
-                       !(blocks[bi]->getType() == "scopeBracket" && blocks[bi]->text() == "}")) {
-                    bodyIndices.append(bi);
-                    bi++;
-                }
-                if (bi < blocks.size()) bi++; // skip closing }
-
-                // emit body indices N times
-                for (int t = 0; t < times && ri < expandedRoute.size(); t++) {
-                    for (int idx : bodyIndices) {
-                        if (ri < expandedRoute.size()) {
-                            highlightIndices.append(idx);
-                            ri++;
-                        }
-                    }
-                }
-
-            } else if (type == "scopeBracket") {
-                bi++;
-            } else {
-                // normal block (routePoint, ifStatement, etc.)
-                if (ri < expandedRoute.size() && cmd == expandedRoute[ri]) {
-                    highlightIndices.append(bi);
-                    ri++;
-                }
-                bi++;
-            }
-        }
-    };
+    QList<QPair<int,QString>> executionOrder;
 
     int bi = 0;
-    process(bi);
+    while (bi < blocks.size()) {
+        CodeBlock *b = blocks[bi];
+        QString type = b->getType();
+        QString cmd  = b->getCommand();
+
+        if (type == "forLoop") {
+            bool ok = false;
+            int times = cmd.mid(4, cmd.size() - 5).toInt(&ok);
+            if (!ok || times <= 0) { bi++; continue; }
+
+            bi++; // skip forLoop block
+
+            // skip opening {
+            if (bi < blocks.size() &&
+                blocks[bi]->getType() == "scopeBracket" &&
+                blocks[bi]->text() == "{") {
+                bi++;
+            }
+
+            // collect body (stop at closing })
+            QList<QPair<int,QString>> body;
+            while (bi < blocks.size() &&
+                   !(blocks[bi]->getType() == "scopeBracket" &&
+                     blocks[bi]->text() == "}")) {
+                body.append({bi, blocks[bi]->getCommand()});
+                bi++;
+            }
+            if (bi < blocks.size()) bi++; // skip closing }
+
+            // repeat body N times
+            for (int t = 0; t < times; t++)
+                for (const auto &entry : body)
+                    executionOrder.append(entry);
+
+        } else if (type == "scopeBracket") {
+            bi++; // orphan brace — skip
+
+        } else {
+            // routePoint, ifStatement, move, etc.
+            executionOrder.append({bi, cmd});
+            bi++;
+        }
+    }
+
+    int count = qMin(executionOrder.size(), expandedRoute.size());
+    for (int i = 0; i < count; i++)
+        highlightIndices.append(executionOrder[i].first);
+
+    for (int i = count; i < expandedRoute.size(); i++)
+        highlightIndices.append(-1);
 }
 
 void MainWindow::resetPrincessToStart()
