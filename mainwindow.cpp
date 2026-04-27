@@ -1413,7 +1413,6 @@ void MainWindow::handlePlayerDeath()
 {
     stopScoreTracking();
     on_runButton_clicked();
-    //failCurrentLevel();
 }
 
 void MainWindow::addWall(int row, int col)
@@ -2233,7 +2232,7 @@ void MainWindow::failCurrentLevel()
 
     // Body text
     QLabel *bodyLabel = new QLabel(
-        "The princess didn't make it this time.\n"
+        "The princess didn't make it to the castle.\n"
         "Review your code and try again — you've got this!",
         &failDialog
         );
@@ -2318,6 +2317,9 @@ void MainWindow::failCurrentLevel()
         ui->stackedWidget->setCurrentIndex(LEVEL_PAGE);
     } else if (result == 3) {
         ui->stackedWidget->setCurrentIndex(START_PAGE);
+    } else {
+        setRunning(true);
+        on_runButton_clicked();
     }
 }
 
