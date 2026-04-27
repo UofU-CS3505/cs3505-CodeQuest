@@ -609,8 +609,8 @@ void MainWindow::updateIfLevelLogic()
     }
 
     if (currentLevel == 4 &&
-        levelPointPositions.contains("moveToH();") &&
-        princess->pos() == levelPointPositions["moveToH();"]) {
+        levelPointPositions.contains("moveToSafety();") &&
+        princess->pos() == levelPointPositions["moveToSafety();"]) {
         playerTriggeredMonster = false;
     }
 
@@ -1170,12 +1170,22 @@ void MainWindow::stepPlayerMovement()
 
         QString current = activeRoute.first();
 
-        if (currentLevel == 4 && current == "if (inDragonVision)") {
-            if (playerTriggeredMonster) {
-                princess->move(levelPointPositions["moveToSafety();"]);
+        if (currentLevel == 4 && targetName == "if (inDragonVision)") {
+            updateIfLevelLogic();
+
+            // Consume the if block itself.
+            activeRoute.removeFirst();
+
+            // If the dragon has detected the player, go to safety point H.
+            if (playerTriggeredMonster &&
+                levelPointPositions.contains("moveToSafety();")) {
+                activeRoute.prepend("moveToSafety();");
             }
 
-            activeRoute.pop_front();
+            if (activeRoute.isEmpty() && moveTimer) {
+                moveTimer->stop();
+            }
+
             return;
         }
 
@@ -1256,7 +1266,7 @@ void MainWindow::stepPlayerMovement()
         }
 
         if (currentLevel == 4 &&
-            targetName == "moveToH();" &&
+            targetName == "moveToSafety();" &&
             dragon1 &&
             levelPointPositions.contains("moveToA();")) {
 
@@ -1342,7 +1352,7 @@ void MainWindow::stepPlayerMovement()
     else if (currentLevel == 4) {
         updateIfLevelLogic();
 
-        if (targetName != "moveToH();" &&
+        if (targetName != "moveToSafety();" &&
             hasGlobalAlertHandler &&
             playerTriggeredMonster) {
 
@@ -1350,7 +1360,7 @@ void MainWindow::stepPlayerMovement()
 
             activeRoute.removeFirst();
             activeRoute.prepend(interruptedTarget);
-            activeRoute.prepend("moveToH();");
+            activeRoute.prepend("moveToSafety();");
             return;
         }
     }
@@ -1485,8 +1495,8 @@ void MainWindow::moveDragons(int dy){
 
         bool playerAtH =
             princess &&
-            levelPointPositions.contains("moveToH();") &&
-            princess->pos() == levelPointPositions["moveToH();"];
+            levelPointPositions.contains("moveToSafety();") &&
+            princess->pos() == levelPointPositions["moveToSafety();"];
 
         if (playerAtH) {
             playerTriggeredMonster = false;
@@ -1965,7 +1975,7 @@ void MainWindow::openSpecificLevel(int levelNumber)
     }
     else if (levelNumber == 4) {
         currentLevelRoutePoints = {
-            "moveToA();", "moveToB();", "moveToC();", "moveToSafety();",
+            "moveToA();", "moveToB();", "moveToC();",
             "if (inDragonVision)",
             "for(2)", "{", "}"
         };
@@ -2682,7 +2692,10 @@ void MainWindow::createRoutePointBlocks()
     for (const QString &pointName : currentLevelRoutePoints) {
         QString displayName = pointName;
 
-        if (pointName == goalPoint) {
+        if (currentLevel == 4 && pointName == "if (inDragonVision)") {
+            displayName = "if (InAlertZone) -> Safety";
+        }
+        else if (pointName == goalPoint) {
             displayName = GOAL_BLOCK;
         }
 
