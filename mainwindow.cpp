@@ -2654,19 +2654,10 @@ void MainWindow::on_restartButton_clicked()
     saveFile.updateUnlockedLevels(1);
     saveFile.save();
 
-    // Reset UI state
-    ui->workspaceWidget->clearBlocks();
-    exitRoutePointSelectionMode();
     unlockLevelButtons();
 
     // Go to level 1
-    currentLevel = 1;
-    ui->levelTitleLabel->setText("Level 1");
-    ui->stackedWidget->setCurrentIndex(CODE_PAGE);
-
-    gameStarted = false;
-    resetPrincessToStart();
-    resetDragonsToStart();
+    openSpecificLevel(1);
 }
 
 void MainWindow::createRoutePointBlocks()
