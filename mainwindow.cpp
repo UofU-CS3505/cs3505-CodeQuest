@@ -2666,6 +2666,7 @@ void MainWindow::on_restartButton_clicked()
     saveFile.updateUnlockedLevels(1);
     saveFile.save();
 
+    exitRoutePointSelectionMode();
     unlockLevelButtons();
 
     // Go to level 1
