@@ -12,4 +12,4 @@ Drag and drop code blocks to solve puzzles and guide a character through each le
 * **Robust Syntax & Logic Checking:** Includes custom structural checks (such as loop brace validators and scope rules) to ensure scripts run reliably.
 * **Level Progression & Save Systems:** Manages distinct game canvases, win/loss states, and persistent user save files.
 
-Developed by BitCats, University of Utah, CS3505
+Developed by Aspen Tobler, Shaoze Yang, Emily Wang, Helen Zhang, Xinmiao Li, University of Utah, CS3505
